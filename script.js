@@ -11,6 +11,12 @@ const appStatus = document.querySelector("[data-app-status]");
 const totalTrailSteps = appSteps.length;
 let trailProgress = Number(localStorage.getItem("gold-vein-trail-progress") || "0");
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+  });
+}
+
 const setStatus = (button, message) => {
   const status = button.parentElement.querySelector(".form-status");
   if (status) {

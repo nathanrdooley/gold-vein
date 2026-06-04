@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Gold Vein</title>
+  <desc id="desc">Gold Vein app icon with a glowing vein through dark stone.</desc>
+  <rect width="512" height="512" rx="96" fill="#0f1417"/>
+  <path d="M40 358c54-38 93-57 139-70 42-12 73-35 97-72 21-32 51-55 96-69 27-8 58-24 91-47" fill="none" stroke="#f5c75f" stroke-width="30" stroke-linecap="round"/>
+  <path d="M68 390c60-42 103-63 152-77 50-15 82-41 110-83 21-32 48-50 88-62" fill="none" stroke="#a66f20" stroke-width="10" stroke-linecap="round" opacity=".85"/>
+  <path d="M116 120h280v30H116zM116 362h280v22H116z" fill="#2a2f2d"/>
+  <text x="256" y="286" fill="#f7efd8" font-family="Georgia, serif" font-size="148" font-weight="700" text-anchor="middle">GV</text>
+</svg>

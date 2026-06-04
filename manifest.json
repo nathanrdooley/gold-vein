@@ -1,0 +1,19 @@
+{
+  "name": "Gold Vein",
+  "short_name": "Gold Vein",
+  "description": "A Scripture-led disciple-making adventure.",
+  "start_url": "./index.html#adventure-app",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1417",
+  "theme_color": "#0f1417",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/gold-vein-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

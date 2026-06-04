@@ -12,6 +12,7 @@ This first version is a static website with one adventure:
 - Discovery/search surface for available trails
 - Core loop: Receive, Go, Connect, Obey, Reflect, Testify
 - Interactive adventure app prototype with locked and unlocked instructions
+- Installable PWA metadata for phone testing
 - Start Adventure section
 - Gold Vein No. 1
 - Adventure metadata for trail type, difficulty, time, companions, verification, and treasure evidence
@@ -47,9 +48,26 @@ Then open:
 http://127.0.0.1:8080/
 ```
 
+To test from a phone on the same Wi-Fi, start the server with:
+
+```sh
+python3 -m http.server 8080 --bind 0.0.0.0
+```
+
+Then open the Mac's Wi-Fi IP address on the phone, such as:
+
+```txt
+http://10.0.3.90:8080/
+```
+
+On iPhone, open the URL in Safari, tap Share, then choose **Add to Home Screen**.
+
 ## Files
 
 - `index.html` - page structure and content
 - `styles.css` - responsive visual design
 - `script.js` - app unlock flow, print, field notes, and testimony interactions
+- `manifest.json` - installable app metadata
+- `service-worker.js` - app shell caching
 - `assets/gold-vein-hero.png` - hero image
+- `assets/gold-vein-icon.svg` - app icon

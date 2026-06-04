@@ -475,18 +475,16 @@ dd {
   padding: 20px;
 }
 
-.app-step.active,
-.app-step.complete {
+.app-step.active {
   display: block;
 }
 
 .app-step.complete {
-  opacity: 0.72;
+  display: none;
 }
 
 .app-step.locked {
-  display: block;
-  opacity: 0.38;
+  display: none;
 }
 
 .app-step.locked .button {
