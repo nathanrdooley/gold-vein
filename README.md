@@ -1,8 +1,8 @@
 # Gold Vein
 
-Gold Vein is a Scripture-led disciple-making adventure where participants follow small steps of
-obedience into real-world encounters that reveal the treasures of God's Word, His people, and His
-Kingdom.
+Gold Vein is a Spirit-led, Scripture-supported disciple-making adventure where participants follow
+small steps of obedience into real-world encounters that reveal the treasures of God's Word, His
+people, and His Kingdom.
 
 ## V1
 
