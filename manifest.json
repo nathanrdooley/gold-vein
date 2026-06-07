@@ -2,7 +2,7 @@
   "name": "Gold Vein",
   "short_name": "Gold Vein",
   "description": "A Spirit-led, Scripture-supported disciple-making adventure.",
-  "start_url": "./index.html#adventure-app",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f1417",

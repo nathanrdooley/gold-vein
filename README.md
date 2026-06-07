@@ -27,10 +27,10 @@ This first version is a static website with one adventure:
 
 The first real-world coffee test can use prepaid shop credit instead of payment automation.
 
-- Nathan starts with a $20 Watermark gift card balance.
+- A $20 Watermark gift card balance is used to start the pilot.
 - The app shows a unique code such as `GV-WM-NO1-001`.
 - The code proves the participant is on Gold Vein Adventure No. 1.
-- Watermark redeems one coffee from the prepaid gift card balance.
+- Watermark redeems one coffee from the prepaid Gold Vein gift card balance.
 - The code is checked off manually for the pilot.
 - Later, Glen can turn this into digital redemption tracking with one-time codes.
 
