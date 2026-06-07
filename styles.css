@@ -662,6 +662,64 @@ dd {
   color: var(--ink);
 }
 
+.scripture-map {
+  background: rgba(10, 14, 15, 0.42);
+  border: 1px solid rgba(245, 199, 95, 0.28);
+  border-radius: var(--radius);
+  margin: 18px 0;
+  overflow: hidden;
+}
+
+.scripture-map summary {
+  color: var(--gold);
+  cursor: pointer;
+  font-weight: 900;
+  list-style-position: inside;
+  padding: 14px;
+}
+
+.scripture-map summary::marker {
+  color: var(--gold);
+}
+
+.map-intro {
+  border-top: 1px solid var(--line);
+  padding: 14px 14px 0;
+}
+
+.map-intro p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.map-grid {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.map-grid article {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.map-grid span {
+  color: var(--gold);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.map-grid p {
+  color: var(--muted);
+  margin: 0;
+}
+
 .conversation-prompt {
   border-left: 3px solid var(--gold);
   color: var(--ink);
