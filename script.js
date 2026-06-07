@@ -43,8 +43,8 @@ const showActivePage = () => {
 const stepStatusMessages = [
   "You moved into the space and place. Receive the small gift.",
   "Small gift received. Look to the Scripture map.",
-  "Scripture map opened. Gather with a brother or sister in Christ.",
-  "You gathered with someone. Give the treasure and record the fruit.",
+  "Scripture map opened. Connect with a brother or sister in Christ.",
+  "You connected with someone. Give the treasure and record the fruit.",
   "The trail is complete. Carry the treasure forward."
 ];
 
@@ -142,7 +142,7 @@ resetTrailButton?.addEventListener("click", () => {
       "I'm at the location",
       "I received the small gift",
       "I opened the Scripture map",
-      "I gathered with someone"
+      "I connected with someone"
     ];
     button.textContent = labels[stepIndex] || button.textContent;
   });
