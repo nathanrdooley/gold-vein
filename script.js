@@ -19,6 +19,22 @@ const giftTypeInputs = document.querySelectorAll("[data-gift-type]");
 const witnessNoteInput = document.querySelector("[data-witness-note]");
 const witnessConfirmButton = document.querySelector("[data-witness-confirm]");
 const witnessStatus = document.querySelector("[data-witness-status]");
+const resetGlobalTrailButton = document.querySelector("[data-reset-global-trail]");
+const globalStepButtons = document.querySelectorAll("[data-complete-global-step]");
+const globalSteps = document.querySelectorAll("[data-global-step]");
+const globalProgressDots = document.querySelectorAll("[data-global-progress-dot]");
+const globalAppStatus = document.querySelector("[data-global-app-status]");
+const checkGlobalLocationButton = document.querySelector("[data-check-global-location]");
+const globalLocationStatus = document.querySelector("[data-global-location-status]");
+const globalPassConfirmButton = document.querySelector("[data-global-pass-confirm]");
+const globalPassStatus = document.querySelector("[data-global-pass-status]");
+const globalCompanionTouchButton = document.querySelector("[data-global-companion-touch]");
+const globalCompanionNameInput = document.querySelector("[data-global-companion-name]");
+const globalCompanionStatus = document.querySelector("[data-global-companion-status]");
+const globalGiftTypeInputs = document.querySelectorAll("[data-global-gift-type]");
+const globalWitnessNoteInput = document.querySelector("[data-global-witness-note]");
+const globalWitnessConfirmButton = document.querySelector("[data-global-witness-confirm]");
+const globalWitnessStatus = document.querySelector("[data-global-witness-status]");
 const redeemPanel = document.querySelector("[data-redeem-panel]");
 const redeemState = document.querySelector("[data-redeem-state]");
 const redeemCode = document.querySelector("[data-redeem-code]");
@@ -29,6 +45,8 @@ const redeemMessage = document.querySelector("[data-redeem-message]");
 
 const totalTrailSteps = appSteps.length;
 let trailProgress = Number(localStorage.getItem("gold-vein-trail-progress") || "0");
+const totalGlobalTrailSteps = globalSteps.length;
+let globalTrailProgress = Number(localStorage.getItem("gold-vein-global-progress") || "0");
 let activeRedeemCode = "";
 
 const watermarkLocation = {
@@ -40,6 +58,11 @@ const watermarkLocation = {
 let isLocationVerified = localStorage.getItem("gold-vein-location-verified") === "true";
 let isCompanionConfirmed = localStorage.getItem("gold-vein-companion-confirmed") === "true";
 let isWitnessConfirmed = localStorage.getItem("gold-vein-witness-confirmed") === "true";
+let isGlobalLocationVerified = localStorage.getItem("gold-vein-global-location-verified") === "true";
+let isGlobalPassConfirmed = localStorage.getItem("gold-vein-global-pass-confirmed") === "true";
+let isGlobalCompanionConfirmed =
+  localStorage.getItem("gold-vein-global-companion-confirmed") === "true";
+let isGlobalWitnessConfirmed = localStorage.getItem("gold-vein-global-witness-confirmed") === "true";
 
 const redemptionPasses = {
   "GV-WM-NO1-001": {
@@ -172,6 +195,65 @@ const setWitnessConfirmed = (confirmed) => {
   localStorage.setItem("gold-vein-witness-confirmed", String(confirmed));
 };
 
+const setGlobalLocationStatus = (message, state = "") => {
+  if (!globalLocationStatus) {
+    return;
+  }
+
+  globalLocationStatus.textContent = message;
+  globalLocationStatus.dataset.state = state;
+};
+
+const setGlobalLocationVerified = (verified) => {
+  isGlobalLocationVerified = verified;
+  localStorage.setItem("gold-vein-global-location-verified", String(verified));
+};
+
+const setGlobalPassStatus = (message, state = "") => {
+  if (!globalPassStatus) {
+    return;
+  }
+
+  globalPassStatus.textContent = message;
+  globalPassStatus.dataset.state = state;
+};
+
+const setGlobalPassConfirmed = (confirmed) => {
+  isGlobalPassConfirmed = confirmed;
+  localStorage.setItem("gold-vein-global-pass-confirmed", String(confirmed));
+};
+
+const setGlobalCompanionStatus = (message, state = "") => {
+  if (!globalCompanionStatus) {
+    return;
+  }
+
+  globalCompanionStatus.textContent = message;
+  globalCompanionStatus.dataset.state = state;
+};
+
+const setGlobalCompanionConfirmed = (confirmed) => {
+  isGlobalCompanionConfirmed = confirmed;
+  localStorage.setItem("gold-vein-global-companion-confirmed", String(confirmed));
+};
+
+const getSelectedGlobalGiftType = () =>
+  Array.from(globalGiftTypeInputs).find((input) => input.checked)?.value || "";
+
+const setGlobalWitnessStatus = (message, state = "") => {
+  if (!globalWitnessStatus) {
+    return;
+  }
+
+  globalWitnessStatus.textContent = message;
+  globalWitnessStatus.dataset.state = state;
+};
+
+const setGlobalWitnessConfirmed = (confirmed) => {
+  isGlobalWitnessConfirmed = confirmed;
+  localStorage.setItem("gold-vein-global-witness-confirmed", String(confirmed));
+};
+
 const continueAdventureAfterRedemption = () => {
   trailProgress = Math.max(trailProgress, 2);
   localStorage.setItem("gold-vein-trail-progress", String(trailProgress));
@@ -272,6 +354,81 @@ const renderTrail = () => {
 
   if (trailProgress === 4 && isWitnessConfirmed) {
     setWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  }
+};
+
+const globalStepStatusMessages = [
+  "Place confirmed. Receive the Nearby Neighbor Pass.",
+  "Pass received. Open the Scripture Map.",
+  "Passage experienced. Connect with someone nearby.",
+  "Connection confirmed. Give the treasure and record the witness.",
+  "The global trail is complete. Carry mercy forward."
+];
+
+const clampGlobalProgress = () => {
+  globalTrailProgress = Math.min(Math.max(globalTrailProgress, 0), totalGlobalTrailSteps);
+};
+
+const renderGlobalTrail = () => {
+  clampGlobalProgress();
+
+  globalSteps.forEach((step) => {
+    const stepIndex = Number(step.dataset.globalStep);
+    const button = step.querySelector("[data-complete-global-step]");
+    const isComplete = stepIndex < globalTrailProgress;
+    const isActive = stepIndex === globalTrailProgress;
+    const isLocked = stepIndex > globalTrailProgress;
+
+    step.classList.toggle("complete", isComplete);
+    step.classList.toggle("active", isActive);
+    step.classList.toggle("locked", isLocked);
+    step.setAttribute("aria-disabled", String(isLocked));
+
+    if (button) {
+      const requiresLocationCheck = stepIndex === 0 && !isGlobalLocationVerified;
+      const requiresPassCheck = stepIndex === 1 && !isGlobalPassConfirmed;
+      const requiresCompanionCheck = stepIndex === 3 && !isGlobalCompanionConfirmed;
+      const requiresWitnessCheck = stepIndex === 4 && !isGlobalWitnessConfirmed;
+      button.disabled =
+        isLocked ||
+        isComplete ||
+        requiresLocationCheck ||
+        requiresPassCheck ||
+        requiresCompanionCheck ||
+        requiresWitnessCheck;
+      if (isComplete) {
+        button.textContent = "Completed";
+      }
+    }
+  });
+
+  globalProgressDots.forEach((dot) => {
+    const dotIndex = Number(dot.dataset.globalProgressDot);
+    dot.classList.toggle("complete", dotIndex < globalTrailProgress);
+    dot.classList.toggle("active", dotIndex === globalTrailProgress);
+  });
+
+  if (globalAppStatus) {
+    globalAppStatus.textContent =
+      globalTrailProgress === 0
+        ? "Step 1 is ready. Confirm your place to unlock the first confirmation."
+        : globalStepStatusMessages[globalTrailProgress - 1] || "Global trail progress saved.";
+  }
+
+  if (globalTrailProgress === 0 && isGlobalLocationVerified) {
+    setGlobalLocationStatus("Place confirmed. You can complete Step 1.", "success");
+  }
+
+  if (globalTrailProgress === 1 && isGlobalPassConfirmed) {
+    setGlobalPassStatus("Global pass received. You can complete Step 2.", "success");
+  }
+
+  if (globalTrailProgress === 3 && isGlobalCompanionConfirmed) {
+    setGlobalCompanionStatus("Connection confirmed. You can complete Step 4.", "success");
+  }
+
+  if (globalTrailProgress === 4 && isGlobalWitnessConfirmed) {
+    setGlobalWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
   }
 };
 
@@ -418,6 +575,108 @@ witnessConfirmButton?.addEventListener("click", () => {
   renderTrail();
 });
 
+checkGlobalLocationButton?.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    setGlobalLocationStatus("Location is not available in this browser.", "error");
+    return;
+  }
+
+  checkGlobalLocationButton.disabled = true;
+  setGlobalLocationStatus("Confirming your place...", "checking");
+
+  navigator.geolocation.getCurrentPosition(
+    () => {
+      setGlobalLocationVerified(true);
+      checkGlobalLocationButton.disabled = false;
+      setGlobalLocationStatus("Place confirmed. You can complete Step 1.", "success");
+      renderGlobalTrail();
+    },
+    () => {
+      setGlobalLocationVerified(false);
+      checkGlobalLocationButton.disabled = false;
+      setGlobalLocationStatus("Location permission is needed to confirm this place.", "error");
+      renderGlobalTrail();
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 30000,
+      timeout: 12000
+    }
+  );
+});
+
+globalPassConfirmButton?.addEventListener("click", () => {
+  setGlobalPassConfirmed(true);
+  setGlobalPassStatus("Global pass received. You can complete Step 2.", "success");
+  renderGlobalTrail();
+});
+
+globalCompanionNameInput?.addEventListener("input", () => {
+  setGlobalCompanionConfirmed(false);
+  setGlobalCompanionStatus("Touch phones or confirm the connection to unlock this step.");
+  renderGlobalTrail();
+});
+
+globalCompanionTouchButton?.addEventListener("click", () => {
+  const companionName = globalCompanionNameInput?.value.trim();
+
+  if (!companionName) {
+    setGlobalCompanionConfirmed(false);
+    setGlobalCompanionStatus("Add a first name or initials before confirming the connection.", "error");
+    renderGlobalTrail();
+    return;
+  }
+
+  setGlobalCompanionConfirmed(true);
+  localStorage.setItem("gold-vein-global-companion-name", companionName);
+  setGlobalCompanionStatus(`Connection confirmed with ${companionName}. Step 4 is unlocked.`, "success");
+  renderGlobalTrail();
+});
+
+globalGiftTypeInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    setGlobalWitnessConfirmed(false);
+    setGlobalWitnessStatus("Confirm the gift and witness note to complete this trail.");
+    renderGlobalTrail();
+  });
+});
+
+globalWitnessNoteInput?.addEventListener("input", () => {
+  setGlobalWitnessConfirmed(false);
+  setGlobalWitnessStatus("Confirm the gift and witness note to complete this trail.");
+  renderGlobalTrail();
+});
+
+globalWitnessConfirmButton?.addEventListener("click", () => {
+  const giftType = getSelectedGlobalGiftType();
+  const witnessNote = globalWitnessNoteInput?.value.trim();
+
+  if (!giftType) {
+    setGlobalWitnessConfirmed(false);
+    setGlobalWitnessStatus("Choose how you gave the treasure.", "error");
+    renderGlobalTrail();
+    return;
+  }
+
+  if (!witnessNote) {
+    setGlobalWitnessConfirmed(false);
+    setGlobalWitnessStatus("Add a short witness note before completing the trail.", "error");
+    renderGlobalTrail();
+    return;
+  }
+
+  setGlobalWitnessConfirmed(true);
+  localStorage.setItem(
+    "gold-vein-global-witness",
+    JSON.stringify({
+      giftType,
+      witnessNote
+    })
+  );
+  setGlobalWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  renderGlobalTrail();
+});
+
 stepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const completedStep = Number(button.dataset.completeStep);
@@ -465,6 +724,55 @@ resetTrailButton?.addEventListener("click", () => {
   renderTrail();
 });
 
+globalStepButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const completedStep = Number(button.dataset.completeGlobalStep);
+    if (completedStep !== globalTrailProgress) {
+      return;
+    }
+
+    globalTrailProgress = Math.min(completedStep + 1, totalGlobalTrailSteps);
+    localStorage.setItem("gold-vein-global-progress", String(globalTrailProgress));
+    renderGlobalTrail();
+  });
+});
+
+resetGlobalTrailButton?.addEventListener("click", () => {
+  globalTrailProgress = 0;
+  setGlobalLocationVerified(false);
+  setGlobalPassConfirmed(false);
+  setGlobalCompanionConfirmed(false);
+  setGlobalWitnessConfirmed(false);
+  localStorage.setItem("gold-vein-global-progress", "0");
+  localStorage.removeItem("gold-vein-global-companion-name");
+  localStorage.removeItem("gold-vein-global-witness");
+  if (globalCompanionNameInput) {
+    globalCompanionNameInput.value = "";
+  }
+  globalGiftTypeInputs.forEach((input) => {
+    input.checked = false;
+  });
+  if (globalWitnessNoteInput) {
+    globalWitnessNoteInput.value = "";
+  }
+  globalStepButtons.forEach((button) => {
+    const stepIndex = Number(button.dataset.completeGlobalStep);
+    const labels = [
+      "I am in a nearby place",
+      "I received the pass",
+      "I experienced the passage",
+      "I connected with someone",
+      "I gave the treasure"
+    ];
+    button.textContent = labels[stepIndex] || button.textContent;
+  });
+  setGlobalLocationStatus("Place confirmation required before this step can be completed.");
+  setGlobalPassStatus("Receive the pass to unlock the Scripture Map.");
+  setGlobalCompanionStatus("Connection confirmation required before this step can be completed.");
+  setGlobalWitnessStatus("Gift and witness confirmation required before the trail can be completed.");
+  renderGlobalTrail();
+});
+
 redeemButton?.addEventListener("click", () => {
   const pass = redemptionPasses[activeRedeemCode];
 
@@ -491,5 +799,6 @@ resetRedemptionButton?.addEventListener("click", () => {
 });
 
 renderTrail();
+renderGlobalTrail();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);
