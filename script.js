@@ -35,6 +35,22 @@ const globalGiftTypeInputs = document.querySelectorAll("[data-global-gift-type]"
 const globalWitnessNoteInput = document.querySelector("[data-global-witness-note]");
 const globalWitnessConfirmButton = document.querySelector("[data-global-witness-confirm]");
 const globalWitnessStatus = document.querySelector("[data-global-witness-status]");
+const resetHomeTrailButton = document.querySelector("[data-reset-home-trail]");
+const homeStepButtons = document.querySelectorAll("[data-complete-home-step]");
+const homeSteps = document.querySelectorAll("[data-home-step]");
+const homeProgressDots = document.querySelectorAll("[data-home-progress-dot]");
+const homeAppStatus = document.querySelector("[data-home-app-status]");
+const homePlaceConfirmButton = document.querySelector("[data-home-place-confirm]");
+const homePlaceStatus = document.querySelector("[data-home-place-status]");
+const homePassConfirmButton = document.querySelector("[data-home-pass-confirm]");
+const homePassStatus = document.querySelector("[data-home-pass-status]");
+const homeCompanionTouchButton = document.querySelector("[data-home-companion-touch]");
+const homeCompanionNameInput = document.querySelector("[data-home-companion-name]");
+const homeCompanionStatus = document.querySelector("[data-home-companion-status]");
+const homeGiftTypeInputs = document.querySelectorAll("[data-home-gift-type]");
+const homeWitnessNoteInput = document.querySelector("[data-home-witness-note]");
+const homeWitnessConfirmButton = document.querySelector("[data-home-witness-confirm]");
+const homeWitnessStatus = document.querySelector("[data-home-witness-status]");
 const redeemPanel = document.querySelector("[data-redeem-panel]");
 const redeemState = document.querySelector("[data-redeem-state]");
 const redeemCode = document.querySelector("[data-redeem-code]");
@@ -47,6 +63,8 @@ const totalTrailSteps = appSteps.length;
 let trailProgress = Number(localStorage.getItem("gold-vein-trail-progress") || "0");
 const totalGlobalTrailSteps = globalSteps.length;
 let globalTrailProgress = Number(localStorage.getItem("gold-vein-global-progress") || "0");
+const totalHomeTrailSteps = homeSteps.length;
+let homeTrailProgress = Number(localStorage.getItem("gold-vein-home-progress") || "0");
 let activeRedeemCode = "";
 
 const watermarkLocation = {
@@ -63,6 +81,10 @@ let isGlobalPassConfirmed = localStorage.getItem("gold-vein-global-pass-confirme
 let isGlobalCompanionConfirmed =
   localStorage.getItem("gold-vein-global-companion-confirmed") === "true";
 let isGlobalWitnessConfirmed = localStorage.getItem("gold-vein-global-witness-confirmed") === "true";
+let isHomePlaceConfirmed = localStorage.getItem("gold-vein-home-place-confirmed") === "true";
+let isHomePassConfirmed = localStorage.getItem("gold-vein-home-pass-confirmed") === "true";
+let isHomeCompanionConfirmed = localStorage.getItem("gold-vein-home-companion-confirmed") === "true";
+let isHomeWitnessConfirmed = localStorage.getItem("gold-vein-home-witness-confirmed") === "true";
 
 const redemptionPasses = {
   "GV-WM-NO1-001": {
@@ -254,6 +276,65 @@ const setGlobalWitnessConfirmed = (confirmed) => {
   localStorage.setItem("gold-vein-global-witness-confirmed", String(confirmed));
 };
 
+const setHomePlaceStatus = (message, state = "") => {
+  if (!homePlaceStatus) {
+    return;
+  }
+
+  homePlaceStatus.textContent = message;
+  homePlaceStatus.dataset.state = state;
+};
+
+const setHomePlaceConfirmed = (confirmed) => {
+  isHomePlaceConfirmed = confirmed;
+  localStorage.setItem("gold-vein-home-place-confirmed", String(confirmed));
+};
+
+const setHomePassStatus = (message, state = "") => {
+  if (!homePassStatus) {
+    return;
+  }
+
+  homePassStatus.textContent = message;
+  homePassStatus.dataset.state = state;
+};
+
+const setHomePassConfirmed = (confirmed) => {
+  isHomePassConfirmed = confirmed;
+  localStorage.setItem("gold-vein-home-pass-confirmed", String(confirmed));
+};
+
+const setHomeCompanionStatus = (message, state = "") => {
+  if (!homeCompanionStatus) {
+    return;
+  }
+
+  homeCompanionStatus.textContent = message;
+  homeCompanionStatus.dataset.state = state;
+};
+
+const setHomeCompanionConfirmed = (confirmed) => {
+  isHomeCompanionConfirmed = confirmed;
+  localStorage.setItem("gold-vein-home-companion-confirmed", String(confirmed));
+};
+
+const getSelectedHomeGiftType = () =>
+  Array.from(homeGiftTypeInputs).find((input) => input.checked)?.value || "";
+
+const setHomeWitnessStatus = (message, state = "") => {
+  if (!homeWitnessStatus) {
+    return;
+  }
+
+  homeWitnessStatus.textContent = message;
+  homeWitnessStatus.dataset.state = state;
+};
+
+const setHomeWitnessConfirmed = (confirmed) => {
+  isHomeWitnessConfirmed = confirmed;
+  localStorage.setItem("gold-vein-home-witness-confirmed", String(confirmed));
+};
+
 const continueAdventureAfterRedemption = () => {
   trailProgress = Math.max(trailProgress, 2);
   localStorage.setItem("gold-vein-trail-progress", String(trailProgress));
@@ -429,6 +510,81 @@ const renderGlobalTrail = () => {
 
   if (globalTrailProgress === 4 && isGlobalWitnessConfirmed) {
     setGlobalWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  }
+};
+
+const homeStepStatusMessages = [
+  "Home place confirmed. Receive the Home Peace Pass.",
+  "Home pass received. Open the Scripture Map.",
+  "Passage experienced. Connect with someone from home.",
+  "Connection confirmed. Give the treasure and record the witness.",
+  "The home trail is complete. Carry peace forward."
+];
+
+const clampHomeProgress = () => {
+  homeTrailProgress = Math.min(Math.max(homeTrailProgress, 0), totalHomeTrailSteps);
+};
+
+const renderHomeTrail = () => {
+  clampHomeProgress();
+
+  homeSteps.forEach((step) => {
+    const stepIndex = Number(step.dataset.homeStep);
+    const button = step.querySelector("[data-complete-home-step]");
+    const isComplete = stepIndex < homeTrailProgress;
+    const isActive = stepIndex === homeTrailProgress;
+    const isLocked = stepIndex > homeTrailProgress;
+
+    step.classList.toggle("complete", isComplete);
+    step.classList.toggle("active", isActive);
+    step.classList.toggle("locked", isLocked);
+    step.setAttribute("aria-disabled", String(isLocked));
+
+    if (button) {
+      const requiresPlaceCheck = stepIndex === 0 && !isHomePlaceConfirmed;
+      const requiresPassCheck = stepIndex === 1 && !isHomePassConfirmed;
+      const requiresCompanionCheck = stepIndex === 3 && !isHomeCompanionConfirmed;
+      const requiresWitnessCheck = stepIndex === 4 && !isHomeWitnessConfirmed;
+      button.disabled =
+        isLocked ||
+        isComplete ||
+        requiresPlaceCheck ||
+        requiresPassCheck ||
+        requiresCompanionCheck ||
+        requiresWitnessCheck;
+      if (isComplete) {
+        button.textContent = "Completed";
+      }
+    }
+  });
+
+  homeProgressDots.forEach((dot) => {
+    const dotIndex = Number(dot.dataset.homeProgressDot);
+    dot.classList.toggle("complete", dotIndex < homeTrailProgress);
+    dot.classList.toggle("active", dotIndex === homeTrailProgress);
+  });
+
+  if (homeAppStatus) {
+    homeAppStatus.textContent =
+      homeTrailProgress === 0
+        ? "Step 1 is ready. Confirm your home place to unlock the first confirmation."
+        : homeStepStatusMessages[homeTrailProgress - 1] || "Home trail progress saved.";
+  }
+
+  if (homeTrailProgress === 0 && isHomePlaceConfirmed) {
+    setHomePlaceStatus("Home place confirmed. You can complete Step 1.", "success");
+  }
+
+  if (homeTrailProgress === 1 && isHomePassConfirmed) {
+    setHomePassStatus("Home pass received. You can complete Step 2.", "success");
+  }
+
+  if (homeTrailProgress === 3 && isHomeCompanionConfirmed) {
+    setHomeCompanionStatus("Connection confirmed. You can complete Step 4.", "success");
+  }
+
+  if (homeTrailProgress === 4 && isHomeWitnessConfirmed) {
+    setHomeWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
   }
 };
 
@@ -677,6 +833,84 @@ globalWitnessConfirmButton?.addEventListener("click", () => {
   renderGlobalTrail();
 });
 
+homePlaceConfirmButton?.addEventListener("click", () => {
+  setHomePlaceConfirmed(true);
+  setHomePlaceStatus("Home place confirmed. You can complete Step 1.", "success");
+  renderHomeTrail();
+});
+
+homePassConfirmButton?.addEventListener("click", () => {
+  setHomePassConfirmed(true);
+  setHomePassStatus("Home pass received. You can complete Step 2.", "success");
+  renderHomeTrail();
+});
+
+homeCompanionNameInput?.addEventListener("input", () => {
+  setHomeCompanionConfirmed(false);
+  setHomeCompanionStatus("Touch phones or confirm the connection to unlock this step.");
+  renderHomeTrail();
+});
+
+homeCompanionTouchButton?.addEventListener("click", () => {
+  const companionName = homeCompanionNameInput?.value.trim();
+
+  if (!companionName) {
+    setHomeCompanionConfirmed(false);
+    setHomeCompanionStatus("Add a first name or initials before confirming the connection.", "error");
+    renderHomeTrail();
+    return;
+  }
+
+  setHomeCompanionConfirmed(true);
+  localStorage.setItem("gold-vein-home-companion-name", companionName);
+  setHomeCompanionStatus(`Connection confirmed with ${companionName}. Step 4 is unlocked.`, "success");
+  renderHomeTrail();
+});
+
+homeGiftTypeInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    setHomeWitnessConfirmed(false);
+    setHomeWitnessStatus("Confirm the gift and witness note to complete this trail.");
+    renderHomeTrail();
+  });
+});
+
+homeWitnessNoteInput?.addEventListener("input", () => {
+  setHomeWitnessConfirmed(false);
+  setHomeWitnessStatus("Confirm the gift and witness note to complete this trail.");
+  renderHomeTrail();
+});
+
+homeWitnessConfirmButton?.addEventListener("click", () => {
+  const giftType = getSelectedHomeGiftType();
+  const witnessNote = homeWitnessNoteInput?.value.trim();
+
+  if (!giftType) {
+    setHomeWitnessConfirmed(false);
+    setHomeWitnessStatus("Choose how you gave the treasure.", "error");
+    renderHomeTrail();
+    return;
+  }
+
+  if (!witnessNote) {
+    setHomeWitnessConfirmed(false);
+    setHomeWitnessStatus("Add a short witness note before completing the trail.", "error");
+    renderHomeTrail();
+    return;
+  }
+
+  setHomeWitnessConfirmed(true);
+  localStorage.setItem(
+    "gold-vein-home-witness",
+    JSON.stringify({
+      giftType,
+      witnessNote
+    })
+  );
+  setHomeWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  renderHomeTrail();
+});
+
 stepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const completedStep = Number(button.dataset.completeStep);
@@ -773,6 +1007,55 @@ resetGlobalTrailButton?.addEventListener("click", () => {
   renderGlobalTrail();
 });
 
+homeStepButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const completedStep = Number(button.dataset.completeHomeStep);
+    if (completedStep !== homeTrailProgress) {
+      return;
+    }
+
+    homeTrailProgress = Math.min(completedStep + 1, totalHomeTrailSteps);
+    localStorage.setItem("gold-vein-home-progress", String(homeTrailProgress));
+    renderHomeTrail();
+  });
+});
+
+resetHomeTrailButton?.addEventListener("click", () => {
+  homeTrailProgress = 0;
+  setHomePlaceConfirmed(false);
+  setHomePassConfirmed(false);
+  setHomeCompanionConfirmed(false);
+  setHomeWitnessConfirmed(false);
+  localStorage.setItem("gold-vein-home-progress", "0");
+  localStorage.removeItem("gold-vein-home-companion-name");
+  localStorage.removeItem("gold-vein-home-witness");
+  if (homeCompanionNameInput) {
+    homeCompanionNameInput.value = "";
+  }
+  homeGiftTypeInputs.forEach((input) => {
+    input.checked = false;
+  });
+  if (homeWitnessNoteInput) {
+    homeWitnessNoteInput.value = "";
+  }
+  homeStepButtons.forEach((button) => {
+    const stepIndex = Number(button.dataset.completeHomeStep);
+    const labels = [
+      "I prepared the place",
+      "I received the pass",
+      "I experienced the passage",
+      "I connected with someone",
+      "I gave the treasure"
+    ];
+    button.textContent = labels[stepIndex] || button.textContent;
+  });
+  setHomePlaceStatus("Place confirmation required before this step can be completed.");
+  setHomePassStatus("Receive the pass to unlock the Scripture Map.");
+  setHomeCompanionStatus("Connection confirmation required before this step can be completed.");
+  setHomeWitnessStatus("Gift and witness confirmation required before the trail can be completed.");
+  renderHomeTrail();
+});
+
 redeemButton?.addEventListener("click", () => {
   const pass = redemptionPasses[activeRedeemCode];
 
@@ -800,5 +1083,6 @@ resetRedemptionButton?.addEventListener("click", () => {
 
 renderTrail();
 renderGlobalTrail();
+renderHomeTrail();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

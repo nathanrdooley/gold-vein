@@ -50,6 +50,10 @@
             <span>Global</span>
             <strong>Start anywhere nearby</strong>
           </a>
+          <a href="#home-adventure-app">
+            <span>Home</span>
+            <strong>Begin where you live</strong>
+          </a>
           <a href="#adventure-app">
             <span>Adventure</span>
             <strong>Begin the active trail</strong>
@@ -165,14 +169,33 @@
 
             <article class="adventure-card muted-card">
               <div class="card-topline">
-                <span class="status-pill quiet">Coming Later</span>
-                <span>Location Trail</span>
+                <span class="status-pill">Available Home</span>
+                <span>Household Trail</span>
               </div>
-              <h3>Table and Witness</h3>
+              <h3>The Table and the Room</h3>
               <p>
-                A future partner-location adventure where a physical handoff, shared table, and
-                Scripture map lead participants into real conversation.
+                Begin where you live. Open Luke 10:38-42, notice the room, receive peace,
+                connect with someone, and give the treasure through presence and service.
               </p>
+              <dl class="trail-meta">
+                <div>
+                  <dt>Map</dt>
+                  <dd>Luke 10:38-42</dd>
+                </div>
+                <div>
+                  <dt>Difficulty</dt>
+                  <dd>At Home</dd>
+                </div>
+                <div>
+                  <dt>Time</dt>
+                  <dd>15-40 minutes</dd>
+                </div>
+                <div>
+                  <dt>Place</dt>
+                  <dd>Home or room</dd>
+                </div>
+              </dl>
+              <a class="button primary wide" href="#home-adventure-app">Open Home Trail</a>
             </article>
           </div>
         </div>
@@ -712,6 +735,235 @@
 
             <p class="app-status" data-global-app-status aria-live="polite">
               Step 1 is ready. Confirm your place to unlock the first confirmation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="app-section app-page home-app-section" id="home-adventure-app" aria-labelledby="home-app-title" data-page>
+        <div class="section-inner app-layout">
+          <div class="app-copy">
+            <p class="section-label">Home Adventure</p>
+            <h2 id="home-app-title">The Table and the Room.</h2>
+            <p>
+              A Gold Vein trail anyone can do where they live: prepare the room, receive peace,
+              open Scripture, connect with someone, and give the treasure at home.
+            </p>
+            <dl class="panel-meta">
+              <div>
+                <dt>Trail</dt>
+                <dd>Home No. 1 · The Table and the Room</dd>
+              </div>
+              <div>
+                <dt>Map</dt>
+                <dd>Luke 10:38-42</dd>
+              </div>
+              <div>
+                <dt>Unlocks</dt>
+                <dd>Place + Pass + Word + Person + Gift/Witness</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="phone-shell" aria-label="Gold Vein home adventure prototype">
+            <div class="phone-top">
+              <span>Gold Vein Home</span>
+              <button class="mini-button" type="button" data-reset-home-trail>Reset</button>
+            </div>
+
+            <div class="app-progress" aria-label="Home adventure progress">
+              <span class="progress-dot active" data-home-progress-dot="0"></span>
+              <span class="progress-dot" data-home-progress-dot="1"></span>
+              <span class="progress-dot" data-home-progress-dot="2"></span>
+              <span class="progress-dot" data-home-progress-dot="3"></span>
+              <span class="progress-dot" data-home-progress-dot="4"></span>
+            </div>
+
+            <article class="app-step" data-home-step="0">
+              <p class="step-label">Step 1 · Place</p>
+              <h3>Prepare the room.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Go to a room, table, chair, porch, or quiet corner where you can be present before the Lord.</p>
+                <p><strong>Attention:</strong> Ask: "Lord, what are You inviting me to notice in this home?"</p>
+              </div>
+              <div class="location-card">
+                <span>Place</span>
+                <strong>Your home, room, table, or quiet corner</strong>
+                <small>No address needed · Begin where you live</small>
+              </div>
+              <div class="location-gate">
+                <button class="button secondary wide" type="button" data-home-place-confirm>
+                  Confirm This Place
+                </button>
+                <p class="location-status" data-home-place-status aria-live="polite">
+                  Place confirmation required before this step can be completed.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-home-step="0">
+                I prepared the place
+              </button>
+            </article>
+
+            <article class="app-step locked" data-home-step="1" aria-disabled="true">
+              <p class="step-label">Step 2 · Pass</p>
+              <h3>Receive the Home Peace Pass.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Receive this trail as an invitation to welcome Christ into the ordinary life of your home.</p>
+                <p><strong>Attention:</strong> Let this pass remind you that peace is not earned by busyness. Peace is received by presence with Christ.</p>
+              </div>
+              <div class="companion-pass global-pass" aria-label="Gold Vein Home Peace Pass">
+                <div class="phone-touch-icon" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <span>Home Peace Pass</span>
+                  <strong>GV-HOME-TR-001</strong>
+                  <small>Home Trail · Luke 10 · Presence before service</small>
+                </div>
+              </div>
+              <button class="button secondary wide" type="button" data-home-pass-confirm>
+                Receive Home Pass
+              </button>
+              <p class="companion-status" data-home-pass-status aria-live="polite">
+                Receive the pass to unlock the Scripture Map.
+              </p>
+              <button class="button primary wide" type="button" data-complete-home-step="1">
+                I received the pass
+              </button>
+            </article>
+
+            <article class="app-step locked treasure-step" data-home-step="2" aria-disabled="true">
+              <p class="step-label">Step 3 · Word</p>
+              <h3>Look at the better portion.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Read Luke 10:38-42.</p>
+                <p><strong>Attention:</strong> Who is serving? Who is listening? What does Jesus name as necessary?</p>
+              </div>
+              <details class="scripture-map">
+                <summary>Open Home Scripture Map</summary>
+                <div class="map-intro">
+                  <p>
+                    If you have a Bible nearby, open it first. Use this map to notice the history,
+                    culture, inner life, and Spirit-led power of Jesus meeting Martha and Mary at home.
+                  </p>
+                </div>
+                <div class="map-grid">
+                  <article>
+                    <span>Context</span>
+                    <p>Jesus enters a home. The place of ordinary hospitality becomes a place of revelation.</p>
+                  </article>
+                  <article>
+                    <span>History + Culture</span>
+                    <p>Hospitality mattered deeply, yet Jesus honors listening discipleship as the necessary portion.</p>
+                  </article>
+                  <article>
+                    <span>Inner Life</span>
+                    <p>Notice distraction, resentment, pressure, comparison, silence, welcome, and desire for Christ.</p>
+                  </article>
+                  <article>
+                    <span>Spirit-Led Attention</span>
+                    <p>Ask the Lord what needs to become quiet so His voice can be heard in your home.</p>
+                  </article>
+                  <article>
+                    <span>Power + Fruit</span>
+                    <p>The treasure is peace received with Christ and then carried into service, speech, and presence.</p>
+                  </article>
+                </div>
+              </details>
+              <button class="button primary wide" type="button" data-complete-home-step="2">
+                I experienced the passage
+              </button>
+            </article>
+
+            <article class="app-step locked" data-home-step="3" aria-disabled="true">
+              <p class="step-label">Step 4 · Person</p>
+              <h3>Connect from home.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Connect with someone in your home, or reach out to someone from your home with peace and attention.</p>
+                <p><strong>Attention:</strong> What changes when you listen before you try to fix, prove, or perform?</p>
+              </div>
+              <div class="conversation-prompt">
+                "How are you really doing?" or "How can I pray for you from here?"
+              </div>
+              <div class="companion-pass" aria-label="Gold Vein Home Companion Pass">
+                <div class="phone-touch-icon" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <span>Home Companion Pass</span>
+                  <strong>GV-HOME-COMP-001</strong>
+                  <small>Connect with consent · Listen well · Carry peace</small>
+                </div>
+              </div>
+              <label class="compact-label">
+                Person name or initials
+                <input type="text" data-home-companion-name placeholder="Example: Mom">
+              </label>
+              <div class="companion-actions">
+                <button class="button secondary wide" type="button" data-home-companion-touch>
+                  Touch Phones / Confirm Connection
+                </button>
+                <p class="companion-status" data-home-companion-status aria-live="polite">
+                  Connection confirmation required before this step can be completed.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-home-step="3">
+                I connected with someone
+              </button>
+            </article>
+
+            <article class="app-step locked" data-home-step="4" aria-disabled="true">
+              <p class="step-label">Step 5 · Gift/Witness</p>
+              <h3>Give the treasure at home.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Give peace through prayer, encouragement, listening, service, hospitality, or follow-up.</p>
+                <p><strong>Attention:</strong> What did Christ reveal in the room, and what fruit should continue after this moment?</p>
+              </div>
+              <div class="gift-unlock" aria-label="Home gift and witness unlock">
+                <p class="unlock-label">Choose the way you gave the treasure.</p>
+                <div class="gift-grid">
+                  <label>
+                    <input type="radio" name="home-gift-type" value="Prayer" data-home-gift-type>
+                    <span>Prayer</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="home-gift-type" value="Listening" data-home-gift-type>
+                    <span>Listening</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="home-gift-type" value="Service" data-home-gift-type>
+                    <span>Service</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="home-gift-type" value="Hospitality" data-home-gift-type>
+                    <span>Hospitality</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="home-gift-type" value="Follow-up" data-home-gift-type>
+                    <span>Follow-up</span>
+                  </label>
+                </div>
+                <label class="compact-label">
+                  Witness note
+                  <textarea data-home-witness-note rows="3" placeholder="What treasure was carried or given at home?"></textarea>
+                </label>
+                <button class="button secondary wide" type="button" data-home-witness-confirm>
+                  Confirm Gift / Witness
+                </button>
+                <p class="witness-status" data-home-witness-status aria-live="polite">
+                  Gift and witness confirmation required before the trail can be completed.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-home-step="4">
+                I gave the treasure
+              </button>
+              <a class="button secondary wide" href="#field-notes">Open Field Notes</a>
+            </article>
+
+            <p class="app-status" data-home-app-status aria-live="polite">
+              Step 1 is ready. Confirm your home place to unlock the first confirmation.
             </p>
           </div>
         </div>
