@@ -1,7 +1,7 @@
 {
   "name": "Gold Vein",
   "short_name": "Gold Vein",
-  "description": "A Spirit-led, Scripture-supported disciple-making adventure.",
+  "description": "Spirit-led spaces and places where grace meets faith, Scripture gives light, and Jesus Christ is revealed as the treasure.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
