@@ -365,6 +365,50 @@
                 <p><strong>Instruction:</strong> Ask brother/s and sister/s what they notice in the passage.</p>
                 <p><strong>Attention:</strong> What was something they noticed that you did not?</p>
               </div>
+              <details class="pass-options">
+                <summary>Pass could be...</summary>
+                <div class="pass-option-grid">
+                  <article>
+                    <span>Redemption</span>
+                    <p>Used to receive a prepared gift.</p>
+                  </article>
+                  <article>
+                    <span>Handoff</span>
+                    <p>Used when someone gives the next step.</p>
+                  </article>
+                  <article>
+                    <span>Companion</span>
+                    <p>Used to connect two people on the same trail.</p>
+                  </article>
+                  <article>
+                    <span>Witness</span>
+                    <p>Used when someone confirms the moment happened.</p>
+                  </article>
+                </div>
+              </details>
+              <div class="companion-pass" aria-label="Gold Vein Companion Pass">
+                <div class="phone-touch-icon" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <span>Companion Pass</span>
+                  <strong data-companion-code>GV-COMP-0001</strong>
+                  <small>Connect with consent · Share the passage · Continue together</small>
+                </div>
+              </div>
+              <label class="compact-label">
+                Companion name or initials
+                <input type="text" data-companion-name placeholder="Example: Glen">
+              </label>
+              <div class="companion-actions">
+                <button class="button secondary wide" type="button" data-companion-touch>
+                  Touch Phones / Confirm Connection
+                </button>
+                <p class="companion-status" data-companion-status aria-live="polite">
+                  Connection confirmation required before this step can be completed.
+                </p>
+              </div>
               <button class="button primary wide" type="button" data-complete-step="3">
                 I connected with someone
               </button>
@@ -376,6 +420,37 @@
               <div class="step-guidance">
                 <p><strong>Instruction:</strong> Pray for people. Serve someone. Share the big treasure of the gospel.</p>
                 <p><strong>Attention:</strong> Who needs encouragement, truth, prayer, or follow-up?</p>
+              </div>
+              <div class="gift-unlock" aria-label="Gift and witness unlock">
+                <p class="unlock-label">Choose the way you gave the treasure.</p>
+                <div class="gift-grid">
+                  <label>
+                    <input type="radio" name="gift-type" value="Prayer" data-gift-type>
+                    <span>Prayer</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="gift-type" value="Encouragement" data-gift-type>
+                    <span>Encouragement</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="gift-type" value="Service" data-gift-type>
+                    <span>Service</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="gift-type" value="Follow-up" data-gift-type>
+                    <span>Follow-up</span>
+                  </label>
+                </div>
+                <label class="compact-label">
+                  Witness note
+                  <textarea data-witness-note rows="3" placeholder="What treasure was carried or given?"></textarea>
+                </label>
+                <button class="button secondary wide" type="button" data-witness-confirm>
+                  Confirm Gift / Witness
+                </button>
+                <p class="witness-status" data-witness-status aria-live="polite">
+                  Gift and witness confirmation required before the trail can be completed.
+                </p>
               </div>
               <button class="button primary wide" type="button" data-complete-step="4">
                 I gave the treasure

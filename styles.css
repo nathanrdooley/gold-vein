@@ -746,6 +746,167 @@ dd {
   margin: 0;
 }
 
+.pass-options {
+  background: rgba(10, 14, 15, 0.38);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: var(--radius);
+  margin: 18px 0;
+  overflow: hidden;
+}
+
+.pass-options summary {
+  color: var(--gold);
+  cursor: pointer;
+  font-weight: 900;
+  list-style-position: inside;
+  padding: 14px;
+}
+
+.pass-option-grid {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 14px;
+}
+
+.pass-option-grid article {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.pass-option-grid span,
+.companion-pass span,
+.unlock-label {
+  color: var(--gold);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.pass-option-grid p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.companion-pass {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.13), rgba(255, 255, 255, 0.05)),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(245, 199, 95, 0.3);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr);
+  margin: 18px 0;
+  padding: 14px;
+}
+
+.companion-pass strong {
+  color: var(--ink);
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.companion-pass small {
+  color: var(--muted);
+}
+
+.phone-touch-icon {
+  height: 58px;
+  position: relative;
+  width: 74px;
+}
+
+.phone-touch-icon span {
+  background: #f4ead4;
+  border: 3px solid #1c1710;
+  border-radius: 10px;
+  height: 52px;
+  position: absolute;
+  top: 3px;
+  width: 34px;
+}
+
+.phone-touch-icon span:first-child {
+  left: 6px;
+  transform: rotate(-8deg);
+}
+
+.phone-touch-icon span:last-child {
+  right: 6px;
+  transform: rotate(8deg);
+}
+
+.compact-label {
+  margin: 18px 0;
+}
+
+.companion-actions,
+.gift-unlock {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.companion-status,
+.witness-status {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0;
+  min-height: 1.35em;
+}
+
+.companion-status[data-state="success"],
+.witness-status[data-state="success"] {
+  color: #98e4b1;
+}
+
+.companion-status[data-state="error"],
+.witness-status[data-state="error"] {
+  color: #ffaaaa;
+}
+
+.gift-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gift-grid label {
+  cursor: pointer;
+}
+
+.gift-grid input {
+  inline-size: auto;
+  position: absolute;
+  opacity: 0;
+}
+
+.gift-grid span {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  display: block;
+  font-weight: 900;
+  padding: 12px;
+  text-align: center;
+}
+
+.gift-grid input:checked + span {
+  background: rgba(245, 199, 95, 0.18);
+  border-color: rgba(245, 199, 95, 0.62);
+  color: var(--gold);
+}
+
 .conversation-prompt {
   border-left: 3px solid var(--gold);
   color: var(--ink);
@@ -1042,6 +1203,12 @@ input:focus {
   .redeem-pass img {
     height: 132px;
     width: 132px;
+  }
+
+  .companion-pass,
+  .pass-option-grid,
+  .gift-grid {
+    grid-template-columns: 1fr;
   }
 
   .framework-item {

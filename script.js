@@ -12,6 +12,13 @@ const redeemButton = document.querySelector("[data-redeem-code-button]");
 const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
 const checkLocationButton = document.querySelector("[data-check-location]");
 const locationStatus = document.querySelector("[data-location-status]");
+const companionTouchButton = document.querySelector("[data-companion-touch]");
+const companionNameInput = document.querySelector("[data-companion-name]");
+const companionStatus = document.querySelector("[data-companion-status]");
+const giftTypeInputs = document.querySelectorAll("[data-gift-type]");
+const witnessNoteInput = document.querySelector("[data-witness-note]");
+const witnessConfirmButton = document.querySelector("[data-witness-confirm]");
+const witnessStatus = document.querySelector("[data-witness-status]");
 const redeemPanel = document.querySelector("[data-redeem-panel]");
 const redeemState = document.querySelector("[data-redeem-state]");
 const redeemCode = document.querySelector("[data-redeem-code]");
@@ -31,6 +38,8 @@ const watermarkLocation = {
 };
 
 let isLocationVerified = localStorage.getItem("gold-vein-location-verified") === "true";
+let isCompanionConfirmed = localStorage.getItem("gold-vein-companion-confirmed") === "true";
+let isWitnessConfirmed = localStorage.getItem("gold-vein-witness-confirmed") === "true";
 
 const redemptionPasses = {
   "GV-WM-NO1-001": {
@@ -132,6 +141,37 @@ const setLocationVerified = (verified) => {
   localStorage.setItem("gold-vein-location-verified", String(verified));
 };
 
+const setCompanionStatus = (message, state = "") => {
+  if (!companionStatus) {
+    return;
+  }
+
+  companionStatus.textContent = message;
+  companionStatus.dataset.state = state;
+};
+
+const setCompanionConfirmed = (confirmed) => {
+  isCompanionConfirmed = confirmed;
+  localStorage.setItem("gold-vein-companion-confirmed", String(confirmed));
+};
+
+const getSelectedGiftType = () =>
+  Array.from(giftTypeInputs).find((input) => input.checked)?.value || "";
+
+const setWitnessStatus = (message, state = "") => {
+  if (!witnessStatus) {
+    return;
+  }
+
+  witnessStatus.textContent = message;
+  witnessStatus.dataset.state = state;
+};
+
+const setWitnessConfirmed = (confirmed) => {
+  isWitnessConfirmed = confirmed;
+  localStorage.setItem("gold-vein-witness-confirmed", String(confirmed));
+};
+
 const continueAdventureAfterRedemption = () => {
   trailProgress = Math.max(trailProgress, 2);
   localStorage.setItem("gold-vein-trail-progress", String(trailProgress));
@@ -199,7 +239,10 @@ const renderTrail = () => {
 
     if (button) {
       const requiresLocationCheck = stepIndex === 0 && !isLocationVerified;
-      button.disabled = isLocked || isComplete || requiresLocationCheck;
+      const requiresCompanionCheck = stepIndex === 3 && !isCompanionConfirmed;
+      const requiresWitnessCheck = stepIndex === 4 && !isWitnessConfirmed;
+      button.disabled =
+        isLocked || isComplete || requiresLocationCheck || requiresCompanionCheck || requiresWitnessCheck;
       if (isComplete) {
         button.textContent = "Completed";
       }
@@ -221,6 +264,14 @@ const renderTrail = () => {
 
   if (trailProgress === 0 && isLocationVerified) {
     setLocationStatus("Location confirmed. You can complete Step 1.", "success");
+  }
+
+  if (trailProgress === 3 && isCompanionConfirmed) {
+    setCompanionStatus("Connection confirmed. You can complete Step 4.", "success");
+  }
+
+  if (trailProgress === 4 && isWitnessConfirmed) {
+    setWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
   }
 };
 
@@ -301,6 +352,72 @@ checkLocationButton?.addEventListener("click", () => {
   );
 });
 
+companionNameInput?.addEventListener("input", () => {
+  setCompanionConfirmed(false);
+  setCompanionStatus("Touch phones or confirm the connection to unlock this step.");
+  renderTrail();
+});
+
+companionTouchButton?.addEventListener("click", () => {
+  const companionName = companionNameInput?.value.trim();
+
+  if (!companionName) {
+    setCompanionConfirmed(false);
+    setCompanionStatus("Add a first name or initials before confirming the connection.", "error");
+    renderTrail();
+    return;
+  }
+
+  setCompanionConfirmed(true);
+  localStorage.setItem("gold-vein-companion-name", companionName);
+  setCompanionStatus(`Connection confirmed with ${companionName}. Step 4 is unlocked.`, "success");
+  renderTrail();
+});
+
+giftTypeInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    setWitnessConfirmed(false);
+    setWitnessStatus("Confirm the gift and witness note to complete this trail.");
+    renderTrail();
+  });
+});
+
+witnessNoteInput?.addEventListener("input", () => {
+  setWitnessConfirmed(false);
+  setWitnessStatus("Confirm the gift and witness note to complete this trail.");
+  renderTrail();
+});
+
+witnessConfirmButton?.addEventListener("click", () => {
+  const giftType = getSelectedGiftType();
+  const witnessNote = witnessNoteInput?.value.trim();
+
+  if (!giftType) {
+    setWitnessConfirmed(false);
+    setWitnessStatus("Choose how you gave the treasure.", "error");
+    renderTrail();
+    return;
+  }
+
+  if (!witnessNote) {
+    setWitnessConfirmed(false);
+    setWitnessStatus("Add a short witness note before completing the trail.", "error");
+    renderTrail();
+    return;
+  }
+
+  setWitnessConfirmed(true);
+  localStorage.setItem(
+    "gold-vein-witness",
+    JSON.stringify({
+      giftType,
+      witnessNote
+    })
+  );
+  setWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  renderTrail();
+});
+
 stepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const completedStep = Number(button.dataset.completeStep);
@@ -317,7 +434,20 @@ stepButtons.forEach((button) => {
 resetTrailButton?.addEventListener("click", () => {
   trailProgress = 0;
   setLocationVerified(false);
+  setCompanionConfirmed(false);
+  setWitnessConfirmed(false);
   localStorage.setItem("gold-vein-trail-progress", "0");
+  localStorage.removeItem("gold-vein-companion-name");
+  localStorage.removeItem("gold-vein-witness");
+  if (companionNameInput) {
+    companionNameInput.value = "";
+  }
+  giftTypeInputs.forEach((input) => {
+    input.checked = false;
+  });
+  if (witnessNoteInput) {
+    witnessNoteInput.value = "";
+  }
   stepButtons.forEach((button) => {
     const stepIndex = Number(button.dataset.completeStep);
     const labels = [
@@ -330,6 +460,8 @@ resetTrailButton?.addEventListener("click", () => {
     button.textContent = labels[stepIndex] || button.textContent;
   });
   setLocationStatus("Location check required before this step can be completed.");
+  setCompanionStatus("Connection confirmation required before this step can be completed.");
+  setWitnessStatus("Gift and witness confirmation required before the trail can be completed.");
   renderTrail();
 });
 
