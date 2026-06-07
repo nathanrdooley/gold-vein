@@ -5,7 +5,7 @@ light, and Jesus Christ is revealed as the treasure.
 
 ## V1
 
-This first version is a static website with one adventure:
+This first version is a static PWA-style website with multiple prototype adventures:
 
 - Landing page for Gold Vein
 - Discovery/search surface for available trails
@@ -13,15 +13,20 @@ This first version is a static website with one adventure:
 - Interactive adventure app prototype with locked and unlocked instructions
 - Compartmental app-page navigation from the home screen
 - Installable PWA metadata for phone testing
-- Start Adventure section
-- Gold Vein No. 1
+- Partner Location Trail: Gold Vein No. 1
+- Global Nearby Trail: The Nearby Neighbor
+- Home Trail: The Table and the Room
+- Walkable / Hikeable Trail: The Road and the Burning Heart
 - Adventure metadata for trail type, difficulty, time, companions, verification, and treasure evidence
 - Printable letter
 - Observation-first framework
-- Focused Scripture map
+- Focused Scripture maps
 - Field notes section
 - Local note saving in the browser
 - Testimony preparation flow
+
+See `PILOT_PLAN.md` for the current pilot plan, Watermark coffee test, unlock system, and suggested
+next technical milestones.
 
 ## Redemption Pilot
 
@@ -69,5 +74,6 @@ On iPhone, open the URL in Safari, tap Share, then choose **Add to Home Screen**
 - `script.js` - app unlock flow, print, field notes, and testimony interactions
 - `manifest.json` - installable app metadata
 - `service-worker.js` - app shell caching
+- `PILOT_PLAN.md` - project brief and V1 pilot plan
 - `assets/gold-vein-hero.png` - hero image
 - `assets/gold-vein-icon.svg` - app icon
