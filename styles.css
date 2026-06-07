@@ -47,7 +47,7 @@ textarea {
   background:
     linear-gradient(90deg, rgba(4, 7, 8, 0.96) 0%, rgba(7, 9, 9, 0.78) 42%, rgba(7, 9, 9, 0.28) 100%),
     linear-gradient(180deg, rgba(6, 7, 8, 0.56) 0%, rgba(15, 20, 23, 0.98) 100%),
-    url("assets/gold-vein-hero-kingdom.png") 58% center / cover;
+    url("assets/gold-vein-hero.png") 58% center / cover;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -611,6 +611,13 @@ dd {
 
 .prompt-list li::marker {
   color: var(--gold);
+}
+
+.conversation-prompt {
+  border-left: 3px solid var(--gold);
+  color: var(--ink);
+  margin: 16px 0 18px;
+  padding-left: 14px;
 }
 
 .treasure-step {

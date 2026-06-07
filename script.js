@@ -41,10 +41,10 @@ const showActivePage = () => {
 };
 
 const stepStatusMessages = [
-  "Step 1 complete. The next instruction is unlocked.",
-  "Step 2 complete. The treasure is unlocked.",
-  "Gift received. Open the Scripture map to seek the bigger treasure.",
-  "Scripture map opened. The big treasure and Field Notes are unlocked.",
+  "You moved into the space and place. Receive the small gift.",
+  "Small gift received. Look to the Scripture map.",
+  "Scripture map opened. Gather with a brother or sister in Christ.",
+  "You gathered with someone. Give the treasure and record the fruit.",
   "The trail is complete. Carry the treasure forward."
 ];
 
@@ -140,9 +140,9 @@ resetTrailButton?.addEventListener("click", () => {
     const stepIndex = Number(button.dataset.completeStep);
     const labels = [
       "I'm at the location",
-      "I showed my code",
-      "I received the gift",
-      "I opened the Scripture map"
+      "I received the small gift",
+      "I opened the Scripture map",
+      "I gathered with someone"
     ];
     button.textContent = labels[stepIndex] || button.textContent;
   });
