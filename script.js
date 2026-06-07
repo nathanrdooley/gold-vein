@@ -8,9 +8,27 @@ const appSteps = document.querySelectorAll("[data-app-step]");
 const progressDots = document.querySelectorAll("[data-progress-dot]");
 const appStatus = document.querySelector("[data-app-status]");
 const appPages = document.querySelectorAll("[data-page]");
+const redeemButton = document.querySelector("[data-redeem-code-button]");
+const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
+const redeemPanel = document.querySelector("[data-redeem-panel]");
+const redeemState = document.querySelector("[data-redeem-state]");
+const redeemCode = document.querySelector("[data-redeem-code]");
+const redeemLocation = document.querySelector("[data-redeem-location]");
+const redeemAdventure = document.querySelector("[data-redeem-adventure]");
+const redeemTreasure = document.querySelector("[data-redeem-treasure]");
+const redeemMessage = document.querySelector("[data-redeem-message]");
 
 const totalTrailSteps = appSteps.length;
 let trailProgress = Number(localStorage.getItem("gold-vein-trail-progress") || "0");
+let activeRedeemCode = "";
+
+const redemptionPasses = {
+  "GV-WM-NO1-001": {
+    location: "Watermark Coffee Shop",
+    adventure: "Gold Vein No. 1",
+    treasure: "One coffee"
+  }
+};
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -25,13 +43,24 @@ const setStatus = (button, message) => {
   }
 };
 
+const getHashParts = () => {
+  const hash = window.location.hash.replace("#", "");
+  const [pageId, detail] = hash.split("/");
+  return { pageId, detail };
+};
+
 const showActivePage = () => {
-  const pageId = window.location.hash.replace("#", "");
+  const { pageId, detail } = getHashParts();
   const activePage = pageId ? document.getElementById(pageId) : null;
 
   appPages.forEach((page) => {
     page.classList.toggle("active-page", page === activePage);
   });
+
+  if (pageId === "redeem") {
+    activeRedeemCode = detail || "GV-WM-NO1-001";
+    renderRedemption();
+  }
 
   if (activePage) {
     window.requestAnimationFrame(() => {
@@ -50,6 +79,58 @@ const stepStatusMessages = [
 
 const clampProgress = () => {
   trailProgress = Math.min(Math.max(trailProgress, 0), totalTrailSteps);
+};
+
+const getRedeemedCodes = () => {
+  try {
+    return JSON.parse(localStorage.getItem("gold-vein-redeemed-codes") || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const setRedeemedCodes = (codes) => {
+  localStorage.setItem("gold-vein-redeemed-codes", JSON.stringify(codes));
+};
+
+const renderRedemption = () => {
+  if (!redeemPanel) {
+    return;
+  }
+
+  const pass = redemptionPasses[activeRedeemCode];
+  const redeemedCodes = getRedeemedCodes();
+  const isRedeemed = redeemedCodes.includes(activeRedeemCode);
+
+  redeemCode.textContent = activeRedeemCode || "No code found";
+  redeemPanel.classList.toggle("redeemed", isRedeemed);
+  redeemPanel.classList.toggle("invalid", !pass);
+
+  if (!pass) {
+    redeemLocation.textContent = "Unknown";
+    redeemAdventure.textContent = "Unknown";
+    redeemTreasure.textContent = "Unknown";
+    redeemState.textContent = "Invalid Code";
+    redeemMessage.textContent =
+      "This code is not currently listed as a valid Gold Vein redemption pass.";
+    redeemButton.disabled = true;
+    return;
+  }
+
+  redeemLocation.textContent = pass.location;
+  redeemAdventure.textContent = pass.adventure;
+  redeemTreasure.textContent = pass.treasure;
+  redeemButton.disabled = isRedeemed;
+
+  if (isRedeemed) {
+    redeemState.textContent = "Already Redeemed";
+    redeemMessage.textContent =
+      "This coffee pass has already been marked redeemed on this device.";
+  } else {
+    redeemState.textContent = "Valid Pass";
+    redeemMessage.textContent =
+      "Redeem one coffee from the Gold Vein balance, then mark this code redeemed.";
+  }
 };
 
 const renderTrail = () => {
@@ -148,6 +229,29 @@ resetTrailButton?.addEventListener("click", () => {
     button.textContent = labels[stepIndex] || button.textContent;
   });
   renderTrail();
+});
+
+redeemButton?.addEventListener("click", () => {
+  const pass = redemptionPasses[activeRedeemCode];
+
+  if (!pass) {
+    renderRedemption();
+    return;
+  }
+
+  const redeemedCodes = getRedeemedCodes();
+  if (!redeemedCodes.includes(activeRedeemCode)) {
+    redeemedCodes.push(activeRedeemCode);
+    setRedeemedCodes(redeemedCodes);
+  }
+
+  renderRedemption();
+});
+
+resetRedemptionButton?.addEventListener("click", () => {
+  const redeemedCodes = getRedeemedCodes().filter((code) => code !== activeRedeemCode);
+  setRedeemedCodes(redeemedCodes);
+  renderRedemption();
 });
 
 renderTrail();

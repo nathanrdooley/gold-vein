@@ -269,7 +269,21 @@
                 <div>
                   <span>Watermark Redemption Code</span>
                   <strong>GV-WM-NO1-001</strong>
-                  <small>Adventure No. 1 · One coffee · Gift-card balance</small>
+                  <small>Adventure No. 1 · One coffee · Gold Vein balance</small>
+                </div>
+              </div>
+              <div class="redeem-pass" aria-label="Scannable Gold Vein redemption pass">
+                <img
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=12&data=https%3A%2F%2Fgold-vein.vercel.app%2F%23redeem%2FGV-WM-NO1-001"
+                  alt="QR code for Gold Vein redemption code GV-WM-NO1-001"
+                >
+                <div>
+                  <span>Scan to Redeem</span>
+                  <p>
+                    Barista scans this code, confirms the pass, and marks one coffee redeemed from
+                    the Gold Vein balance.
+                  </p>
+                  <a class="button secondary wide" href="#redeem/GV-WM-NO1-001">Open Redeem Screen</a>
                 </div>
               </div>
               <button class="button primary wide" type="button" data-complete-step="1">
@@ -318,6 +332,50 @@
               Step 1 is ready. Complete it to unlock the next instruction.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section class="section app-page" id="redeem" aria-labelledby="redeem-title" data-page>
+        <div class="section-inner redeem-layout">
+          <div class="section-heading">
+            <p class="section-label">Barista Redeem Screen</p>
+            <h2 id="redeem-title">Gold Vein Coffee Pass</h2>
+            <p>
+              This screen verifies the adventure code and records that one coffee was redeemed.
+              Payment is still handled through the prepaid Gold Vein balance at Watermark.
+            </p>
+          </div>
+
+          <article class="redeem-panel" data-redeem-panel>
+            <div class="redeem-status-pill" data-redeem-state>Ready to Check</div>
+            <dl class="redeem-details">
+              <div>
+                <dt>Code</dt>
+                <dd data-redeem-code>GV-WM-NO1-001</dd>
+              </div>
+              <div>
+                <dt>Location</dt>
+                <dd data-redeem-location>Watermark Coffee Shop</dd>
+              </div>
+              <div>
+                <dt>Adventure</dt>
+                <dd data-redeem-adventure>Gold Vein No. 1</dd>
+              </div>
+              <div>
+                <dt>Treasure</dt>
+                <dd data-redeem-treasure>One coffee</dd>
+              </div>
+            </dl>
+            <p class="redeem-message" data-redeem-message>
+              Confirm the participant's code, then redeem one coffee from the Gold Vein balance.
+            </p>
+            <button class="button primary wide" type="button" data-redeem-code-button>
+              Mark Coffee Redeemed
+            </button>
+            <button class="button secondary wide" type="button" data-reset-redemption>
+              Reset This Demo Code
+            </button>
+          </article>
         </div>
       </section>
 

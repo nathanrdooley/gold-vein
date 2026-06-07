@@ -601,6 +601,41 @@ dd {
   background: transparent;
 }
 
+.redeem-pass {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(245, 199, 95, 0.3);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr);
+  margin: 18px 0;
+  padding: 14px;
+}
+
+.redeem-pass img {
+  background: #fff8e8;
+  border-radius: 8px;
+  height: 112px;
+  padding: 8px;
+  width: 112px;
+}
+
+.redeem-pass span {
+  color: var(--gold);
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.redeem-pass p {
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
 .prompt-list {
   color: var(--muted);
   display: grid;
@@ -644,6 +679,87 @@ dd {
   color: var(--gold);
   font-weight: 800;
   margin: 18px 0 0;
+}
+
+.redeem-layout {
+  display: grid;
+  gap: 28px;
+  max-width: 760px;
+}
+
+.redeem-panel {
+  background:
+    linear-gradient(145deg, rgba(245, 199, 95, 0.14), rgba(255, 255, 255, 0.055) 42%),
+    rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(245, 199, 95, 0.32);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.redeem-panel.redeemed {
+  border-color: rgba(132, 214, 161, 0.5);
+}
+
+.redeem-panel.invalid {
+  border-color: rgba(255, 134, 134, 0.55);
+}
+
+.redeem-status-pill {
+  background: rgba(245, 199, 95, 0.17);
+  border: 1px solid rgba(245, 199, 95, 0.32);
+  border-radius: 999px;
+  color: var(--gold);
+  display: inline-flex;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+  padding: 8px 12px;
+  text-transform: uppercase;
+}
+
+.redeem-panel.redeemed .redeem-status-pill {
+  background: rgba(132, 214, 161, 0.14);
+  border-color: rgba(132, 214, 161, 0.38);
+  color: #98e4b1;
+}
+
+.redeem-panel.invalid .redeem-status-pill {
+  background: rgba(255, 134, 134, 0.13);
+  border-color: rgba(255, 134, 134, 0.4);
+  color: #ffaaaa;
+}
+
+.redeem-details {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.redeem-details div {
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.redeem-details dt {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.redeem-details dd {
+  color: var(--ink);
+  font-weight: 900;
+  margin: 0;
+  text-align: right;
+}
+
+.redeem-message {
+  color: var(--muted);
+  margin: 0 0 18px;
 }
 
 .adventure-section {
@@ -833,6 +949,15 @@ input:focus {
 
   .app-copy {
     position: static;
+  }
+
+  .redeem-pass {
+    grid-template-columns: 1fr;
+  }
+
+  .redeem-pass img {
+    height: 132px;
+    width: 132px;
   }
 
   .framework-item {
