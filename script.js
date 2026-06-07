@@ -10,6 +10,8 @@ const appStatus = document.querySelector("[data-app-status]");
 const appPages = document.querySelectorAll("[data-page]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
 const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
+const checkLocationButton = document.querySelector("[data-check-location]");
+const locationStatus = document.querySelector("[data-location-status]");
 const redeemPanel = document.querySelector("[data-redeem-panel]");
 const redeemState = document.querySelector("[data-redeem-state]");
 const redeemCode = document.querySelector("[data-redeem-code]");
@@ -21,6 +23,14 @@ const redeemMessage = document.querySelector("[data-redeem-message]");
 const totalTrailSteps = appSteps.length;
 let trailProgress = Number(localStorage.getItem("gold-vein-trail-progress") || "0");
 let activeRedeemCode = "";
+
+const watermarkLocation = {
+  latitude: 32.9231644,
+  longitude: -96.7767744,
+  radiusMeters: 560
+};
+
+let isLocationVerified = localStorage.getItem("gold-vein-location-verified") === "true";
 
 const redemptionPasses = {
   "GV-WM-NO1-001": {
@@ -93,6 +103,35 @@ const setRedeemedCodes = (codes) => {
   localStorage.setItem("gold-vein-redeemed-codes", JSON.stringify(codes));
 };
 
+const getDistanceMeters = (start, end) => {
+  const earthRadiusMeters = 6371000;
+  const toRadians = (degrees) => degrees * (Math.PI / 180);
+  const latitudeDelta = toRadians(end.latitude - start.latitude);
+  const longitudeDelta = toRadians(end.longitude - start.longitude);
+  const startLatitude = toRadians(start.latitude);
+  const endLatitude = toRadians(end.latitude);
+
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(startLatitude) * Math.cos(endLatitude) * Math.sin(longitudeDelta / 2) ** 2;
+
+  return 2 * earthRadiusMeters * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+};
+
+const setLocationStatus = (message, state = "") => {
+  if (!locationStatus) {
+    return;
+  }
+
+  locationStatus.textContent = message;
+  locationStatus.dataset.state = state;
+};
+
+const setLocationVerified = (verified) => {
+  isLocationVerified = verified;
+  localStorage.setItem("gold-vein-location-verified", String(verified));
+};
+
 const continueAdventureAfterRedemption = () => {
   trailProgress = Math.max(trailProgress, 2);
   localStorage.setItem("gold-vein-trail-progress", String(trailProgress));
@@ -159,7 +198,8 @@ const renderTrail = () => {
     step.setAttribute("aria-disabled", String(isLocked));
 
     if (button) {
-      button.disabled = isLocked || isComplete;
+      const requiresLocationCheck = stepIndex === 0 && !isLocationVerified;
+      button.disabled = isLocked || isComplete || requiresLocationCheck;
       if (isComplete) {
         button.textContent = "Completed";
       }
@@ -175,8 +215,12 @@ const renderTrail = () => {
   if (appStatus) {
     appStatus.textContent =
       trailProgress === 0
-        ? "Step 1 is ready. Complete it to unlock the next instruction."
+        ? "Step 1 is ready. Check your location to unlock the first confirmation."
         : stepStatusMessages[trailProgress - 1] || "Trail progress saved.";
+  }
+
+  if (trailProgress === 0 && isLocationVerified) {
+    setLocationStatus("Location confirmed. You can complete Step 1.", "success");
   }
 };
 
@@ -211,6 +255,52 @@ searchButton?.addEventListener("click", () => {
   setStatus(searchButton, "Gold Vein No. 1 is the available trail in this V1.");
 });
 
+checkLocationButton?.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    setLocationStatus("Location is not available in this browser.", "error");
+    return;
+  }
+
+  checkLocationButton.disabled = true;
+  setLocationStatus("Checking your location...", "checking");
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const currentLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
+      const distanceMeters = getDistanceMeters(currentLocation, watermarkLocation);
+      const distanceMiles = distanceMeters / 1609.344;
+
+      if (distanceMeters <= watermarkLocation.radiusMeters) {
+        setLocationVerified(true);
+        setLocationStatus("Location confirmed. You can complete Step 1.", "success");
+      } else {
+        setLocationVerified(false);
+        setLocationStatus(
+          `You are about ${distanceMiles.toFixed(1)} miles from the trail location.`,
+          "error"
+        );
+      }
+
+      checkLocationButton.disabled = false;
+      renderTrail();
+    },
+    () => {
+      setLocationVerified(false);
+      checkLocationButton.disabled = false;
+      setLocationStatus("Location permission is needed to unlock this step.", "error");
+      renderTrail();
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 30000,
+      timeout: 12000
+    }
+  );
+});
+
 stepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const completedStep = Number(button.dataset.completeStep);
@@ -226,6 +316,7 @@ stepButtons.forEach((button) => {
 
 resetTrailButton?.addEventListener("click", () => {
   trailProgress = 0;
+  setLocationVerified(false);
   localStorage.setItem("gold-vein-trail-progress", "0");
   stepButtons.forEach((button) => {
     const stepIndex = Number(button.dataset.completeStep);
@@ -238,6 +329,7 @@ resetTrailButton?.addEventListener("click", () => {
     ];
     button.textContent = labels[stepIndex] || button.textContent;
   });
+  setLocationStatus("Location check required before this step can be completed.");
   renderTrail();
 });
 
