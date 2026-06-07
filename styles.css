@@ -172,6 +172,14 @@ h1 {
   margin: 0 auto;
 }
 
+.app-page {
+  display: none;
+}
+
+.app-page.active-page {
+  display: block;
+}
+
 .intro-band {
   background: linear-gradient(135deg, var(--forest), var(--plum));
   border-bottom: 1px solid var(--line);

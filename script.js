@@ -7,6 +7,7 @@ const stepButtons = document.querySelectorAll("[data-complete-step]");
 const appSteps = document.querySelectorAll("[data-app-step]");
 const progressDots = document.querySelectorAll("[data-progress-dot]");
 const appStatus = document.querySelector("[data-app-status]");
+const appPages = document.querySelectorAll("[data-page]");
 
 const totalTrailSteps = appSteps.length;
 let trailProgress = Number(localStorage.getItem("gold-vein-trail-progress") || "0");
@@ -21,6 +22,21 @@ const setStatus = (button, message) => {
   const status = button.parentElement.querySelector(".form-status");
   if (status) {
     status.textContent = message;
+  }
+};
+
+const showActivePage = () => {
+  const pageId = window.location.hash.replace("#", "");
+  const activePage = pageId ? document.getElementById(pageId) : null;
+
+  appPages.forEach((page) => {
+    page.classList.toggle("active-page", page === activePage);
+  });
+
+  if (activePage) {
+    window.requestAnimationFrame(() => {
+      activePage.scrollIntoView({ block: "start" });
+    });
   }
 };
 
@@ -134,3 +150,5 @@ resetTrailButton?.addEventListener("click", () => {
 });
 
 renderTrail();
+showActivePage();
+window.addEventListener("hashchange", showActivePage);

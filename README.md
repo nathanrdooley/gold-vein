@@ -12,6 +12,7 @@ This first version is a static website with one adventure:
 - Discovery/search surface for available trails
 - Core loop: Receive, Go, Connect, Obey, Reflect, Testify
 - Interactive adventure app prototype with locked and unlocked instructions
+- Compartmental app-page navigation from the home screen
 - Installable PWA metadata for phone testing
 - Start Adventure section
 - Gold Vein No. 1
