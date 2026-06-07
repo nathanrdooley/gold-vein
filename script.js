@@ -93,6 +93,16 @@ const setRedeemedCodes = (codes) => {
   localStorage.setItem("gold-vein-redeemed-codes", JSON.stringify(codes));
 };
 
+const continueAdventureAfterRedemption = () => {
+  trailProgress = Math.max(trailProgress, 2);
+  localStorage.setItem("gold-vein-trail-progress", String(trailProgress));
+  renderTrail();
+
+  window.setTimeout(() => {
+    window.location.hash = "adventure-app";
+  }, 900);
+};
+
 const renderRedemption = () => {
   if (!redeemPanel) {
     return;
@@ -125,7 +135,7 @@ const renderRedemption = () => {
   if (isRedeemed) {
     redeemState.textContent = "Already Redeemed";
     redeemMessage.textContent =
-      "This coffee pass has already been marked redeemed on this device.";
+      "This coffee pass has already been marked redeemed on this device. Return to the trail and continue the adventure.";
   } else {
     redeemState.textContent = "Valid Pass";
     redeemMessage.textContent =
@@ -246,6 +256,8 @@ redeemButton?.addEventListener("click", () => {
   }
 
   renderRedemption();
+  redeemMessage.textContent = "Coffee redeemed. Returning to the trail with Step 3 unlocked.";
+  continueAdventureAfterRedemption();
 });
 
 resetRedemptionButton?.addEventListener("click", () => {
