@@ -51,6 +51,22 @@ const homeGiftTypeInputs = document.querySelectorAll("[data-home-gift-type]");
 const homeWitnessNoteInput = document.querySelector("[data-home-witness-note]");
 const homeWitnessConfirmButton = document.querySelector("[data-home-witness-confirm]");
 const homeWitnessStatus = document.querySelector("[data-home-witness-status]");
+const resetEmmausTrailButton = document.querySelector("[data-reset-emmaus-trail]");
+const emmausStepButtons = document.querySelectorAll("[data-complete-emmaus-step]");
+const emmausSteps = document.querySelectorAll("[data-emmaus-step]");
+const emmausProgressDots = document.querySelectorAll("[data-emmaus-progress-dot]");
+const emmausAppStatus = document.querySelector("[data-emmaus-app-status]");
+const emmausPlaceConfirmButton = document.querySelector("[data-emmaus-place-confirm]");
+const emmausPlaceStatus = document.querySelector("[data-emmaus-place-status]");
+const emmausPassConfirmButton = document.querySelector("[data-emmaus-pass-confirm]");
+const emmausPassStatus = document.querySelector("[data-emmaus-pass-status]");
+const emmausCompanionTouchButton = document.querySelector("[data-emmaus-companion-touch]");
+const emmausCompanionNameInput = document.querySelector("[data-emmaus-companion-name]");
+const emmausCompanionStatus = document.querySelector("[data-emmaus-companion-status]");
+const emmausGiftTypeInputs = document.querySelectorAll("[data-emmaus-gift-type]");
+const emmausWitnessNoteInput = document.querySelector("[data-emmaus-witness-note]");
+const emmausWitnessConfirmButton = document.querySelector("[data-emmaus-witness-confirm]");
+const emmausWitnessStatus = document.querySelector("[data-emmaus-witness-status]");
 const redeemPanel = document.querySelector("[data-redeem-panel]");
 const redeemState = document.querySelector("[data-redeem-state]");
 const redeemCode = document.querySelector("[data-redeem-code]");
@@ -65,6 +81,8 @@ const totalGlobalTrailSteps = globalSteps.length;
 let globalTrailProgress = Number(localStorage.getItem("gold-vein-global-progress") || "0");
 const totalHomeTrailSteps = homeSteps.length;
 let homeTrailProgress = Number(localStorage.getItem("gold-vein-home-progress") || "0");
+const totalEmmausTrailSteps = emmausSteps.length;
+let emmausTrailProgress = Number(localStorage.getItem("gold-vein-emmaus-progress") || "0");
 let activeRedeemCode = "";
 
 const watermarkLocation = {
@@ -85,6 +103,11 @@ let isHomePlaceConfirmed = localStorage.getItem("gold-vein-home-place-confirmed"
 let isHomePassConfirmed = localStorage.getItem("gold-vein-home-pass-confirmed") === "true";
 let isHomeCompanionConfirmed = localStorage.getItem("gold-vein-home-companion-confirmed") === "true";
 let isHomeWitnessConfirmed = localStorage.getItem("gold-vein-home-witness-confirmed") === "true";
+let isEmmausPlaceConfirmed = localStorage.getItem("gold-vein-emmaus-place-confirmed") === "true";
+let isEmmausPassConfirmed = localStorage.getItem("gold-vein-emmaus-pass-confirmed") === "true";
+let isEmmausCompanionConfirmed =
+  localStorage.getItem("gold-vein-emmaus-companion-confirmed") === "true";
+let isEmmausWitnessConfirmed = localStorage.getItem("gold-vein-emmaus-witness-confirmed") === "true";
 
 const redemptionPasses = {
   "GV-WM-NO1-001": {
@@ -333,6 +356,65 @@ const setHomeWitnessStatus = (message, state = "") => {
 const setHomeWitnessConfirmed = (confirmed) => {
   isHomeWitnessConfirmed = confirmed;
   localStorage.setItem("gold-vein-home-witness-confirmed", String(confirmed));
+};
+
+const setEmmausPlaceStatus = (message, state = "") => {
+  if (!emmausPlaceStatus) {
+    return;
+  }
+
+  emmausPlaceStatus.textContent = message;
+  emmausPlaceStatus.dataset.state = state;
+};
+
+const setEmmausPlaceConfirmed = (confirmed) => {
+  isEmmausPlaceConfirmed = confirmed;
+  localStorage.setItem("gold-vein-emmaus-place-confirmed", String(confirmed));
+};
+
+const setEmmausPassStatus = (message, state = "") => {
+  if (!emmausPassStatus) {
+    return;
+  }
+
+  emmausPassStatus.textContent = message;
+  emmausPassStatus.dataset.state = state;
+};
+
+const setEmmausPassConfirmed = (confirmed) => {
+  isEmmausPassConfirmed = confirmed;
+  localStorage.setItem("gold-vein-emmaus-pass-confirmed", String(confirmed));
+};
+
+const setEmmausCompanionStatus = (message, state = "") => {
+  if (!emmausCompanionStatus) {
+    return;
+  }
+
+  emmausCompanionStatus.textContent = message;
+  emmausCompanionStatus.dataset.state = state;
+};
+
+const setEmmausCompanionConfirmed = (confirmed) => {
+  isEmmausCompanionConfirmed = confirmed;
+  localStorage.setItem("gold-vein-emmaus-companion-confirmed", String(confirmed));
+};
+
+const getSelectedEmmausGiftType = () =>
+  Array.from(emmausGiftTypeInputs).find((input) => input.checked)?.value || "";
+
+const setEmmausWitnessStatus = (message, state = "") => {
+  if (!emmausWitnessStatus) {
+    return;
+  }
+
+  emmausWitnessStatus.textContent = message;
+  emmausWitnessStatus.dataset.state = state;
+};
+
+const setEmmausWitnessConfirmed = (confirmed) => {
+  isEmmausWitnessConfirmed = confirmed;
+  localStorage.setItem("gold-vein-emmaus-witness-confirmed", String(confirmed));
 };
 
 const continueAdventureAfterRedemption = () => {
@@ -585,6 +667,81 @@ const renderHomeTrail = () => {
 
   if (homeTrailProgress === 4 && isHomeWitnessConfirmed) {
     setHomeWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  }
+};
+
+const emmausStepStatusMessages = [
+  "Road confirmed. Receive the Emmaus Pass.",
+  "Emmaus pass received. Open the Scripture Map.",
+  "Passage experienced. Connect with someone on the road.",
+  "Connection confirmed. Return with witness and record the treasure.",
+  "The Emmaus trail is complete. Carry the witness that Christ is risen."
+];
+
+const clampEmmausProgress = () => {
+  emmausTrailProgress = Math.min(Math.max(emmausTrailProgress, 0), totalEmmausTrailSteps);
+};
+
+const renderEmmausTrail = () => {
+  clampEmmausProgress();
+
+  emmausSteps.forEach((step) => {
+    const stepIndex = Number(step.dataset.emmausStep);
+    const button = step.querySelector("[data-complete-emmaus-step]");
+    const isComplete = stepIndex < emmausTrailProgress;
+    const isActive = stepIndex === emmausTrailProgress;
+    const isLocked = stepIndex > emmausTrailProgress;
+
+    step.classList.toggle("complete", isComplete);
+    step.classList.toggle("active", isActive);
+    step.classList.toggle("locked", isLocked);
+    step.setAttribute("aria-disabled", String(isLocked));
+
+    if (button) {
+      const requiresPlaceCheck = stepIndex === 0 && !isEmmausPlaceConfirmed;
+      const requiresPassCheck = stepIndex === 1 && !isEmmausPassConfirmed;
+      const requiresCompanionCheck = stepIndex === 3 && !isEmmausCompanionConfirmed;
+      const requiresWitnessCheck = stepIndex === 4 && !isEmmausWitnessConfirmed;
+      button.disabled =
+        isLocked ||
+        isComplete ||
+        requiresPlaceCheck ||
+        requiresPassCheck ||
+        requiresCompanionCheck ||
+        requiresWitnessCheck;
+      if (isComplete) {
+        button.textContent = "Completed";
+      }
+    }
+  });
+
+  emmausProgressDots.forEach((dot) => {
+    const dotIndex = Number(dot.dataset.emmausProgressDot);
+    dot.classList.toggle("complete", dotIndex < emmausTrailProgress);
+    dot.classList.toggle("active", dotIndex === emmausTrailProgress);
+  });
+
+  if (emmausAppStatus) {
+    emmausAppStatus.textContent =
+      emmausTrailProgress === 0
+        ? "Step 1 is ready. Confirm the road to unlock the first confirmation."
+        : emmausStepStatusMessages[emmausTrailProgress - 1] || "Emmaus trail progress saved.";
+  }
+
+  if (emmausTrailProgress === 0 && isEmmausPlaceConfirmed) {
+    setEmmausPlaceStatus("Road confirmed. You can complete Step 1.", "success");
+  }
+
+  if (emmausTrailProgress === 1 && isEmmausPassConfirmed) {
+    setEmmausPassStatus("Emmaus pass received. You can complete Step 2.", "success");
+  }
+
+  if (emmausTrailProgress === 3 && isEmmausCompanionConfirmed) {
+    setEmmausCompanionStatus("Connection confirmed. You can complete Step 4.", "success");
+  }
+
+  if (emmausTrailProgress === 4 && isEmmausWitnessConfirmed) {
+    setEmmausWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
   }
 };
 
@@ -911,6 +1068,84 @@ homeWitnessConfirmButton?.addEventListener("click", () => {
   renderHomeTrail();
 });
 
+emmausPlaceConfirmButton?.addEventListener("click", () => {
+  setEmmausPlaceConfirmed(true);
+  setEmmausPlaceStatus("Road confirmed. You can complete Step 1.", "success");
+  renderEmmausTrail();
+});
+
+emmausPassConfirmButton?.addEventListener("click", () => {
+  setEmmausPassConfirmed(true);
+  setEmmausPassStatus("Emmaus pass received. You can complete Step 2.", "success");
+  renderEmmausTrail();
+});
+
+emmausCompanionNameInput?.addEventListener("input", () => {
+  setEmmausCompanionConfirmed(false);
+  setEmmausCompanionStatus("Touch phones or confirm the connection to unlock this step.");
+  renderEmmausTrail();
+});
+
+emmausCompanionTouchButton?.addEventListener("click", () => {
+  const companionName = emmausCompanionNameInput?.value.trim();
+
+  if (!companionName) {
+    setEmmausCompanionConfirmed(false);
+    setEmmausCompanionStatus("Add a first name or initials before confirming the connection.", "error");
+    renderEmmausTrail();
+    return;
+  }
+
+  setEmmausCompanionConfirmed(true);
+  localStorage.setItem("gold-vein-emmaus-companion-name", companionName);
+  setEmmausCompanionStatus(`Connection confirmed with ${companionName}. Step 4 is unlocked.`, "success");
+  renderEmmausTrail();
+});
+
+emmausGiftTypeInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    setEmmausWitnessConfirmed(false);
+    setEmmausWitnessStatus("Confirm the gift and witness note to complete this trail.");
+    renderEmmausTrail();
+  });
+});
+
+emmausWitnessNoteInput?.addEventListener("input", () => {
+  setEmmausWitnessConfirmed(false);
+  setEmmausWitnessStatus("Confirm the gift and witness note to complete this trail.");
+  renderEmmausTrail();
+});
+
+emmausWitnessConfirmButton?.addEventListener("click", () => {
+  const giftType = getSelectedEmmausGiftType();
+  const witnessNote = emmausWitnessNoteInput?.value.trim();
+
+  if (!giftType) {
+    setEmmausWitnessConfirmed(false);
+    setEmmausWitnessStatus("Choose how you gave the treasure.", "error");
+    renderEmmausTrail();
+    return;
+  }
+
+  if (!witnessNote) {
+    setEmmausWitnessConfirmed(false);
+    setEmmausWitnessStatus("Add a short witness note before completing the trail.", "error");
+    renderEmmausTrail();
+    return;
+  }
+
+  setEmmausWitnessConfirmed(true);
+  localStorage.setItem(
+    "gold-vein-emmaus-witness",
+    JSON.stringify({
+      giftType,
+      witnessNote
+    })
+  );
+  setEmmausWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  renderEmmausTrail();
+});
+
 stepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const completedStep = Number(button.dataset.completeStep);
@@ -1056,6 +1291,55 @@ resetHomeTrailButton?.addEventListener("click", () => {
   renderHomeTrail();
 });
 
+emmausStepButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const completedStep = Number(button.dataset.completeEmmausStep);
+    if (completedStep !== emmausTrailProgress) {
+      return;
+    }
+
+    emmausTrailProgress = Math.min(completedStep + 1, totalEmmausTrailSteps);
+    localStorage.setItem("gold-vein-emmaus-progress", String(emmausTrailProgress));
+    renderEmmausTrail();
+  });
+});
+
+resetEmmausTrailButton?.addEventListener("click", () => {
+  emmausTrailProgress = 0;
+  setEmmausPlaceConfirmed(false);
+  setEmmausPassConfirmed(false);
+  setEmmausCompanionConfirmed(false);
+  setEmmausWitnessConfirmed(false);
+  localStorage.setItem("gold-vein-emmaus-progress", "0");
+  localStorage.removeItem("gold-vein-emmaus-companion-name");
+  localStorage.removeItem("gold-vein-emmaus-witness");
+  if (emmausCompanionNameInput) {
+    emmausCompanionNameInput.value = "";
+  }
+  emmausGiftTypeInputs.forEach((input) => {
+    input.checked = false;
+  });
+  if (emmausWitnessNoteInput) {
+    emmausWitnessNoteInput.value = "";
+  }
+  emmausStepButtons.forEach((button) => {
+    const stepIndex = Number(button.dataset.completeEmmausStep);
+    const labels = [
+      "I began the road",
+      "I received the pass",
+      "I experienced the passage",
+      "I connected with someone",
+      "I gave the treasure"
+    ];
+    button.textContent = labels[stepIndex] || button.textContent;
+  });
+  setEmmausPlaceStatus("Road confirmation required before this step can be completed.");
+  setEmmausPassStatus("Receive the pass to unlock the Scripture Map.");
+  setEmmausCompanionStatus("Connection confirmation required before this step can be completed.");
+  setEmmausWitnessStatus("Gift and witness confirmation required before the trail can be completed.");
+  renderEmmausTrail();
+});
+
 redeemButton?.addEventListener("click", () => {
   const pass = redemptionPasses[activeRedeemCode];
 
@@ -1084,5 +1368,6 @@ resetRedemptionButton?.addEventListener("click", () => {
 renderTrail();
 renderGlobalTrail();
 renderHomeTrail();
+renderEmmausTrail();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

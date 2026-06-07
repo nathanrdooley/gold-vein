@@ -54,6 +54,10 @@
             <span>Home</span>
             <strong>Begin where you live</strong>
           </a>
+          <a href="#emmaus-adventure-app">
+            <span>Emmaus</span>
+            <strong>Walk with the Word</strong>
+          </a>
           <a href="#adventure-app">
             <span>Adventure</span>
             <strong>Begin the active trail</strong>
@@ -196,6 +200,37 @@
                 </div>
               </dl>
               <a class="button primary wide" href="#home-adventure-app">Open Home Trail</a>
+            </article>
+
+            <article class="adventure-card available">
+              <div class="card-topline">
+                <span class="status-pill">Available Emmaus</span>
+                <span>Walking Trail</span>
+              </div>
+              <h3>The Road and the Burning Heart</h3>
+              <p>
+                Take an intentional walk, open Luke 24:13-35, notice where hope feels hidden,
+                and return with witness to the risen Christ.
+              </p>
+              <dl class="trail-meta">
+                <div>
+                  <dt>Map</dt>
+                  <dd>Luke 24:13-35</dd>
+                </div>
+                <div>
+                  <dt>Difficulty</dt>
+                  <dd>Reflective</dd>
+                </div>
+                <div>
+                  <dt>Time</dt>
+                  <dd>25-60 minutes</dd>
+                </div>
+                <div>
+                  <dt>Place</dt>
+                  <dd>Walk or quiet road</dd>
+                </div>
+              </dl>
+              <a class="button primary wide" href="#emmaus-adventure-app">Open Emmaus Trail</a>
             </article>
           </div>
         </div>
@@ -964,6 +999,235 @@
 
             <p class="app-status" data-home-app-status aria-live="polite">
               Step 1 is ready. Confirm your home place to unlock the first confirmation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="app-section app-page emmaus-app-section" id="emmaus-adventure-app" aria-labelledby="emmaus-app-title" data-page>
+        <div class="section-inner app-layout">
+          <div class="app-copy">
+            <p class="section-label">Emmaus Adventure</p>
+            <h2 id="emmaus-app-title">The Road and the Burning Heart.</h2>
+            <p>
+              A Gold Vein trail for a walk, drive, quiet road, or reflective place: bring your
+              confusion before Christ, open Scripture, recognize Him, and return with witness.
+            </p>
+            <dl class="panel-meta">
+              <div>
+                <dt>Trail</dt>
+                <dd>Emmaus No. 1 · The Road and the Burning Heart</dd>
+              </div>
+              <div>
+                <dt>Map</dt>
+                <dd>Luke 24:13-35</dd>
+              </div>
+              <div>
+                <dt>Unlocks</dt>
+                <dd>Place + Pass + Word + Person + Gift/Witness</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="phone-shell" aria-label="Gold Vein Emmaus adventure prototype">
+            <div class="phone-top">
+              <span>Gold Vein Emmaus</span>
+              <button class="mini-button" type="button" data-reset-emmaus-trail>Reset</button>
+            </div>
+
+            <div class="app-progress" aria-label="Emmaus adventure progress">
+              <span class="progress-dot active" data-emmaus-progress-dot="0"></span>
+              <span class="progress-dot" data-emmaus-progress-dot="1"></span>
+              <span class="progress-dot" data-emmaus-progress-dot="2"></span>
+              <span class="progress-dot" data-emmaus-progress-dot="3"></span>
+              <span class="progress-dot" data-emmaus-progress-dot="4"></span>
+            </div>
+
+            <article class="app-step" data-emmaus-step="0">
+              <p class="step-label">Step 1 · Place</p>
+              <h3>Begin the road.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Go for an intentional walk, sit beside a path, or choose a quiet place where you can walk with the Lord.</p>
+                <p><strong>Attention:</strong> Ask: "Lord Jesus, what disappointment, confusion, or hope do You want to meet on this road?"</p>
+              </div>
+              <div class="location-card">
+                <span>Place</span>
+                <strong>A walk, road, path, or quiet place</strong>
+                <small>No address needed · Begin where you can be attentive</small>
+              </div>
+              <div class="location-gate">
+                <button class="button secondary wide" type="button" data-emmaus-place-confirm>
+                  Confirm This Road
+                </button>
+                <p class="location-status" data-emmaus-place-status aria-live="polite">
+                  Road confirmation required before this step can be completed.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-emmaus-step="0">
+                I began the road
+              </button>
+            </article>
+
+            <article class="app-step locked" data-emmaus-step="1" aria-disabled="true">
+              <p class="step-label">Step 2 · Pass</p>
+              <h3>Receive the Emmaus Pass.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Receive this pass as an invitation to walk honestly with Christ before you recognize Him clearly.</p>
+                <p><strong>Attention:</strong> The disciples walked with Jesus while their eyes were kept from recognizing Him. Let the pass mark the beginning of that kind of honest journey.</p>
+              </div>
+              <div class="companion-pass global-pass" aria-label="Gold Vein Emmaus Pass">
+                <div class="phone-touch-icon" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <span>Emmaus Pass</span>
+                  <strong>GV-EMMAUS-RD-001</strong>
+                  <small>Emmaus Trail · Luke 24 · Christ revealed on the road</small>
+                </div>
+              </div>
+              <button class="button secondary wide" type="button" data-emmaus-pass-confirm>
+                Receive Emmaus Pass
+              </button>
+              <p class="companion-status" data-emmaus-pass-status aria-live="polite">
+                Receive the pass to unlock the Scripture Map.
+              </p>
+              <button class="button primary wide" type="button" data-complete-emmaus-step="1">
+                I received the pass
+              </button>
+            </article>
+
+            <article class="app-step locked treasure-step" data-emmaus-step="2" aria-disabled="true">
+              <p class="step-label">Step 3 · Word</p>
+              <h3>Let Scripture open the road.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Read Luke 24:13-35.</p>
+                <p><strong>Attention:</strong> What are they talking about? What do they hope? How does Jesus open Scripture? When are their eyes opened?</p>
+              </div>
+              <details class="scripture-map">
+                <summary>Open Emmaus Scripture Map</summary>
+                <div class="map-intro">
+                  <p>
+                    If you have a Bible nearby, open it first. Use this map to notice the history,
+                    culture, inner life, and Spirit-led power of the risen Christ walking with His people.
+                  </p>
+                </div>
+                <div class="map-grid">
+                  <article>
+                    <span>Context</span>
+                    <p>Two disciples leave Jerusalem after the crucifixion, carrying grief, confusion, and disappointed hope.</p>
+                  </article>
+                  <article>
+                    <span>History + Culture</span>
+                    <p>The road becomes a classroom. Hospitality opens the table. Scripture interprets suffering through the Messiah.</p>
+                  </article>
+                  <article>
+                    <span>Inner Life</span>
+                    <p>Notice sadness, slowness of heart, hidden recognition, burning hearts, and the desire for Christ to stay.</p>
+                  </article>
+                  <article>
+                    <span>Spirit-Led Attention</span>
+                    <p>Ask the Lord to open the Scriptures and show where He has been near even before you recognized Him.</p>
+                  </article>
+                  <article>
+                    <span>Power + Fruit</span>
+                    <p>The treasure is the risen Christ revealed: hearts burning, eyes opened, and witnesses returning with good news.</p>
+                  </article>
+                </div>
+              </details>
+              <button class="button primary wide" type="button" data-complete-emmaus-step="2">
+                I experienced the passage
+              </button>
+            </article>
+
+            <article class="app-step locked" data-emmaus-step="3" aria-disabled="true">
+              <p class="step-label">Step 4 · Person</p>
+              <h3>Walk or speak with someone.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Invite someone into the passage, the walk, or the witness of what Christ is showing you.</p>
+                <p><strong>Attention:</strong> What changes when hope is shared instead of carried alone?</p>
+              </div>
+              <div class="conversation-prompt">
+                "What part of this passage stands out to you?" or "Where have you seen Christ meet disappointment with hope?"
+              </div>
+              <div class="companion-pass" aria-label="Gold Vein Emmaus Companion Pass">
+                <div class="phone-touch-icon" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <span>Emmaus Companion Pass</span>
+                  <strong>GV-EMMAUS-COMP-001</strong>
+                  <small>Connect with consent · Walk honestly · Return with witness</small>
+                </div>
+              </div>
+              <label class="compact-label">
+                Person name or initials
+                <input type="text" data-emmaus-companion-name placeholder="Example: Cleopas">
+              </label>
+              <div class="companion-actions">
+                <button class="button secondary wide" type="button" data-emmaus-companion-touch>
+                  Touch Phones / Confirm Connection
+                </button>
+                <p class="companion-status" data-emmaus-companion-status aria-live="polite">
+                  Connection confirmation required before this step can be completed.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-emmaus-step="3">
+                I connected with someone
+              </button>
+            </article>
+
+            <article class="app-step locked" data-emmaus-step="4" aria-disabled="true">
+              <p class="step-label">Step 5 · Gift/Witness</p>
+              <h3>Return with witness.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Give the treasure by sharing hope, praying, encouraging, returning to someone, or recording testimony.</p>
+                <p><strong>Attention:</strong> What did Christ reveal on the road, and who needs the witness that He is risen?</p>
+              </div>
+              <div class="gift-unlock" aria-label="Emmaus gift and witness unlock">
+                <p class="unlock-label">Choose the way you gave the treasure.</p>
+                <div class="gift-grid">
+                  <label>
+                    <input type="radio" name="emmaus-gift-type" value="Prayer" data-emmaus-gift-type>
+                    <span>Prayer</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="emmaus-gift-type" value="Encouragement" data-emmaus-gift-type>
+                    <span>Encouragement</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="emmaus-gift-type" value="Testimony" data-emmaus-gift-type>
+                    <span>Testimony</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="emmaus-gift-type" value="Return" data-emmaus-gift-type>
+                    <span>Return</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="emmaus-gift-type" value="Follow-up" data-emmaus-gift-type>
+                    <span>Follow-up</span>
+                  </label>
+                </div>
+                <label class="compact-label">
+                  Witness note
+                  <textarea data-emmaus-witness-note rows="3" placeholder="What treasure burned, opened, or was carried back?"></textarea>
+                </label>
+                <button class="button secondary wide" type="button" data-emmaus-witness-confirm>
+                  Confirm Gift / Witness
+                </button>
+                <p class="witness-status" data-emmaus-witness-status aria-live="polite">
+                  Gift and witness confirmation required before the trail can be completed.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-emmaus-step="4">
+                I gave the treasure
+              </button>
+              <a class="button secondary wide" href="#field-notes">Open Field Notes</a>
+            </article>
+
+            <p class="app-status" data-emmaus-app-status aria-live="polite">
+              Step 1 is ready. Confirm the road to unlock the first confirmation.
             </p>
           </div>
         </div>
