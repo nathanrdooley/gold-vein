@@ -42,14 +42,14 @@ const showActivePage = () => {
 
 const stepStatusMessages = [
   "You moved into the space and place. Receive the small gift.",
-  "Small gift received. Look to the Scripture map.",
-  "Scripture map opened. Connect with a brother or sister in Christ.",
+  "Small gift received. Look to the passage.",
+  "Passage experienced. Connect with a brother or sister in Christ.",
   "You connected with someone. Give the treasure and record the fruit.",
   "The trail is complete. Carry the treasure forward."
 ];
 
 const clampProgress = () => {
-  trailProgress = Math.min(Math.max(trailProgress, 0), totalTrailSteps - 1);
+  trailProgress = Math.min(Math.max(trailProgress, 0), totalTrailSteps);
 };
 
 const renderTrail = () => {
@@ -127,7 +127,7 @@ stepButtons.forEach((button) => {
       return;
     }
 
-    trailProgress = Math.min(completedStep + 1, totalTrailSteps - 1);
+    trailProgress = Math.min(completedStep + 1, totalTrailSteps);
     localStorage.setItem("gold-vein-trail-progress", String(trailProgress));
     renderTrail();
   });
@@ -141,8 +141,9 @@ resetTrailButton?.addEventListener("click", () => {
     const labels = [
       "I'm at the location",
       "I received the small gift",
-      "I opened the Scripture map",
-      "I connected with someone"
+      "I experienced the passage",
+      "I connected with someone",
+      "I gave the treasure"
     ];
     button.textContent = labels[stepIndex] || button.textContent;
   });

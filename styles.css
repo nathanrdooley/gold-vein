@@ -613,6 +613,20 @@ dd {
   color: var(--gold);
 }
 
+.step-guidance {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.step-guidance p {
+  color: var(--muted);
+}
+
+.step-guidance strong {
+  color: var(--ink);
+}
+
 .conversation-prompt {
   border-left: 3px solid var(--gold);
   color: var(--ink);
