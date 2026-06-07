@@ -1,11 +1,11 @@
-const CACHE_NAME = "gold-vein-v5";
+const CACHE_NAME = "gold-vein-v6";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./script.js",
   "./manifest.json",
-  "./assets/gold-vein-hero.png",
+  "./assets/gold-vein-hero-kingdom.png",
   "./assets/gold-vein-icon.svg",
   "./assets/gold-vein-icon-180.png",
   "./assets/gold-vein-icon-192.png",
