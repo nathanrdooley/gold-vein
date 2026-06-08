@@ -270,13 +270,7 @@ const formatWeather = (currentWeather) => {
   const description = weatherDescriptions[currentWeather.weathercode] || "Weather recorded";
   const temperature = Math.round((currentWeather.temperature * 9) / 5 + 32);
   const wind = Math.round(currentWeather.windspeed);
-  const observedAt = currentWeather.time
-    ? `, reported ${new Date(currentWeather.time).toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit"
-      })}`
-    : "";
-  return `${description}, ${temperature}F, wind ${wind} mph${observedAt}`;
+  return `${description}, ${temperature}F, wind ${wind} mph`;
 };
 
 const normalizeTrailName = (trail) => trail?.trim() || "Gold Vein Trail";
