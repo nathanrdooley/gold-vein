@@ -252,7 +252,9 @@ const weatherDescriptions = {
   80: "Rain showers",
   81: "Rain showers",
   82: "Heavy rain showers",
-  95: "Thunderstorm"
+  95: "Storms reported nearby",
+  96: "Storms reported nearby",
+  99: "Storms reported nearby"
 };
 
 const setWeatherStatus = (message, state = "") => {
@@ -268,7 +270,13 @@ const formatWeather = (currentWeather) => {
   const description = weatherDescriptions[currentWeather.weathercode] || "Weather recorded";
   const temperature = Math.round((currentWeather.temperature * 9) / 5 + 32);
   const wind = Math.round(currentWeather.windspeed);
-  return `${description}, ${temperature}F, wind ${wind} mph`;
+  const observedAt = currentWeather.time
+    ? `, reported ${new Date(currentWeather.time).toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit"
+      })}`
+    : "";
+  return `${description}, ${temperature}F, wind ${wind} mph${observedAt}`;
 };
 
 const normalizeTrailName = (trail) => trail?.trim() || "Gold Vein Trail";
@@ -1383,7 +1391,7 @@ useWeatherButton?.addEventListener("click", () => {
           journalWeatherInput.value = formatWeather(data.current_weather);
         }
 
-        setWeatherStatus("Weather added to this entry.", "success");
+        setWeatherStatus("Nearby reported weather added. You can edit it if needed.", "success");
       } catch {
         setWeatherStatus("Weather could not be loaded. You can type it manually.", "error");
       } finally {
