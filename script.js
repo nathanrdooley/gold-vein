@@ -917,8 +917,8 @@ const renderTrail = () => {
 };
 
 const globalStepStatusMessages = [
-  "Place confirmed. Receive the Nearby Neighbor Pass.",
-  "Pass received. Open the Scripture Map.",
+  "Place confirmed. Receive the Nearby Neighbor Trail.",
+  "Trail received. Open the Scripture Map.",
   "Passage experienced. Connect with someone nearby.",
   "Connection confirmed. Give the treasure and record the witness.",
   "The global trail is complete. Carry mercy forward."
@@ -994,7 +994,7 @@ const renderGlobalTrail = () => {
   }
 
   if (globalTrailProgress === 1 && isGlobalPassConfirmed) {
-    setGlobalPassStatus("Global pass received. You can complete Step 2.", "success");
+    setGlobalPassStatus("Trail received. You can complete Step 2.", "success");
   }
 
   if (globalTrailProgress === 3 && isGlobalCompanionConfirmed) {
@@ -1596,7 +1596,7 @@ checkGlobalLocationButton?.addEventListener("click", () => {
 
 globalPassConfirmButton?.addEventListener("click", () => {
   setGlobalPassConfirmed(true);
-  setGlobalPassStatus("Global pass received. You can complete Step 2.", "success");
+  setGlobalPassStatus("Trail received. You can complete Step 2.", "success");
   renderGlobalTrail();
 });
 
@@ -1983,7 +1983,7 @@ resetGlobalTrailButton?.addEventListener("click", () => {
     const stepIndex = Number(button.dataset.completeGlobalStep);
     const labels = [
       "I am in a nearby place",
-      "I received the pass",
+      "I received the trail",
       "I experienced the passage",
       "I connected with someone",
       "I gave the treasure"
@@ -1991,7 +1991,7 @@ resetGlobalTrailButton?.addEventListener("click", () => {
     button.textContent = labels[stepIndex] || button.textContent;
   });
   setGlobalLocationStatus("Place confirmation required before this step can be completed.");
-  setGlobalPassStatus("Receive the pass to unlock the Scripture Map.");
+  setGlobalPassStatus("Receive the trail to unlock the Scripture Map.");
   setGlobalCompanionStatus("Connection confirmation required before this step can be completed.");
   setGlobalWitnessStatus("Gift and witness confirmation required before the trail can be completed.");
   renderGlobalTrail();
