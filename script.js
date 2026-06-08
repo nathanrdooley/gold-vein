@@ -5,6 +5,11 @@ const journalWeatherInput = document.querySelector("[data-journal-weather]");
 const journalList = document.querySelector("[data-journal-list]");
 const useWeatherButton = document.querySelector("[data-use-weather]");
 const weatherStatus = document.querySelector("[data-weather-status]");
+const previewAdventureButton = document.querySelector("[data-preview-adventure]");
+const saveAdventureButton = document.querySelector("[data-save-adventure]");
+const adventurePreview = document.querySelector("[data-adventure-preview]");
+const adventureDraftList = document.querySelector("[data-adventure-drafts]");
+const creatorStatus = document.querySelector("[data-creator-status]");
 const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
@@ -151,6 +156,18 @@ const setJournalEntries = (entries) => {
   localStorage.setItem("gold-vein-journal-entries", JSON.stringify(entries));
 };
 
+const getAdventureDrafts = () => {
+  try {
+    return JSON.parse(localStorage.getItem("gold-vein-adventure-drafts") || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const setAdventureDrafts = (drafts) => {
+  localStorage.setItem("gold-vein-adventure-drafts", JSON.stringify(drafts));
+};
+
 const escapeHtml = (value) =>
   String(value || "")
     .replaceAll("&", "&amp;")
@@ -211,6 +228,8 @@ const formatWeather = (currentWeather) => {
   return `${description}, ${temperature}F, wind ${wind} mph`;
 };
 
+const normalizeTrailName = (trail) => trail?.trim() || "Gold Vein Trail";
+
 const renderJournalEntries = () => {
   if (!journalList) {
     return;
@@ -219,32 +238,139 @@ const renderJournalEntries = () => {
   const entries = getJournalEntries();
 
   if (!entries.length) {
-    journalList.innerHTML = '<p class="empty-journal">No journal entries saved yet.</p>';
+    journalList.innerHTML = '<p class="empty-journal">No adventure history saved yet.</p>';
     return;
   }
 
-  journalList.innerHTML = entries
-    .slice(0, 5)
+  const groupedEntries = entries.reduce((groups, entry) => {
+    const trail = normalizeTrailName(entry.trail);
+    if (!groups[trail]) {
+      groups[trail] = [];
+    }
+    groups[trail].push(entry);
+    return groups;
+  }, {});
+
+  journalList.innerHTML = Object.entries(groupedEntries)
     .map(
-      (entry) => `
-        <article class="journal-entry">
-          <div class="journal-entry-topline">
-            <span>${escapeHtml(entry.date || "Undated")} · ${escapeHtml(entry.time || "No time")}</span>
-            <strong>${escapeHtml(entry.trail || "Gold Vein Trail")}</strong>
+      ([trail, trailEntries]) => `
+        <section class="journal-trail-group">
+          <div class="journal-group-heading">
+            <div>
+              <span>Trail</span>
+              <h3>${escapeHtml(trail)}</h3>
+            </div>
+            <strong>${trailEntries.length} ${trailEntries.length === 1 ? "entry" : "entries"}</strong>
           </div>
-          <dl>
-            <div>
-              <dt>Place</dt>
-              <dd>${escapeHtml(entry.place || "Not recorded")}</dd>
+          <div class="journal-entry-stack">
+            ${trailEntries
+              .map(
+                (entry) => `
+                  <article class="journal-entry">
+                    <div class="journal-entry-topline">
+                      <span>${escapeHtml(entry.date || "Undated")} · ${escapeHtml(entry.time || "No time")}</span>
+                      <strong>${escapeHtml(entry.place || "Place not recorded")}</strong>
+                    </div>
+                    <dl>
+                      <div>
+                        <dt>Weather</dt>
+                        <dd>${escapeHtml(entry.weather || "Not recorded")}</dd>
+                      </div>
+                      <div>
+                        <dt>Saved</dt>
+                        <dd>${escapeHtml(entry.savedAt ? new Date(entry.savedAt).toLocaleDateString() : "Not recorded")}</dd>
+                      </div>
+                    </dl>
+                    <p><strong>Word:</strong> ${escapeHtml(entry.scripture || "Not recorded")}</p>
+                    <p><strong>Treasure:</strong> ${escapeHtml(entry.treasure || "Not recorded")}</p>
+                    <p><strong>Next step:</strong> ${escapeHtml(entry.nextStep || "Not recorded")}</p>
+                  </article>
+                `
+              )
+              .join("")}
             </div>
-            <div>
-              <dt>Weather</dt>
-              <dd>${escapeHtml(entry.weather || "Not recorded")}</dd>
-            </div>
-          </dl>
-          <p><strong>Word:</strong> ${escapeHtml(entry.scripture || "Not recorded")}</p>
-          <p><strong>Treasure:</strong> ${escapeHtml(entry.treasure || "Not recorded")}</p>
-          <p><strong>Next step:</strong> ${escapeHtml(entry.nextStep || "Not recorded")}</p>
+        </section>
+      `
+    )
+    .join("");
+};
+
+const getCreatorFormData = () => {
+  const form = saveAdventureButton?.closest("form") || previewAdventureButton?.closest("form");
+
+  if (!form) {
+    return null;
+  }
+
+  const data = Object.fromEntries(new FormData(form).entries());
+  return {
+    title: data.title?.trim() || "Untitled Gold Vein Adventure",
+    collection: data.collection?.trim() || "Custom",
+    scripture: data.scripture?.trim() || "Scripture map not set",
+    place: data.place?.trim() || "Place or unlock not set",
+    smallTreasure: data.smallTreasure?.trim() || "Small treasure not set",
+    bigTreasure: data.bigTreasure?.trim() || "Big treasure not set",
+    firstStep: data.firstStep?.trim() || "First instruction not set",
+    connection: data.connection?.trim() || "Connection prompt not set",
+    witness: data.witness?.trim() || "Give / witness step not set"
+  };
+};
+
+const renderAdventurePreview = (draft) => {
+  if (!adventurePreview || !draft) {
+    return;
+  }
+
+  adventurePreview.innerHTML = `
+    <article class="creator-card">
+      <span>${escapeHtml(draft.collection)}</span>
+      <h3>${escapeHtml(draft.title)}</h3>
+      <dl>
+        <div>
+          <dt>Scripture Map</dt>
+          <dd>${escapeHtml(draft.scripture)}</dd>
+        </div>
+        <div>
+          <dt>Place / Unlock</dt>
+          <dd>${escapeHtml(draft.place)}</dd>
+        </div>
+        <div>
+          <dt>Small Treasure</dt>
+          <dd>${escapeHtml(draft.smallTreasure)}</dd>
+        </div>
+      </dl>
+      <div class="creator-step-list">
+        <p><strong>Go:</strong> ${escapeHtml(draft.firstStep)}</p>
+        <p><strong>Look:</strong> ${escapeHtml(draft.bigTreasure)}</p>
+        <p><strong>Connect:</strong> ${escapeHtml(draft.connection)}</p>
+        <p><strong>Give:</strong> ${escapeHtml(draft.witness)}</p>
+      </div>
+    </article>
+  `;
+};
+
+const renderAdventureDrafts = () => {
+  if (!adventureDraftList) {
+    return;
+  }
+
+  const drafts = getAdventureDrafts();
+
+  if (!drafts.length) {
+    adventureDraftList.innerHTML = '<p class="empty-journal">No draft adventures saved yet.</p>';
+    return;
+  }
+
+  adventureDraftList.innerHTML = drafts
+    .map(
+      (draft) => `
+        <article class="creator-draft">
+          <div>
+            <span>${escapeHtml(draft.collection)}</span>
+            <h3>${escapeHtml(draft.title)}</h3>
+          </div>
+          <p>${escapeHtml(draft.scripture)} · ${escapeHtml(draft.place)}</p>
+          <small>Saved ${escapeHtml(draft.savedAt ? new Date(draft.savedAt).toLocaleString() : "locally")}</small>
         </article>
       `
     )
@@ -974,6 +1100,37 @@ notesButton?.addEventListener("click", () => {
   setStatus(notesButton, "Journal entry saved in this browser.");
 });
 
+previewAdventureButton?.addEventListener("click", () => {
+  const draft = getCreatorFormData();
+  renderAdventurePreview(draft);
+  if (creatorStatus) {
+    creatorStatus.textContent = "Draft preview updated.";
+  }
+});
+
+saveAdventureButton?.addEventListener("click", () => {
+  const draft = getCreatorFormData();
+
+  if (!draft) {
+    return;
+  }
+
+  const drafts = getAdventureDrafts();
+  const savedDraft = {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    ...draft
+  };
+
+  drafts.unshift(savedDraft);
+  setAdventureDrafts(drafts);
+  renderAdventurePreview(savedDraft);
+  renderAdventureDrafts();
+  if (creatorStatus) {
+    creatorStatus.textContent = "Adventure draft saved in this browser.";
+  }
+});
+
 useWeatherButton?.addEventListener("click", () => {
   if (!navigator.geolocation) {
     setWeatherStatus("Location is not available in this browser.", "error");
@@ -1671,5 +1828,6 @@ renderHomeTrail();
 renderEmmausTrail();
 setJournalDateTimeDefaults();
 renderJournalEntries();
+renderAdventureDrafts();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

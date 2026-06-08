@@ -25,6 +25,7 @@
         <div class="nav-links">
           <a href="#discover">Trails</a>
           <a href="#framework">Framework</a>
+          <a href="#creator">Creator</a>
           <a href="#field-notes">Field Notes</a>
         </div>
       </nav>
@@ -1444,6 +1445,84 @@
         </div>
       </section>
 
+      <section class="section app-page" id="creator" aria-labelledby="creator-title" data-page>
+        <div class="section-inner creator-layout">
+          <div class="section-heading">
+            <p class="section-label">Creator</p>
+            <h2 id="creator-title">Shape a new adventure.</h2>
+            <p>
+              Draft a trail by naming the place, Scripture, treasure, connection, and witness.
+              For now, drafts are saved in this browser so you and Glen can test the structure
+              before building a full admin system.
+            </p>
+          </div>
+
+          <form class="creator-form">
+            <div class="journal-meta-grid">
+              <label>
+                Adventure title
+                <input type="text" name="title" placeholder="Coffee Shop Trail">
+              </label>
+              <label>
+                Collection
+                <select name="collection">
+                  <option value="The Watermark Experience">The Watermark Experience</option>
+                  <option value="Anywhere Nearby">Anywhere Nearby</option>
+                  <option value="Sacred Place">Sacred Place</option>
+                  <option value="Walkable / Hikeable">Walkable / Hikeable</option>
+                  <option value="Custom">Custom</option>
+                </select>
+              </label>
+            </div>
+            <div class="journal-meta-grid">
+              <label>
+                Scripture map
+                <input type="text" name="scripture" placeholder="2 Peter 1:3-11">
+              </label>
+              <label>
+                Place / unlock
+                <input type="text" name="place" placeholder="Watermark Coffee Shop, a table, a road, nearby place">
+              </label>
+            </div>
+            <label>
+              Small treasure
+              <input type="text" name="smallTreasure" placeholder="Free coffee, prepared resource, meal, note, gift">
+            </label>
+            <label>
+              Big treasure
+              <textarea name="bigTreasure" rows="3" placeholder="How should this trail help someone look to Christ, obey, connect, and carry the treasure outward?"></textarea>
+            </label>
+            <label>
+              First instruction
+              <textarea name="firstStep" rows="2" placeholder="Go to the place. Ask the Lord what He wants you to notice."></textarea>
+            </label>
+            <label>
+              Connection prompt
+              <textarea name="connection" rows="2" placeholder="Invite a brother or sister into the passage and ask what they notice."></textarea>
+            </label>
+            <label>
+              Give / witness step
+              <textarea name="witness" rows="2" placeholder="Pray, serve, encourage, follow up, or share the treasure revealed."></textarea>
+            </label>
+            <div class="creator-actions">
+              <button class="button secondary" type="button" data-preview-adventure>Preview Draft</button>
+              <button class="button primary" type="button" data-save-adventure>Save Draft</button>
+            </div>
+            <p class="form-status" data-creator-status aria-live="polite"></p>
+          </form>
+
+          <div class="creator-output">
+            <div class="creator-preview" data-adventure-preview>
+              <p class="empty-journal">Preview a draft to see the adventure structure.</p>
+            </div>
+            <div>
+              <h3 class="journal-log-title">Draft Adventures</h3>
+              <div class="creator-draft-list" data-adventure-drafts aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="letter-section app-page" id="letter" aria-labelledby="letter-title" data-page>
         <div class="section-inner letter-layout">
           <div class="section-heading">
@@ -1480,10 +1559,10 @@
         <div class="section-inner notes-layout">
           <div class="section-heading">
             <p class="section-label">Field Notes</p>
-            <h2 id="notes-title">Journal what was uncovered.</h2>
+            <h2 id="notes-title">Your adventure history.</h2>
             <p>
-              Save field notes as dated journal entries. Record the place, conditions, Scripture,
-              people, treasure, and next faithful step.
+              Save simple dated journal entries as you travel. Your Field Notes are grouped by
+              trail so you can see what was uncovered over time.
             </p>
           </div>
 
@@ -1533,7 +1612,7 @@
           </form>
 
           <div>
-            <h3 class="journal-log-title">Log</h3>
+            <h3 class="journal-log-title">Adventure History</h3>
             <div class="journal-list" data-journal-list aria-live="polite"></div>
           </div>
         </div>

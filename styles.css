@@ -1235,10 +1235,112 @@ dd {
   padding-left: 16px;
 }
 
+.creator-form,
 .notes-form,
 .testimony-form {
   display: grid;
   gap: 16px;
+}
+
+.creator-layout {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+}
+
+.creator-form,
+.creator-output,
+.journal-trail-group {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.creator-output {
+  display: grid;
+  gap: 18px;
+}
+
+.creator-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.creator-preview,
+.creator-draft-list {
+  display: grid;
+  gap: 12px;
+}
+
+.creator-card,
+.creator-draft {
+  background: rgba(10, 14, 15, 0.38);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.creator-card span,
+.creator-draft span,
+.journal-group-heading span {
+  color: var(--gold);
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.creator-card h3,
+.creator-draft h3,
+.journal-group-heading h3 {
+  margin: 4px 0 12px;
+}
+
+.creator-card dl {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 14px;
+}
+
+.creator-card dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.creator-card dd {
+  color: var(--ink);
+  margin: 0;
+}
+
+.creator-step-list {
+  display: grid;
+  gap: 10px;
+}
+
+.creator-step-list p,
+.creator-draft p,
+.creator-draft small {
+  color: var(--muted);
+  margin: 0;
+}
+
+.creator-step-list strong {
+  color: var(--ink);
+}
+
+.creator-draft h3 {
+  font-size: 1.1rem;
+}
+
+.creator-draft small {
+  display: block;
+  font-weight: 800;
+  margin-top: 10px;
 }
 
 .journal-meta-grid {
@@ -1281,6 +1383,33 @@ dd {
 .journal-list {
   display: grid;
   gap: 14px;
+}
+
+.journal-trail-group {
+  display: grid;
+  gap: 14px;
+}
+
+.journal-group-heading {
+  align-items: start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.journal-group-heading strong {
+  background: rgba(245, 199, 95, 0.16);
+  border: 1px solid rgba(245, 199, 95, 0.28);
+  border-radius: 999px;
+  color: var(--gold);
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  padding: 7px 10px;
+}
+
+.journal-entry-stack {
+  display: grid;
+  gap: 12px;
 }
 
 .empty-journal {
@@ -1349,7 +1478,8 @@ label {
 }
 
 textarea,
-input {
+input,
+select {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -1361,7 +1491,8 @@ input {
 }
 
 textarea:focus,
-input:focus {
+input:focus,
+select:focus {
   border-color: rgba(245, 199, 95, 0.72);
 }
 
@@ -1437,6 +1568,8 @@ input:focus {
   .adventure-layout,
   .app-layout,
   .adventure-card-grid,
+  .creator-layout,
+  .creator-card dl,
   .search-panel,
   .trail-type-strip,
   .framework-grid {
