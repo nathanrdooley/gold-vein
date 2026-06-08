@@ -1,4 +1,7 @@
 const notesButton = document.querySelector("[data-save-notes]");
+const journalDateInput = document.querySelector("[data-journal-date]");
+const journalTimeInput = document.querySelector("[data-journal-time]");
+const journalList = document.querySelector("[data-journal-list]");
 const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
@@ -130,6 +133,79 @@ const setStatus = (button, message) => {
   if (status) {
     status.textContent = message;
   }
+};
+
+const getJournalEntries = () => {
+  try {
+    return JSON.parse(localStorage.getItem("gold-vein-journal-entries") || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const setJournalEntries = (entries) => {
+  localStorage.setItem("gold-vein-journal-entries", JSON.stringify(entries));
+};
+
+const escapeHtml = (value) =>
+  String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+const setJournalDateTimeDefaults = () => {
+  const now = new Date();
+  const date = now.toISOString().slice(0, 10);
+  const time = now.toTimeString().slice(0, 5);
+
+  if (journalDateInput && !journalDateInput.value) {
+    journalDateInput.value = date;
+  }
+
+  if (journalTimeInput && !journalTimeInput.value) {
+    journalTimeInput.value = time;
+  }
+};
+
+const renderJournalEntries = () => {
+  if (!journalList) {
+    return;
+  }
+
+  const entries = getJournalEntries();
+
+  if (!entries.length) {
+    journalList.innerHTML = '<p class="empty-journal">No journal entries saved yet.</p>';
+    return;
+  }
+
+  journalList.innerHTML = entries
+    .slice(0, 5)
+    .map(
+      (entry) => `
+        <article class="journal-entry">
+          <div class="journal-entry-topline">
+            <span>${escapeHtml(entry.date || "Undated")} · ${escapeHtml(entry.time || "No time")}</span>
+            <strong>${escapeHtml(entry.trail || "Gold Vein Trail")}</strong>
+          </div>
+          <dl>
+            <div>
+              <dt>Place</dt>
+              <dd>${escapeHtml(entry.place || "Not recorded")}</dd>
+            </div>
+            <div>
+              <dt>Weather</dt>
+              <dd>${escapeHtml(entry.weather || "Not recorded")}</dd>
+            </div>
+          </dl>
+          <p><strong>Treasure:</strong> ${escapeHtml(entry.treasure || "Not recorded")}</p>
+          <p><strong>Next step:</strong> ${escapeHtml(entry.nextStep || "Not recorded")}</p>
+        </article>
+      `
+    )
+    .join("");
 };
 
 const getHashParts = () => {
@@ -750,9 +826,18 @@ const renderEmmausTrail = () => {
 notesButton?.addEventListener("click", () => {
   const form = notesButton.closest("form");
   const data = new FormData(form);
-  const notes = Object.fromEntries(data.entries());
-  localStorage.setItem("gold-vein-field-notes", JSON.stringify(notes));
-  setStatus(notesButton, "Field notes saved in this browser.");
+  const entry = {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    ...Object.fromEntries(data.entries())
+  };
+  const entries = getJournalEntries();
+  entries.unshift(entry);
+  setJournalEntries(entries);
+  renderJournalEntries();
+  form.reset();
+  setJournalDateTimeDefaults();
+  setStatus(notesButton, "Journal entry saved in this browser.");
 });
 
 testimonyButton?.addEventListener("click", async () => {
@@ -785,7 +870,7 @@ heroAdventureToggle?.addEventListener("click", () => {
 });
 
 searchButton?.addEventListener("click", () => {
-  setStatus(searchButton, "Gold Vein No. 1 is the available trail in this V1.");
+  setStatus(searchButton, "Choose a collection above, or open one of the available adventure cards.");
 });
 
 checkLocationButton?.addEventListener("click", () => {
@@ -1381,5 +1466,7 @@ renderTrail();
 renderGlobalTrail();
 renderHomeTrail();
 renderEmmausTrail();
+setJournalDateTimeDefaults();
+renderJournalEntries();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

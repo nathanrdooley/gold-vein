@@ -24,8 +24,6 @@
         <a class="brand" href="#top">Gold Vein</a>
         <div class="nav-links">
           <a href="#discover">Trails</a>
-          <a href="#framework">Framework</a>
-          <a href="#field-notes">Field Notes</a>
         </div>
       </nav>
 
@@ -64,9 +62,9 @@
             <span>Trails</span>
             <strong>Choose an adventure</strong>
           </a>
-          <a href="#adventure-app">
+          <a href="#discover">
             <span>Watermark</span>
-            <strong>Coffee Shop Trail</strong>
+            <strong>See location trails</strong>
           </a>
           <a href="#framework">
             <span>Framework</span>
@@ -1306,44 +1304,45 @@
       <section class="section app-page" id="framework" aria-labelledby="framework-title" data-page>
         <div class="section-inner">
           <div class="section-heading">
-            <p class="section-label">Project Structure</p>
-            <h2 id="framework-title">Gold Vein Framework</h2>
+            <p class="section-label">Framework</p>
+            <h2 id="framework-title">Disciple-making by adventure.</h2>
             <p>
-              Each trail begins with one clear observation and grows from there. The first step
-              should be small, focused, and possible to complete.
+              Gold Vein is built around Spirit-led trails where Scripture gives light, obedience
+              takes shape, people are connected, and Jesus Christ is discovered, received, carried,
+              and given as the treasure.
             </p>
           </div>
 
           <div class="framework-grid">
             <article class="framework-item">
               <span>01</span>
-              <h3>Observation</h3>
-              <p>One phrase, verse, question, need, or moment that catches the participant's attention.</p>
+              <h3>Unbeliever</h3>
+              <p>A trail can invite someone to come and look to Christ through Scripture, honest questions, embodied kindness, and witness toward new birth.</p>
             </article>
             <article class="framework-item">
               <span>02</span>
-              <h3>Map</h3>
-              <p>A focused Scripture passage or biblical theme that gives the observation its trail.</p>
+              <h3>Believer</h3>
+              <p>A trail can help a believer stuck in sin, fear, or addiction move from isolation into confession, Scripture, companionship, obedience, and freedom.</p>
             </article>
             <article class="framework-item">
               <span>03</span>
-              <h3>Little Adventure</h3>
-              <p>A short mission of faith, conversation, action, or service that can actually be done.</p>
+              <h3>Disciple Maker</h3>
+              <p>A trail can send a follower of Jesus to pray, serve, teach, follow up, and help another person take the next faithful step.</p>
             </article>
             <article class="framework-item">
               <span>04</span>
-              <h3>Companionship</h3>
-              <p>Including at least one other person through presence, conversation, prayer, or witness.</p>
+              <h3>Unlocks</h3>
+              <p>Each step unlocks through a real act: place, pass, Word, person, gift, or witness. The app serves the obedience.</p>
             </article>
             <article class="framework-item">
               <span>05</span>
-              <h3>Commentary</h3>
-              <p>Biblical and personal reflection on what the experience revealed.</p>
+              <h3>Scripture Map</h3>
+              <p>The Word is not decoration. It gives the trail light through context, history, inner life, Spirit-led attention, power, and fruit.</p>
             </article>
             <article class="framework-item">
               <span>06</span>
               <h3>The Treasure</h3>
-              <p>The deeper truth and tangible evidence discovered, received, recorded, and acted on.</p>
+              <p>The treasure is Christ revealed and then carried outward through repentance, faith, love, mercy, testimony, and disciple-making.</p>
             </article>
           </div>
         </div>
@@ -1457,29 +1456,59 @@
         <div class="section-inner notes-layout">
           <div class="section-heading">
             <p class="section-label">Field Notes</p>
-            <h2 id="notes-title">Record what was uncovered.</h2>
+            <h2 id="notes-title">Journal what was uncovered.</h2>
+            <p>
+              Save field notes as dated journal entries. Record the place, conditions, Scripture,
+              people, treasure, and next faithful step.
+            </p>
           </div>
 
           <form class="notes-form">
             <label>
-              What did you observe in 2 Peter 1:3-11?
-              <textarea name="scripture" rows="3"></textarea>
+              Date
+              <input type="date" name="date" data-journal-date>
             </label>
             <label>
-              What did the person say?
-              <textarea name="conversation" rows="3"></textarea>
+              Time
+              <input type="time" name="time" data-journal-time>
             </label>
             <label>
-              What did you notice in yourself?
-              <textarea name="reflection" rows="3"></textarea>
+              Weather / conditions
+              <input type="text" name="weather" placeholder="Rainy, quiet, crowded, warm, late night">
             </label>
             <label>
-              What treasure did you discover or receive?
-              <textarea name="treasure" rows="4"></textarea>
+              Trail
+              <input type="text" name="trail" placeholder="Coffee Shop Trail, Emmaus Road, Nearby Neighbor">
             </label>
-            <button class="button primary" type="button" data-save-notes>Save Notes</button>
+            <label>
+              Place
+              <input type="text" name="place" placeholder="Watermark, home table, neighborhood walk">
+            </label>
+            <label>
+              Scripture / Word
+              <textarea name="scripture" rows="3" placeholder="What passage, phrase, or truth gave light?"></textarea>
+            </label>
+            <label>
+              Person / conversation
+              <textarea name="conversation" rows="3" placeholder="Who did you connect with, and what was noticed?"></textarea>
+            </label>
+            <label>
+              Inner life
+              <textarea name="reflection" rows="3" placeholder="What did you notice in your thoughts, emotions, desires, fears, or obedience?"></textarea>
+            </label>
+            <label>
+              Treasure
+              <textarea name="treasure" rows="4" placeholder="What did Christ reveal, give, heal, convict, or send you to carry?"></textarea>
+            </label>
+            <label>
+              Next faithful step
+              <textarea name="nextStep" rows="3" placeholder="Prayer, follow-up, confession, service, witness, or another adventure"></textarea>
+            </label>
+            <button class="button primary" type="button" data-save-notes>Save Journal Entry</button>
             <p class="form-status" aria-live="polite"></p>
           </form>
+
+          <div class="journal-list" data-journal-list aria-live="polite"></div>
         </div>
       </section>
 

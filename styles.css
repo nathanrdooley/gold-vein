@@ -84,6 +84,12 @@ h3,
   font-size: 0.92rem;
 }
 
+.nav-links a {
+  border: 1px solid rgba(245, 199, 95, 0.28);
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
 .nav-links a:hover {
   color: var(--ink);
 }
@@ -1149,6 +1155,69 @@ dd {
   gap: 16px;
 }
 
+.journal-list {
+  display: grid;
+  gap: 14px;
+}
+
+.empty-journal {
+  color: var(--muted);
+  margin: 0;
+}
+
+.journal-entry {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.journal-entry-topline {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.journal-entry-topline span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.journal-entry-topline strong {
+  color: var(--gold);
+  text-align: right;
+}
+
+.journal-entry dl {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 12px;
+}
+
+.journal-entry dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.journal-entry dd {
+  color: var(--ink);
+  margin: 0;
+}
+
+.journal-entry p {
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+
+.journal-entry p strong {
+  color: var(--ink);
+}
+
 label {
   color: var(--ink);
   display: grid;
@@ -1303,6 +1372,15 @@ input:focus {
 
   .hero-adventure-chooser {
     grid-template-columns: 1fr;
+  }
+
+  .journal-entry-topline,
+  .journal-entry dl {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-entry-topline {
+    display: grid;
   }
 
   .home-menu a {
