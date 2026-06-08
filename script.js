@@ -13,6 +13,7 @@ const creatorStatus = document.querySelector("[data-creator-status]");
 const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
+const shareAdventureButtons = document.querySelectorAll("[data-share-adventure]");
 const resetTrailButton = document.querySelector("[data-reset-trail]");
 const stepButtons = document.querySelectorAll("[data-complete-step]");
 const appSteps = document.querySelectorAll("[data-app-step]");
@@ -168,6 +169,22 @@ const setStatus = (button, message) => {
   if (status) {
     status.textContent = message;
   }
+};
+
+const getShareUrl = (target) => {
+  const baseUrl = window.location.origin === "null"
+    ? window.location.href.split("#")[0]
+    : `${window.location.origin}${window.location.pathname}`;
+  return `${baseUrl}#${target}`;
+};
+
+const setTemporaryButtonText = (button, message) => {
+  const originalText = button.dataset.originalText || button.textContent.trim();
+  button.dataset.originalText = originalText;
+  button.textContent = message;
+  window.setTimeout(() => {
+    button.textContent = originalText;
+  }, 2200);
 };
 
 const getJournalEntries = () => {
@@ -1310,6 +1327,28 @@ saveAdventureButton?.addEventListener("click", () => {
   if (creatorStatus) {
     creatorStatus.textContent = "Adventure draft saved in this browser.";
   }
+});
+
+shareAdventureButtons.forEach((button) => {
+  button.addEventListener("click", async () => {
+    const target = button.dataset.shareTarget || "top";
+    const title = button.dataset.shareTitle || "Gold Vein Adventure";
+    const url = getShareUrl(target);
+    const text = `I am inviting you into a Gold Vein adventure: ${title}.`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text, url });
+        setTemporaryButtonText(button, "Adventure Sent");
+        return;
+      }
+
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      setTemporaryButtonText(button, "Link Copied");
+    } catch {
+      setTemporaryButtonText(button, "Copy Link Failed");
+    }
+  });
 });
 
 useWeatherButton?.addEventListener("click", () => {
