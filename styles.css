@@ -200,7 +200,7 @@ h1 {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   display: grid;
-  min-height: 86px;
+  min-height: 98px;
   padding: 14px;
 }
 
@@ -209,6 +209,7 @@ h1 {
   font-size: 0.7rem;
   font-weight: 900;
   letter-spacing: 0.08em;
+  line-height: 1.25;
   text-transform: uppercase;
 }
 
