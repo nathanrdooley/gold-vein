@@ -116,6 +116,7 @@ let isEmmausPassConfirmed = localStorage.getItem("gold-vein-emmaus-pass-confirme
 let isEmmausCompanionConfirmed =
   localStorage.getItem("gold-vein-emmaus-companion-confirmed") === "true";
 let isEmmausWitnessConfirmed = localStorage.getItem("gold-vein-emmaus-witness-confirmed") === "true";
+let watermarkCompassDetail = "";
 
 const redemptionPasses = {
   "GV-WM-NO1-001": {
@@ -283,6 +284,38 @@ const stepStatusMessages = [
   "You connected with someone. Give the treasure and record the fruit.",
   "The trail is complete. Carry the treasure forward."
 ];
+
+const compassStepLabels = {
+  watermark: ["Go", "Receive", "Look", "Connect", "Give"],
+  global: ["Place", "Receive", "Look", "Connect", "Give"],
+  home: ["Place", "Receive", "Look", "Connect", "Give"],
+  emmaus: ["Road", "Receive", "Look", "Connect", "Give"]
+};
+
+const updateTrailCompass = ({ trailKey, progress, total, detail, state = "" }) => {
+  const compass = document.querySelector(`[data-trail-compass="${trailKey}"]`);
+
+  if (!compass) {
+    return;
+  }
+
+  const labels = compassStepLabels[trailKey] || compassStepLabels.watermark;
+  const activeIndex = Math.min(progress, Math.max(total - 1, 0));
+  const isComplete = progress >= total;
+  const label = isComplete ? "Trail Complete" : `Step ${activeIndex + 1} · ${labels[activeIndex]}`;
+  const turn = isComplete ? 360 : activeIndex * (360 / Math.max(total, 1));
+  const labelNode = compass.querySelector("[data-compass-label]");
+  const detailNode = compass.querySelector("[data-compass-detail]");
+
+  compass.style.setProperty("--compass-turn", `${turn}deg`);
+  compass.dataset.state = isComplete ? "complete" : state;
+  if (labelNode) {
+    labelNode.textContent = label;
+  }
+  if (detailNode) {
+    detailNode.textContent = detail;
+  }
+};
 
 const clampProgress = () => {
   trailProgress = Math.min(Math.max(trailProgress, 0), totalTrailSteps);
@@ -627,6 +660,20 @@ const renderTrail = () => {
         : stepStatusMessages[trailProgress - 1] || "Trail progress saved.";
   }
 
+  updateTrailCompass({
+    trailKey: "watermark",
+    progress: trailProgress,
+    total: totalTrailSteps,
+    detail:
+      trailProgress >= totalTrailSteps
+        ? "Trail complete. Carry the treasure forward."
+        : trailProgress === 0
+          ? watermarkCompassDetail ||
+            (isLocationVerified ? "At Watermark. Step 1 is ready." : "Awaiting location check.")
+          : stepStatusMessages[trailProgress - 1] || "Trail progress saved.",
+    state: trailProgress === 0 && !isLocationVerified && watermarkCompassDetail ? "error" : ""
+  });
+
   if (trailProgress === 0 && isLocationVerified) {
     setLocationStatus("Location confirmed. You can complete Step 1.", "success");
   }
@@ -697,6 +744,21 @@ const renderGlobalTrail = () => {
         ? "Step 1 is ready. Confirm your place to unlock the first confirmation."
         : globalStepStatusMessages[globalTrailProgress - 1] || "Global trail progress saved.";
   }
+
+  updateTrailCompass({
+    trailKey: "global",
+    progress: globalTrailProgress,
+    total: totalGlobalTrailSteps,
+    detail:
+      globalTrailProgress >= totalGlobalTrailSteps
+        ? "Trail complete. Carry mercy forward."
+        : globalTrailProgress === 0
+          ? isGlobalLocationVerified
+            ? "Nearby place confirmed. Step 1 is ready."
+            : "Confirm your nearby place."
+          : globalStepStatusMessages[globalTrailProgress - 1] || "Global trail progress saved.",
+    state: globalTrailProgress === 0 && isGlobalLocationVerified ? "success" : ""
+  });
 
   if (globalTrailProgress === 0 && isGlobalLocationVerified) {
     setGlobalLocationStatus("Place confirmed. You can complete Step 1.", "success");
@@ -773,6 +835,21 @@ const renderHomeTrail = () => {
         : homeStepStatusMessages[homeTrailProgress - 1] || "Home trail progress saved.";
   }
 
+  updateTrailCompass({
+    trailKey: "home",
+    progress: homeTrailProgress,
+    total: totalHomeTrailSteps,
+    detail:
+      homeTrailProgress >= totalHomeTrailSteps
+        ? "Trail complete. Carry peace forward."
+        : homeTrailProgress === 0
+          ? isHomePlaceConfirmed
+            ? "Home place confirmed. Step 1 is ready."
+            : "Confirm your room or table."
+          : homeStepStatusMessages[homeTrailProgress - 1] || "Home trail progress saved.",
+    state: homeTrailProgress === 0 && isHomePlaceConfirmed ? "success" : ""
+  });
+
   if (homeTrailProgress === 0 && isHomePlaceConfirmed) {
     setHomePlaceStatus("Home place confirmed. You can complete Step 1.", "success");
   }
@@ -847,6 +924,21 @@ const renderEmmausTrail = () => {
         ? "Step 1 is ready. Confirm the road to unlock the first confirmation."
         : emmausStepStatusMessages[emmausTrailProgress - 1] || "Emmaus trail progress saved.";
   }
+
+  updateTrailCompass({
+    trailKey: "emmaus",
+    progress: emmausTrailProgress,
+    total: totalEmmausTrailSteps,
+    detail:
+      emmausTrailProgress >= totalEmmausTrailSteps
+        ? "Trail complete. Carry the witness that Christ is risen."
+        : emmausTrailProgress === 0
+          ? isEmmausPlaceConfirmed
+            ? "Road confirmed. Step 1 is ready."
+            : "Confirm the road beneath your feet."
+          : emmausStepStatusMessages[emmausTrailProgress - 1] || "Emmaus trail progress saved.",
+    state: emmausTrailProgress === 0 && isEmmausPlaceConfirmed ? "success" : ""
+  });
 
   if (emmausTrailProgress === 0 && isEmmausPlaceConfirmed) {
     setEmmausPlaceStatus("Road confirmed. You can complete Step 1.", "success");
@@ -974,6 +1066,13 @@ checkLocationButton?.addEventListener("click", () => {
 
   checkLocationButton.disabled = true;
   setLocationStatus("Checking your location...", "checking");
+  updateTrailCompass({
+    trailKey: "watermark",
+    progress: trailProgress,
+    total: totalTrailSteps,
+    detail: "Checking distance to Watermark...",
+    state: "checking"
+  });
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -986,9 +1085,11 @@ checkLocationButton?.addEventListener("click", () => {
 
       if (distanceMeters <= watermarkLocation.radiusMeters) {
         setLocationVerified(true);
+        watermarkCompassDetail = "At Watermark. Step 1 is ready.";
         setLocationStatus("Location confirmed. You can complete Step 1.", "success");
       } else {
         setLocationVerified(false);
+        watermarkCompassDetail = `About ${distanceMiles.toFixed(1)} miles from Watermark.`;
         setLocationStatus(
           `You are about ${distanceMiles.toFixed(1)} miles from the trail location.`,
           "error"
@@ -1000,6 +1101,7 @@ checkLocationButton?.addEventListener("click", () => {
     },
     () => {
       setLocationVerified(false);
+      watermarkCompassDetail = "Location permission is needed to unlock this step.";
       checkLocationButton.disabled = false;
       setLocationStatus("Location permission is needed to unlock this step.", "error");
       renderTrail();
@@ -1086,6 +1188,13 @@ checkGlobalLocationButton?.addEventListener("click", () => {
 
   checkGlobalLocationButton.disabled = true;
   setGlobalLocationStatus("Confirming your place...", "checking");
+  updateTrailCompass({
+    trailKey: "global",
+    progress: globalTrailProgress,
+    total: totalGlobalTrailSteps,
+    detail: "Confirming your nearby place...",
+    state: "checking"
+  });
 
   navigator.geolocation.getCurrentPosition(
     () => {
@@ -1351,6 +1460,7 @@ stepButtons.forEach((button) => {
 
 resetTrailButton?.addEventListener("click", () => {
   trailProgress = 0;
+  watermarkCompassDetail = "";
   setLocationVerified(false);
   setCompanionConfirmed(false);
   setWitnessConfirmed(false);

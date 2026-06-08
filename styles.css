@@ -45,8 +45,8 @@ textarea {
 .hero {
   min-height: 92vh;
   background:
-    linear-gradient(90deg, rgba(4, 7, 8, 0.96) 0%, rgba(7, 9, 9, 0.78) 42%, rgba(7, 9, 9, 0.28) 100%),
-    linear-gradient(180deg, rgba(6, 7, 8, 0.56) 0%, rgba(15, 20, 23, 0.98) 100%),
+    linear-gradient(90deg, rgba(4, 7, 8, 0.9) 0%, rgba(7, 9, 9, 0.66) 42%, rgba(7, 9, 9, 0.16) 100%),
+    linear-gradient(180deg, rgba(6, 7, 8, 0.4) 0%, rgba(15, 20, 23, 0.9) 100%),
     url("assets/gold-vein-hero.png") 58% center / cover;
   display: flex;
   flex-direction: column;
@@ -579,6 +579,92 @@ dd {
 .progress-dot.active,
 .progress-dot.complete {
   background: linear-gradient(90deg, var(--gold), #d99831);
+}
+
+.trail-compass {
+  --compass-turn: 0deg;
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.16), rgba(255, 255, 255, 0.055) 58%),
+    rgba(10, 14, 15, 0.5);
+  border: 1px solid rgba(245, 199, 95, 0.3);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 54px minmax(0, 1fr);
+  margin: 0 0 18px;
+  min-height: 74px;
+  padding: 10px;
+}
+
+.trail-compass[data-state="success"],
+.trail-compass[data-state="complete"] {
+  border-color: rgba(132, 214, 161, 0.5);
+}
+
+.trail-compass[data-state="error"] {
+  border-color: rgba(255, 134, 134, 0.5);
+}
+
+.trail-compass[data-state="checking"] {
+  border-color: rgba(245, 199, 95, 0.74);
+}
+
+.compass-dial {
+  aspect-ratio: 1;
+  background:
+    radial-gradient(circle at center, rgba(245, 199, 95, 0.26), transparent 28%),
+    conic-gradient(from 45deg, rgba(245, 199, 95, 0.16), rgba(255, 255, 255, 0.04), rgba(245, 199, 95, 0.16));
+  border: 1px solid rgba(245, 199, 95, 0.38);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.compass-dial::before,
+.compass-dial::after {
+  color: rgba(255, 244, 210, 0.62);
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1;
+  position: absolute;
+}
+
+.compass-dial::before {
+  content: "N";
+  top: 5px;
+}
+
+.compass-dial::after {
+  bottom: 5px;
+  content: "S";
+}
+
+.compass-needle {
+  background: linear-gradient(180deg, #ffe19b 0 50%, rgba(255, 255, 255, 0.42) 50% 100%);
+  border-radius: 999px;
+  display: block;
+  height: 35px;
+  transform: rotate(var(--compass-turn));
+  transform-origin: center;
+  transition: transform 220ms ease;
+  width: 4px;
+}
+
+.trail-compass span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.trail-compass strong {
+  color: var(--ink);
+  display: block;
+  font-size: 0.98rem;
+  margin-top: 4px;
 }
 
 .app-step {
