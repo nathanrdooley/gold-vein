@@ -273,6 +273,9 @@ const formatWeather = (currentWeather) => {
   return `${description}, ${temperature}F, wind ${wind} mph`;
 };
 
+const cleanWeatherValue = (weather) =>
+  String(weather || "").replace(/,\s*reported\s+\d{1,2}:\d{2}\s*(AM|PM)?$/i, "");
+
 const normalizeTrailName = (trail) => trail?.trim() || "Gold Vein Trail";
 
 const renderJournalEntries = () => {
@@ -319,7 +322,7 @@ const renderJournalEntries = () => {
                     <dl>
                       <div>
                         <dt>Weather</dt>
-                        <dd>${escapeHtml(entry.weather || "Not recorded")}</dd>
+                        <dd>${escapeHtml(cleanWeatherValue(entry.weather) || "Not recorded")}</dd>
                       </div>
                       <div>
                         <dt>Saved</dt>
@@ -1291,6 +1294,7 @@ notesButton?.addEventListener("click", () => {
     savedAt: new Date().toISOString(),
     ...Object.fromEntries(data.entries())
   };
+  entry.weather = cleanWeatherValue(entry.weather);
   const entries = getJournalEntries();
   entries.unshift(entry);
   setJournalEntries(entries);
