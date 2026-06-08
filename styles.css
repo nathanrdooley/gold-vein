@@ -170,9 +170,9 @@ h1 {
 .home-menu {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(220px, 280px);
   margin-top: 34px;
-  max-width: 860px;
+  max-width: 280px;
 }
 
 .home-menu a {
