@@ -134,7 +134,7 @@ h1 {
 .hero-adventure-chooser {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   margin-top: 18px;
   max-width: 920px;
 }
@@ -233,7 +233,7 @@ h1 {
 .trail-type-strip {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   margin: 0 0 24px;
 }
 

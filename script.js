@@ -80,6 +80,22 @@ const emmausGiftTypeInputs = document.querySelectorAll("[data-emmaus-gift-type]"
 const emmausWitnessNoteInput = document.querySelector("[data-emmaus-witness-note]");
 const emmausWitnessConfirmButton = document.querySelector("[data-emmaus-witness-confirm]");
 const emmausWitnessStatus = document.querySelector("[data-emmaus-witness-status]");
+const resetConversionTrailButton = document.querySelector("[data-reset-conversion-trail]");
+const conversionStepButtons = document.querySelectorAll("[data-complete-conversion-step]");
+const conversionSteps = document.querySelectorAll("[data-conversion-step]");
+const conversionProgressDots = document.querySelectorAll("[data-conversion-progress-dot]");
+const conversionAppStatus = document.querySelector("[data-conversion-app-status]");
+const conversionHonestyConfirmButton = document.querySelector("[data-conversion-honesty-confirm]");
+const conversionHonestyStatus = document.querySelector("[data-conversion-honesty-status]");
+const conversionGospelConfirmButton = document.querySelector("[data-conversion-gospel-confirm]");
+const conversionGospelStatus = document.querySelector("[data-conversion-gospel-status]");
+const conversionResponseTypeInputs = document.querySelectorAll("[data-conversion-response-type]");
+const conversionResponseNoteInput = document.querySelector("[data-conversion-response-note]");
+const conversionResponseConfirmButton = document.querySelector("[data-conversion-response-confirm]");
+const conversionResponseStatus = document.querySelector("[data-conversion-response-status]");
+const conversionFollowupNameInput = document.querySelector("[data-conversion-followup-name]");
+const conversionFollowupConfirmButton = document.querySelector("[data-conversion-followup-confirm]");
+const conversionFollowupStatus = document.querySelector("[data-conversion-followup-status]");
 const redeemPanel = document.querySelector("[data-redeem-panel]");
 const redeemState = document.querySelector("[data-redeem-state]");
 const redeemCode = document.querySelector("[data-redeem-code]");
@@ -96,6 +112,8 @@ const totalHomeTrailSteps = homeSteps.length;
 let homeTrailProgress = Number(localStorage.getItem("gold-vein-home-progress") || "0");
 const totalEmmausTrailSteps = emmausSteps.length;
 let emmausTrailProgress = Number(localStorage.getItem("gold-vein-emmaus-progress") || "0");
+const totalConversionTrailSteps = conversionSteps.length;
+let conversionTrailProgress = Number(localStorage.getItem("gold-vein-conversion-progress") || "0");
 let activeRedeemCode = "";
 
 const watermarkLocation = {
@@ -121,6 +139,14 @@ let isEmmausPassConfirmed = localStorage.getItem("gold-vein-emmaus-pass-confirme
 let isEmmausCompanionConfirmed =
   localStorage.getItem("gold-vein-emmaus-companion-confirmed") === "true";
 let isEmmausWitnessConfirmed = localStorage.getItem("gold-vein-emmaus-witness-confirmed") === "true";
+let isConversionHonestyConfirmed =
+  localStorage.getItem("gold-vein-conversion-honesty-confirmed") === "true";
+let isConversionGospelConfirmed =
+  localStorage.getItem("gold-vein-conversion-gospel-confirmed") === "true";
+let isConversionResponseConfirmed =
+  localStorage.getItem("gold-vein-conversion-response-confirmed") === "true";
+let isConversionFollowupConfirmed =
+  localStorage.getItem("gold-vein-conversion-followup-confirmed") === "true";
 let watermarkCompassDetail = "";
 
 const redemptionPasses = {
@@ -415,7 +441,8 @@ const compassStepLabels = {
   watermark: ["Go", "Receive", "Look", "Connect", "Give"],
   global: ["Place", "Receive", "Look", "Connect", "Give"],
   home: ["Place", "Receive", "Look", "Connect", "Give"],
-  emmaus: ["Road", "Receive", "Look", "Connect", "Give"]
+  emmaus: ["Road", "Receive", "Look", "Connect", "Give"],
+  conversion: ["Look", "Hear", "Word", "Respond", "Follow"]
 };
 
 const updateTrailCompass = ({ trailKey, progress, total, detail, state = "" }) => {
@@ -694,6 +721,65 @@ const setEmmausWitnessStatus = (message, state = "") => {
 const setEmmausWitnessConfirmed = (confirmed) => {
   isEmmausWitnessConfirmed = confirmed;
   localStorage.setItem("gold-vein-emmaus-witness-confirmed", String(confirmed));
+};
+
+const setConversionHonestyStatus = (message, state = "") => {
+  if (!conversionHonestyStatus) {
+    return;
+  }
+
+  conversionHonestyStatus.textContent = message;
+  conversionHonestyStatus.dataset.state = state;
+};
+
+const setConversionHonestyConfirmed = (confirmed) => {
+  isConversionHonestyConfirmed = confirmed;
+  localStorage.setItem("gold-vein-conversion-honesty-confirmed", String(confirmed));
+};
+
+const setConversionGospelStatus = (message, state = "") => {
+  if (!conversionGospelStatus) {
+    return;
+  }
+
+  conversionGospelStatus.textContent = message;
+  conversionGospelStatus.dataset.state = state;
+};
+
+const setConversionGospelConfirmed = (confirmed) => {
+  isConversionGospelConfirmed = confirmed;
+  localStorage.setItem("gold-vein-conversion-gospel-confirmed", String(confirmed));
+};
+
+const getSelectedConversionResponseType = () =>
+  Array.from(conversionResponseTypeInputs).find((input) => input.checked)?.value || "";
+
+const setConversionResponseStatus = (message, state = "") => {
+  if (!conversionResponseStatus) {
+    return;
+  }
+
+  conversionResponseStatus.textContent = message;
+  conversionResponseStatus.dataset.state = state;
+};
+
+const setConversionResponseConfirmed = (confirmed) => {
+  isConversionResponseConfirmed = confirmed;
+  localStorage.setItem("gold-vein-conversion-response-confirmed", String(confirmed));
+};
+
+const setConversionFollowupStatus = (message, state = "") => {
+  if (!conversionFollowupStatus) {
+    return;
+  }
+
+  conversionFollowupStatus.textContent = message;
+  conversionFollowupStatus.dataset.state = state;
+};
+
+const setConversionFollowupConfirmed = (confirmed) => {
+  isConversionFollowupConfirmed = confirmed;
+  localStorage.setItem("gold-vein-conversion-followup-confirmed", String(confirmed));
 };
 
 const continueAdventureAfterRedemption = () => {
@@ -1080,6 +1166,101 @@ const renderEmmausTrail = () => {
 
   if (emmausTrailProgress === 4 && isEmmausWitnessConfirmed) {
     setEmmausWitnessStatus("Gift and witness confirmed. You can complete the trail.", "success");
+  }
+};
+
+const conversionStepStatusMessages = [
+  "Honest willingness confirmed. Hear the gospel invitation.",
+  "Gospel invitation received. Open the Scripture Map.",
+  "Passage experienced. Name your honest response.",
+  "Honest response confirmed. Connect for follow-up.",
+  "The Conversion Trail is complete. Follow Christ with His people."
+];
+
+const clampConversionProgress = () => {
+  conversionTrailProgress = Math.min(
+    Math.max(conversionTrailProgress, 0),
+    totalConversionTrailSteps
+  );
+};
+
+const renderConversionTrail = () => {
+  clampConversionProgress();
+
+  conversionSteps.forEach((step) => {
+    const stepIndex = Number(step.dataset.conversionStep);
+    const button = step.querySelector("[data-complete-conversion-step]");
+    const isComplete = stepIndex < conversionTrailProgress;
+    const isActive = stepIndex === conversionTrailProgress;
+    const isLocked = stepIndex > conversionTrailProgress;
+
+    step.classList.toggle("complete", isComplete);
+    step.classList.toggle("active", isActive);
+    step.classList.toggle("locked", isLocked);
+    step.setAttribute("aria-disabled", String(isLocked));
+
+    if (button) {
+      const requiresHonestyCheck = stepIndex === 0 && !isConversionHonestyConfirmed;
+      const requiresGospelCheck = stepIndex === 1 && !isConversionGospelConfirmed;
+      const requiresResponseCheck = stepIndex === 3 && !isConversionResponseConfirmed;
+      const requiresFollowupCheck = stepIndex === 4 && !isConversionFollowupConfirmed;
+      button.disabled =
+        isLocked ||
+        isComplete ||
+        requiresHonestyCheck ||
+        requiresGospelCheck ||
+        requiresResponseCheck ||
+        requiresFollowupCheck;
+      if (isComplete) {
+        button.textContent = "Completed";
+      }
+    }
+  });
+
+  conversionProgressDots.forEach((dot) => {
+    const dotIndex = Number(dot.dataset.conversionProgressDot);
+    dot.classList.toggle("complete", dotIndex < conversionTrailProgress);
+    dot.classList.toggle("active", dotIndex === conversionTrailProgress);
+  });
+
+  if (conversionAppStatus) {
+    conversionAppStatus.textContent =
+      conversionTrailProgress === 0
+        ? "Step 1 is ready. Begin with honesty before God."
+        : conversionStepStatusMessages[conversionTrailProgress - 1] ||
+          "Conversion Trail progress saved.";
+  }
+
+  updateTrailCompass({
+    trailKey: "conversion",
+    progress: conversionTrailProgress,
+    total: totalConversionTrailSteps,
+    detail:
+      conversionTrailProgress >= totalConversionTrailSteps
+        ? "Trail complete. Follow Christ with His people."
+        : conversionTrailProgress === 0
+          ? isConversionHonestyConfirmed
+            ? "Honesty confirmed. Step 1 is ready."
+            : "Begin with honesty before God."
+          : conversionStepStatusMessages[conversionTrailProgress - 1] ||
+            "Conversion Trail progress saved.",
+    state: conversionTrailProgress === 0 && isConversionHonestyConfirmed ? "success" : ""
+  });
+
+  if (conversionTrailProgress === 0 && isConversionHonestyConfirmed) {
+    setConversionHonestyStatus("Honest willingness confirmed. You can complete Step 1.", "success");
+  }
+
+  if (conversionTrailProgress === 1 && isConversionGospelConfirmed) {
+    setConversionGospelStatus("Gospel invitation received. You can complete Step 2.", "success");
+  }
+
+  if (conversionTrailProgress === 3 && isConversionResponseConfirmed) {
+    setConversionResponseStatus("Honest response confirmed. You can complete Step 4.", "success");
+  }
+
+  if (conversionTrailProgress === 4 && isConversionFollowupConfirmed) {
+    setConversionFollowupStatus("Follow-up confirmed. You can complete the trail.", "success");
   }
 };
 
@@ -1602,6 +1783,84 @@ emmausWitnessConfirmButton?.addEventListener("click", () => {
   renderEmmausTrail();
 });
 
+conversionHonestyConfirmButton?.addEventListener("click", () => {
+  setConversionHonestyConfirmed(true);
+  setConversionHonestyStatus("Honest willingness confirmed. You can complete Step 1.", "success");
+  renderConversionTrail();
+});
+
+conversionGospelConfirmButton?.addEventListener("click", () => {
+  setConversionGospelConfirmed(true);
+  setConversionGospelStatus("Gospel invitation received. You can complete Step 2.", "success");
+  renderConversionTrail();
+});
+
+conversionResponseTypeInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    setConversionResponseConfirmed(false);
+    setConversionResponseStatus("Confirm the honest response note to continue.");
+    renderConversionTrail();
+  });
+});
+
+conversionResponseNoteInput?.addEventListener("input", () => {
+  setConversionResponseConfirmed(false);
+  setConversionResponseStatus("Confirm the honest response note to continue.");
+  renderConversionTrail();
+});
+
+conversionResponseConfirmButton?.addEventListener("click", () => {
+  const responseType = getSelectedConversionResponseType();
+  const responseNote = conversionResponseNoteInput?.value.trim();
+
+  if (!responseType) {
+    setConversionResponseConfirmed(false);
+    setConversionResponseStatus("Choose the response that is most honest right now.", "error");
+    renderConversionTrail();
+    return;
+  }
+
+  if (!responseNote) {
+    setConversionResponseConfirmed(false);
+    setConversionResponseStatus("Add one honest sentence before continuing.", "error");
+    renderConversionTrail();
+    return;
+  }
+
+  setConversionResponseConfirmed(true);
+  localStorage.setItem(
+    "gold-vein-conversion-response",
+    JSON.stringify({
+      responseType,
+      responseNote
+    })
+  );
+  setConversionResponseStatus("Honest response confirmed. You can complete Step 4.", "success");
+  renderConversionTrail();
+});
+
+conversionFollowupNameInput?.addEventListener("input", () => {
+  setConversionFollowupConfirmed(false);
+  setConversionFollowupStatus("Confirm the follow-up connection to complete this trail.");
+  renderConversionTrail();
+});
+
+conversionFollowupConfirmButton?.addEventListener("click", () => {
+  const followupName = conversionFollowupNameInput?.value.trim();
+
+  if (!followupName) {
+    setConversionFollowupConfirmed(false);
+    setConversionFollowupStatus("Add a follow-up person before completing the trail.", "error");
+    renderConversionTrail();
+    return;
+  }
+
+  setConversionFollowupConfirmed(true);
+  localStorage.setItem("gold-vein-conversion-followup-name", followupName);
+  setConversionFollowupStatus(`Follow-up confirmed with ${followupName}.`, "success");
+  renderConversionTrail();
+});
+
 stepButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const completedStep = Number(button.dataset.completeStep);
@@ -1797,6 +2056,55 @@ resetEmmausTrailButton?.addEventListener("click", () => {
   renderEmmausTrail();
 });
 
+conversionStepButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const completedStep = Number(button.dataset.completeConversionStep);
+    if (completedStep !== conversionTrailProgress) {
+      return;
+    }
+
+    conversionTrailProgress = Math.min(completedStep + 1, totalConversionTrailSteps);
+    localStorage.setItem("gold-vein-conversion-progress", String(conversionTrailProgress));
+    renderConversionTrail();
+  });
+});
+
+resetConversionTrailButton?.addEventListener("click", () => {
+  conversionTrailProgress = 0;
+  setConversionHonestyConfirmed(false);
+  setConversionGospelConfirmed(false);
+  setConversionResponseConfirmed(false);
+  setConversionFollowupConfirmed(false);
+  localStorage.setItem("gold-vein-conversion-progress", "0");
+  localStorage.removeItem("gold-vein-conversion-response");
+  localStorage.removeItem("gold-vein-conversion-followup-name");
+  conversionResponseTypeInputs.forEach((input) => {
+    input.checked = false;
+  });
+  if (conversionResponseNoteInput) {
+    conversionResponseNoteInput.value = "";
+  }
+  if (conversionFollowupNameInput) {
+    conversionFollowupNameInput.value = "";
+  }
+  conversionStepButtons.forEach((button) => {
+    const stepIndex = Number(button.dataset.completeConversionStep);
+    const labels = [
+      "I am willing to look to Christ",
+      "I received the gospel invitation",
+      "I experienced the passage",
+      "I named my response",
+      "I connected for follow-up"
+    ];
+    button.textContent = labels[stepIndex] || button.textContent;
+  });
+  setConversionHonestyStatus("Honest willingness is required before continuing.");
+  setConversionGospelStatus("Receive the gospel invitation to unlock the Scripture Map.");
+  setConversionResponseStatus("Honest response confirmation required before continuing.");
+  setConversionFollowupStatus("Follow-up connection required before this trail can be completed.");
+  renderConversionTrail();
+});
+
 redeemButton?.addEventListener("click", () => {
   const pass = redemptionPasses[activeRedeemCode];
 
@@ -1826,6 +2134,7 @@ renderTrail();
 renderGlobalTrail();
 renderHomeTrail();
 renderEmmausTrail();
+renderConversionTrail();
 setJournalDateTimeDefaults();
 renderJournalEntries();
 renderAdventureDrafts();

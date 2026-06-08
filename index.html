@@ -59,6 +59,10 @@
             <span>Walkable / Hikeable</span>
             <strong>Emmaus Road</strong>
           </a>
+          <a href="#conversion-adventure-app">
+            <span>Gospel Response</span>
+            <strong>Conversion Trail</strong>
+          </a>
         </div>
       </div>
     </header>
@@ -114,6 +118,10 @@
             <a href="#emmaus-adventure-app">
               <span>Walkable / Hikeable</span>
               <strong>Emmaus Road</strong>
+            </a>
+            <a href="#conversion-adventure-app">
+              <span>Gospel Response</span>
+              <strong>Conversion Trail</strong>
             </a>
           </div>
 
@@ -240,6 +248,37 @@
                 </div>
               </dl>
               <a class="button primary wide" href="#emmaus-adventure-app">Open Emmaus Road</a>
+            </article>
+
+            <article class="adventure-card available">
+              <div class="card-topline">
+                <span class="status-pill">Gospel Response</span>
+                <span>A trail for looking to Christ, responding, and being followed up</span>
+              </div>
+              <h3>Conversion Trail</h3>
+              <p>
+                Open John 3:1-18, hear the gospel, name an honest response, and connect with
+                a believer for prayer, questions, and the next faithful step.
+              </p>
+              <dl class="trail-meta">
+                <div>
+                  <dt>Map</dt>
+                  <dd>John 3:1-18</dd>
+                </div>
+                <div>
+                  <dt>Difficulty</dt>
+                  <dd>Honest Response</dd>
+                </div>
+                <div>
+                  <dt>Time</dt>
+                  <dd>20-50 minutes</dd>
+                </div>
+                <div>
+                  <dt>Companion</dt>
+                  <dd>Follow-up person</dd>
+                </div>
+              </dl>
+              <a class="button primary wide" href="#conversion-adventure-app">Open Conversion Trail</a>
             </article>
           </div>
         </div>
@@ -1277,6 +1316,225 @@
 
             <p class="app-status" data-emmaus-app-status aria-live="polite">
               Step 1 is ready. Confirm the road to unlock the first confirmation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="app-section app-page conversion-app-section" id="conversion-adventure-app" aria-labelledby="conversion-app-title" data-page>
+        <div class="section-inner app-layout">
+          <div class="app-copy">
+            <p class="section-label">Gospel Response</p>
+            <h2 id="conversion-app-title">The Conversion Trail.</h2>
+            <p>
+              A Gold Vein trail for someone willing to look honestly to Jesus Christ: hear the
+              gospel, bring questions into the light, respond, and connect with a follower of
+              Jesus for prayer and follow-up.
+            </p>
+            <dl class="panel-meta">
+              <div>
+                <dt>Trail</dt>
+                <dd>Gospel Response No. 1 · Conversion Trail</dd>
+              </div>
+              <div>
+                <dt>Map</dt>
+                <dd>John 3:1-18</dd>
+              </div>
+              <div>
+                <dt>Unlocks</dt>
+                <dd>Honesty + Gospel + Word + Response + Follow-up</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="phone-shell" aria-label="Gold Vein conversion trail prototype">
+            <div class="phone-top">
+              <span>Gold Vein Gospel</span>
+              <button class="mini-button" type="button" data-reset-conversion-trail>Reset</button>
+            </div>
+
+            <div class="app-progress" aria-label="Conversion trail progress">
+              <span class="progress-dot active" data-conversion-progress-dot="0"></span>
+              <span class="progress-dot" data-conversion-progress-dot="1"></span>
+              <span class="progress-dot" data-conversion-progress-dot="2"></span>
+              <span class="progress-dot" data-conversion-progress-dot="3"></span>
+              <span class="progress-dot" data-conversion-progress-dot="4"></span>
+            </div>
+
+            <div class="trail-compass" data-trail-compass="conversion" aria-live="polite">
+              <div class="compass-dial" aria-hidden="true">
+                <span class="compass-needle"></span>
+              </div>
+              <div>
+                <span data-compass-label>Step 1 · Look</span>
+                <strong data-compass-detail>Begin with honesty before God.</strong>
+              </div>
+            </div>
+
+            <article class="app-step" data-conversion-step="0">
+              <p class="step-label">Step 1 · Look</p>
+              <h3>Begin with honesty.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Pause and ask: "Jesus, if You are the Son of God, help me see what is true."</p>
+                <p><strong>Attention:</strong> Notice what rises in you: curiosity, resistance, fear, hope, confusion, desire, or weariness.</p>
+              </div>
+              <div class="conversation-prompt">
+                This app cannot convert anyone. It can only help you come into the light and look to Christ.
+              </div>
+              <button class="button secondary wide" type="button" data-conversion-honesty-confirm>
+                I am willing to look honestly
+              </button>
+              <p class="companion-status" data-conversion-honesty-status aria-live="polite">
+                Honest willingness is required before continuing.
+              </p>
+              <button class="button primary wide" type="button" data-complete-conversion-step="0">
+                I am willing to look to Christ
+              </button>
+            </article>
+
+            <article class="app-step locked" data-conversion-step="1" aria-disabled="true">
+              <p class="step-label">Step 2 · Hear</p>
+              <h3>Receive the gospel invitation.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Hear the good news: God loved the world and gave His Son, that whoever believes in Him shall not perish but have eternal life.</p>
+                <p><strong>Attention:</strong> Do not rush past the word <strong>gave</strong>. Salvation is received by faith, not earned by performance.</p>
+              </div>
+              <div class="companion-pass global-pass" aria-label="Gold Vein Gospel Invitation Pass">
+                <div class="phone-touch-icon" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <span>Gospel Invitation</span>
+                  <strong>GV-GSP-CONV-001</strong>
+                  <small>Look to Christ · Believe · Receive life</small>
+                </div>
+              </div>
+              <button class="button secondary wide" type="button" data-conversion-gospel-confirm>
+                I received the gospel invitation
+              </button>
+              <p class="companion-status" data-conversion-gospel-status aria-live="polite">
+                Receive the gospel invitation to unlock the Scripture Map.
+              </p>
+              <button class="button primary wide" type="button" data-complete-conversion-step="1">
+                I received the gospel invitation
+              </button>
+            </article>
+
+            <article class="app-step locked treasure-step" data-conversion-step="2" aria-disabled="true">
+              <p class="step-label">Step 3 · Word</p>
+              <h3>Look at John 3:1-18.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Read John 3:1-18 slowly.</p>
+                <p><strong>Attention:</strong> What does Jesus say must happen? What does God give? What does belief receive? What does light expose?</p>
+              </div>
+              <details class="scripture-map">
+                <summary>Open Conversion Scripture Map</summary>
+                <div class="map-intro">
+                  <p>
+                    If you have a Bible with you, open it first. Use this map to discover the
+                    conversation, promise, warning, invitation, and power of the passage.
+                  </p>
+                </div>
+                <div class="map-grid">
+                  <article>
+                    <span>Context</span>
+                    <p>Nicodemus is religious, respected, and still needs new birth from above.</p>
+                  </article>
+                  <article>
+                    <span>Need</span>
+                    <p>Jesus says a person must be born again to see and enter the kingdom of God.</p>
+                  </article>
+                  <article>
+                    <span>Gift</span>
+                    <p>The Father gives the Son. The Son is lifted up. Eternal life is received by believing in Him.</p>
+                  </article>
+                  <article>
+                    <span>Inner Life</span>
+                    <p>Notice whether you are hiding from light, coming toward light, or asking for mercy.</p>
+                  </article>
+                  <article>
+                    <span>Power + Fruit</span>
+                    <p>The Big Treasure is Christ revealed as Savior and Lord, bringing life where there was death.</p>
+                  </article>
+                </div>
+              </details>
+              <button class="button primary wide" type="button" data-complete-conversion-step="2">
+                I experienced the passage
+              </button>
+            </article>
+
+            <article class="app-step locked" data-conversion-step="3" aria-disabled="true">
+              <p class="step-label">Step 4 · Respond</p>
+              <h3>Name your honest response.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Choose the response that is most honest right now, then write one sentence.</p>
+                <p><strong>Attention:</strong> The goal is truth in the light, not pretending to be somewhere you are not.</p>
+              </div>
+              <div class="gift-unlock" aria-label="Conversion response unlock">
+                <p class="unlock-label">Choose your honest response.</p>
+                <div class="gift-grid">
+                  <label>
+                    <input type="radio" name="conversion-response-type" value="I believe" data-conversion-response-type>
+                    <span>I believe</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="conversion-response-type" value="I want to believe" data-conversion-response-type>
+                    <span>I want to believe</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="conversion-response-type" value="I have questions" data-conversion-response-type>
+                    <span>Questions</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="conversion-response-type" value="I need prayer" data-conversion-response-type>
+                    <span>Prayer</span>
+                  </label>
+                </div>
+                <label class="compact-label">
+                  Honest response note
+                  <textarea data-conversion-response-note rows="3" placeholder="Jesus, I believe... / I want to believe... / My question is..."></textarea>
+                </label>
+                <button class="button secondary wide" type="button" data-conversion-response-confirm>
+                  Confirm Honest Response
+                </button>
+                <p class="witness-status" data-conversion-response-status aria-live="polite">
+                  Honest response confirmation required before continuing.
+                </p>
+              </div>
+              <button class="button primary wide" type="button" data-complete-conversion-step="3">
+                I named my response
+              </button>
+            </article>
+
+            <article class="app-step locked" data-conversion-step="4" aria-disabled="true">
+              <p class="step-label">Step 5 · Follow</p>
+              <h3>Connect for follow-up.</h3>
+              <div class="step-guidance">
+                <p><strong>Instruction:</strong> Invite a follower of Jesus into this moment for prayer, questions, confession, baptism, church, or the next faithful step.</p>
+                <p><strong>Attention:</strong> New life is not meant to be carried alone. Follow Christ with His people.</p>
+              </div>
+              <label class="compact-label">
+                Follow-up person
+                <input type="text" data-conversion-followup-name placeholder="Example: Sarah, Pastor M., brother from group">
+              </label>
+              <div class="conversation-prompt">
+                "I am on a Gold Vein Conversion Trail. I read John 3 and need someone to pray with me and help me take the next step."
+              </div>
+              <button class="button secondary wide" type="button" data-conversion-followup-confirm>
+                Confirm Follow-up Connection
+              </button>
+              <p class="companion-status" data-conversion-followup-status aria-live="polite">
+                Follow-up connection required before this trail can be completed.
+              </p>
+              <button class="button primary wide" type="button" data-complete-conversion-step="4">
+                I connected for follow-up
+              </button>
+              <a class="button secondary wide" href="#field-notes">Open Field Notes</a>
+            </article>
+
+            <p class="app-status" data-conversion-app-status aria-live="polite">
+              Step 1 is ready. Begin with honesty before God.
             </p>
           </div>
         </div>
