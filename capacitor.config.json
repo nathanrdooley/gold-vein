@@ -1,0 +1,14 @@
+{
+  "appId": "com.goldvein.app",
+  "appName": "Gold Vein",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "backgroundColor": "#0f1417"
+    }
+  }
+}

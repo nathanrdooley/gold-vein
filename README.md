@@ -28,6 +28,9 @@ This first version is a static PWA-style website with multiple prototype adventu
 See `PILOT_PLAN.md` for the current pilot plan, Watermark coffee test, unlock system, and suggested
 next technical milestones.
 
+See `MOBILE_APP_PLAN.md` for the Capacitor app-store path, native build steps, required developer
+tools, and store submission checklist.
+
 ## Redemption Pilot
 
 The first real-world coffee test can use prepaid shop credit instead of payment automation.
@@ -75,5 +78,9 @@ On iPhone, open the URL in Safari, tap Share, then choose **Add to Home Screen**
 - `manifest.json` - installable app metadata
 - `service-worker.js` - app shell caching
 - `PILOT_PLAN.md` - project brief and V1 pilot plan
+- `MOBILE_APP_PLAN.md` - iOS/Android app-store preparation plan
+- `PRIVACY.md` - privacy policy draft for review before public launch
+- `capacitor.config.json` - Capacitor native app wrapper configuration
+- `package.json` - mobile wrapper scripts and dependencies
 - `assets/gold-vein-hero.png` - hero image
 - `assets/gold-vein-icon.svg` - app icon
