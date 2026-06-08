@@ -188,6 +188,36 @@ h1 {
   width: 100%;
 }
 
+.trail-type-strip {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 24px;
+}
+
+.trail-type-strip a {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: grid;
+  min-height: 86px;
+  padding: 14px;
+}
+
+.trail-type-strip span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trail-type-strip strong {
+  align-self: end;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
 .section,
 .adventure-section,
 .app-section,
@@ -1170,6 +1200,7 @@ input:focus {
   .app-layout,
   .adventure-card-grid,
   .search-panel,
+  .trail-type-strip,
   .framework-grid {
     grid-template-columns: 1fr;
   }
