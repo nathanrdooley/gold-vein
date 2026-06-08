@@ -8,6 +8,8 @@ const appSteps = document.querySelectorAll("[data-app-step]");
 const progressDots = document.querySelectorAll("[data-progress-dot]");
 const appStatus = document.querySelector("[data-app-status]");
 const appPages = document.querySelectorAll("[data-page]");
+const heroAdventureToggle = document.querySelector("[data-toggle-hero-adventures]");
+const heroAdventureChooser = document.querySelector("[data-hero-adventures]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
 const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
 const checkLocationButton = document.querySelector("[data-check-location]");
@@ -770,6 +772,16 @@ testimonyButton?.addEventListener("click", async () => {
 
 printButton?.addEventListener("click", () => {
   window.print();
+});
+
+heroAdventureToggle?.addEventListener("click", () => {
+  if (!heroAdventureChooser) {
+    return;
+  }
+
+  const isOpen = !heroAdventureChooser.hidden;
+  heroAdventureChooser.hidden = isOpen;
+  heroAdventureToggle.setAttribute("aria-expanded", String(!isOpen));
 });
 
 searchButton?.addEventListener("click", () => {

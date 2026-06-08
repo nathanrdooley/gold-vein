@@ -125,6 +125,42 @@ h1 {
   margin-top: 34px;
 }
 
+.hero-adventure-chooser {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 18px;
+  max-width: 920px;
+}
+
+.hero-adventure-chooser[hidden] {
+  display: none;
+}
+
+.hero-adventure-chooser a {
+  background: rgba(15, 20, 23, 0.72);
+  border: 1px solid rgba(245, 199, 95, 0.3);
+  border-radius: var(--radius);
+  display: grid;
+  min-height: 96px;
+  padding: 14px;
+}
+
+.hero-adventure-chooser span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.hero-adventure-chooser strong {
+  align-self: end;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
 .home-menu {
   display: grid;
   gap: 12px;
@@ -1181,6 +1217,10 @@ input:focus {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .hero-adventure-chooser {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero {
     min-height: 88vh;
   }
@@ -1258,6 +1298,10 @@ input:focus {
 
 @media (max-width: 560px) {
   .home-menu {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-adventure-chooser {
     grid-template-columns: 1fr;
   }
 
