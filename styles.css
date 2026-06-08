@@ -1155,6 +1155,43 @@ dd {
   gap: 16px;
 }
 
+.journal-meta-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.weather-row {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.weather-status {
+  color: var(--muted);
+  margin: -6px 0 0;
+  min-height: 1.35em;
+}
+
+.weather-status[data-state="checking"] {
+  color: var(--gold);
+}
+
+.weather-status[data-state="success"] {
+  color: #98e4b1;
+}
+
+.weather-status[data-state="error"] {
+  color: #ffaaaa;
+}
+
+.journal-log-title {
+  color: var(--ink);
+  font-size: 1.25rem;
+  margin: 0 0 14px;
+}
+
 .journal-list {
   display: grid;
   gap: 14px;
@@ -1288,6 +1325,11 @@ input:focus {
 
   .hero-adventure-chooser {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journal-meta-grid,
+  .weather-row {
+    grid-template-columns: 1fr;
   }
 
   .hero {

@@ -1,7 +1,10 @@
 const notesButton = document.querySelector("[data-save-notes]");
 const journalDateInput = document.querySelector("[data-journal-date]");
 const journalTimeInput = document.querySelector("[data-journal-time]");
+const journalWeatherInput = document.querySelector("[data-journal-weather]");
 const journalList = document.querySelector("[data-journal-list]");
+const useWeatherButton = document.querySelector("[data-use-weather]");
+const weatherStatus = document.querySelector("[data-weather-status]");
 const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
@@ -169,6 +172,44 @@ const setJournalDateTimeDefaults = () => {
   }
 };
 
+const weatherDescriptions = {
+  0: "Clear",
+  1: "Mostly clear",
+  2: "Partly cloudy",
+  3: "Overcast",
+  45: "Fog",
+  48: "Freezing fog",
+  51: "Light drizzle",
+  53: "Drizzle",
+  55: "Heavy drizzle",
+  61: "Light rain",
+  63: "Rain",
+  65: "Heavy rain",
+  71: "Light snow",
+  73: "Snow",
+  75: "Heavy snow",
+  80: "Rain showers",
+  81: "Rain showers",
+  82: "Heavy rain showers",
+  95: "Thunderstorm"
+};
+
+const setWeatherStatus = (message, state = "") => {
+  if (!weatherStatus) {
+    return;
+  }
+
+  weatherStatus.textContent = message;
+  weatherStatus.dataset.state = state;
+};
+
+const formatWeather = (currentWeather) => {
+  const description = weatherDescriptions[currentWeather.weathercode] || "Weather recorded";
+  const temperature = Math.round((currentWeather.temperature * 9) / 5 + 32);
+  const wind = Math.round(currentWeather.windspeed);
+  return `${description}, ${temperature}F, wind ${wind} mph`;
+};
+
 const renderJournalEntries = () => {
   if (!journalList) {
     return;
@@ -200,6 +241,7 @@ const renderJournalEntries = () => {
               <dd>${escapeHtml(entry.weather || "Not recorded")}</dd>
             </div>
           </dl>
+          <p><strong>Word:</strong> ${escapeHtml(entry.scripture || "Not recorded")}</p>
           <p><strong>Treasure:</strong> ${escapeHtml(entry.treasure || "Not recorded")}</p>
           <p><strong>Next step:</strong> ${escapeHtml(entry.nextStep || "Not recorded")}</p>
         </article>
@@ -838,6 +880,57 @@ notesButton?.addEventListener("click", () => {
   form.reset();
   setJournalDateTimeDefaults();
   setStatus(notesButton, "Journal entry saved in this browser.");
+});
+
+useWeatherButton?.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    setWeatherStatus("Location is not available in this browser.", "error");
+    return;
+  }
+
+  useWeatherButton.disabled = true;
+  setWeatherStatus("Getting weather for your location...", "checking");
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      try {
+        const response = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&current_weather=true&temperature_unit=celsius&windspeed_unit=mph`
+        );
+
+        if (!response.ok) {
+          throw new Error("Weather request failed");
+        }
+
+        const data = await response.json();
+
+        if (!data.current_weather) {
+          throw new Error("Missing weather");
+        }
+
+        if (journalWeatherInput) {
+          journalWeatherInput.value = formatWeather(data.current_weather);
+        }
+
+        setWeatherStatus("Weather added to this entry.", "success");
+      } catch {
+        setWeatherStatus("Weather could not be loaded. You can type it manually.", "error");
+      } finally {
+        useWeatherButton.disabled = false;
+      }
+    },
+    () => {
+      useWeatherButton.disabled = false;
+      setWeatherStatus("Location permission is needed to add weather automatically.", "error");
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 30000,
+      timeout: 12000
+    }
+  );
 });
 
 testimonyButton?.addEventListener("click", async () => {

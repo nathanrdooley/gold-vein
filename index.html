@@ -1448,51 +1448,54 @@
           </div>
 
           <form class="notes-form">
+            <div class="journal-meta-grid">
+              <label>
+                Date
+                <input type="date" name="date" data-journal-date>
+              </label>
+              <label>
+                Time
+                <input type="time" name="time" data-journal-time>
+              </label>
+            </div>
+            <div class="weather-row">
+              <label>
+                Weather
+                <input type="text" name="weather" data-journal-weather placeholder="Tap Use My Weather">
+              </label>
+              <button class="button secondary" type="button" data-use-weather>Use My Weather</button>
+            </div>
+            <p class="weather-status" data-weather-status aria-live="polite"></p>
+            <div class="journal-meta-grid">
+              <label>
+                Trail
+                <input type="text" name="trail" placeholder="Emmaus Road">
+              </label>
+              <label>
+                Place
+                <input type="text" name="place" placeholder="Neighborhood walk">
+              </label>
+            </div>
             <label>
-              Date
-              <input type="date" name="date" data-journal-date>
-            </label>
-            <label>
-              Time
-              <input type="time" name="time" data-journal-time>
-            </label>
-            <label>
-              Weather / conditions
-              <input type="text" name="weather" placeholder="Rainy, quiet, crowded, warm, late night">
-            </label>
-            <label>
-              Trail
-              <input type="text" name="trail" placeholder="Coffee Shop Trail, Emmaus Road, Nearby Neighbor">
-            </label>
-            <label>
-              Place
-              <input type="text" name="place" placeholder="Watermark, home table, neighborhood walk">
-            </label>
-            <label>
-              Scripture / Word
-              <textarea name="scripture" rows="3" placeholder="What passage, phrase, or truth gave light?"></textarea>
-            </label>
-            <label>
-              Person / conversation
-              <textarea name="conversation" rows="3" placeholder="Who did you connect with, and what was noticed?"></textarea>
-            </label>
-            <label>
-              Inner life
-              <textarea name="reflection" rows="3" placeholder="What did you notice in your thoughts, emotions, desires, fears, or obedience?"></textarea>
+              Word
+              <textarea name="scripture" rows="3" placeholder="What Scripture, phrase, or truth gave light?"></textarea>
             </label>
             <label>
               Treasure
-              <textarea name="treasure" rows="4" placeholder="What did Christ reveal, give, heal, convict, or send you to carry?"></textarea>
+              <textarea name="treasure" rows="3" placeholder="What was uncovered, received, or given?"></textarea>
             </label>
             <label>
-              Next faithful step
-              <textarea name="nextStep" rows="3" placeholder="Prayer, follow-up, confession, service, witness, or another adventure"></textarea>
+              Next step
+              <textarea name="nextStep" rows="2" placeholder="What will you do next?"></textarea>
             </label>
             <button class="button primary" type="button" data-save-notes>Save Journal Entry</button>
             <p class="form-status" aria-live="polite"></p>
           </form>
 
-          <div class="journal-list" data-journal-list aria-live="polite"></div>
+          <div>
+            <h3 class="journal-log-title">Log</h3>
+            <div class="journal-list" data-journal-list aria-live="polite"></div>
+          </div>
         </div>
       </section>
 
