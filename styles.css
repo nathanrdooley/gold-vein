@@ -47,7 +47,7 @@ textarea {
   background:
     linear-gradient(90deg, rgba(4, 7, 8, 0.9) 0%, rgba(7, 9, 9, 0.66) 42%, rgba(7, 9, 9, 0.16) 100%),
     linear-gradient(180deg, rgba(6, 7, 8, 0.4) 0%, rgba(15, 20, 23, 0.9) 100%),
-    url("assets/gold-vein-hero.png") 58% center / cover;
+    url("assets/gold-vein-hero-clean.png") 58% center / cover;
   display: flex;
   flex-direction: column;
   position: relative;
