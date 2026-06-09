@@ -14,6 +14,8 @@ const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
 const shareAdventureButtons = document.querySelectorAll("[data-share-adventure]");
+const supportActionButtons = document.querySelectorAll("[data-support-action]");
+const supportStatus = document.querySelector("[data-support-status]");
 const resetTrailButton = document.querySelector("[data-reset-trail]");
 const stepButtons = document.querySelectorAll("[data-complete-step]");
 const appSteps = document.querySelectorAll("[data-app-step]");
@@ -1354,6 +1356,16 @@ shareAdventureButtons.forEach((button) => {
     } catch {
       setTemporaryButtonText(button, "Copy Link Failed");
     }
+  });
+});
+
+supportActionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (supportStatus) {
+      supportStatus.textContent =
+        "Payment support is not connected yet. This option is reserved for the next build.";
+    }
+    setTemporaryButtonText(button, "Coming Soon");
   });
 });
 
