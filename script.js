@@ -14,7 +14,12 @@ const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
 const shareAdventureButtons = document.querySelectorAll("[data-share-adventure]");
-const supportActionButtons = document.querySelectorAll("[data-support-action]");
+const supportOptionButtons = document.querySelectorAll("[data-support-option]");
+const supportAmountOptionButtons = document.querySelectorAll("[data-support-amount-option]");
+const saveSupportPledgeButton = document.querySelector("[data-save-support-pledge]");
+const supportTypeInput = document.querySelector("[data-support-type]");
+const supportAmountInput = document.querySelector("[data-support-amount]");
+const supportPledgeList = document.querySelector("[data-support-pledge-list]");
 const supportStatus = document.querySelector("[data-support-status]");
 const resetTrailButton = document.querySelector("[data-reset-trail]");
 const stepButtons = document.querySelectorAll("[data-complete-step]");
@@ -211,6 +216,18 @@ const getAdventureDrafts = () => {
 
 const setAdventureDrafts = (drafts) => {
   localStorage.setItem("gold-vein-adventure-drafts", JSON.stringify(drafts));
+};
+
+const getSupportPledges = () => {
+  try {
+    return JSON.parse(localStorage.getItem("gold-vein-support-pledges") || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const setSupportPledges = (pledges) => {
+  localStorage.setItem("gold-vein-support-pledges", JSON.stringify(pledges));
 };
 
 const escapeHtml = (value) =>
@@ -421,6 +438,34 @@ const renderAdventureDrafts = () => {
           </div>
           <p>${escapeHtml(draft.scripture)} · ${escapeHtml(draft.place)}</p>
           <small>Saved ${escapeHtml(draft.savedAt ? new Date(draft.savedAt).toLocaleString() : "locally")}</small>
+        </article>
+      `
+    )
+    .join("");
+};
+
+const renderSupportPledges = () => {
+  if (!supportPledgeList) {
+    return;
+  }
+
+  const pledges = getSupportPledges();
+
+  if (!pledges.length) {
+    supportPledgeList.innerHTML = '<p class="empty-journal">No support pledges saved yet.</p>';
+    return;
+  }
+
+  supportPledgeList.innerHTML = pledges
+    .map(
+      (pledge) => `
+        <article class="support-pledge">
+          <div>
+            <span>${escapeHtml(pledge.supportType)}</span>
+            <strong>$${escapeHtml(pledge.amount)}</strong>
+          </div>
+          <p>${escapeHtml(pledge.purpose || "No purpose note added.")}</p>
+          <small>${escapeHtml(pledge.note || "No contact note.")}</small>
         </article>
       `
     )
@@ -1359,14 +1404,58 @@ shareAdventureButtons.forEach((button) => {
   });
 });
 
-supportActionButtons.forEach((button) => {
+supportOptionButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    if (supportStatus) {
-      supportStatus.textContent =
-        "Payment support is not connected yet. This option is reserved for the next build.";
+    if (supportTypeInput) {
+      supportTypeInput.value = button.dataset.supportOption || "Give Freely";
     }
-    setTemporaryButtonText(button, "Coming Soon");
+    if (supportStatus) {
+      supportStatus.textContent = `${supportTypeInput?.value || "Support"} selected. Choose an amount and save a pledge.`;
+    }
+    setTemporaryButtonText(button, "Selected");
   });
+});
+
+supportAmountOptionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (supportAmountInput) {
+      supportAmountInput.value = button.dataset.supportAmountOption || "";
+    }
+  });
+});
+
+saveSupportPledgeButton?.addEventListener("click", () => {
+  const form = saveSupportPledgeButton.closest("form");
+  const data = Object.fromEntries(new FormData(form).entries());
+  const amount = Number(data.amount);
+
+  if (!amount || amount < 1) {
+    if (supportStatus) {
+      supportStatus.textContent = "Choose or enter a support amount before saving a pledge.";
+    }
+    return;
+  }
+
+  const pledge = {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    supportType: data.supportType?.trim() || "Give Freely",
+    amount: amount.toFixed(0),
+    purpose: data.purpose?.trim() || "",
+    note: data.note?.trim() || ""
+  };
+  const pledges = getSupportPledges();
+  pledges.unshift(pledge);
+  setSupportPledges(pledges);
+  renderSupportPledges();
+  form.reset();
+  if (supportTypeInput) {
+    supportTypeInput.value = pledge.supportType;
+  }
+  if (supportStatus) {
+    supportStatus.textContent =
+      "Support pledge saved locally. Payment processing is still reserved for the next build.";
+  }
 });
 
 useWeatherButton?.addEventListener("click", () => {
@@ -2195,5 +2284,6 @@ renderConversionTrail();
 setJournalDateTimeDefaults();
 renderJournalEntries();
 renderAdventureDrafts();
+renderSupportPledges();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

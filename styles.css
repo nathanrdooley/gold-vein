@@ -1356,6 +1356,76 @@ dd {
   margin-top: 18px;
 }
 
+.support-builder {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1fr);
+  margin-top: 22px;
+}
+
+.support-form,
+.support-pledge-list {
+  display: grid;
+  gap: 14px;
+}
+
+.support-form {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.amount-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.amount-grid button {
+  background: rgba(245, 199, 95, 0.14);
+  border: 1px solid rgba(245, 199, 95, 0.28);
+  border-radius: 8px;
+  color: var(--gold);
+  cursor: pointer;
+  font-weight: 900;
+  min-height: 44px;
+}
+
+.support-pledge {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.support-pledge div {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.support-pledge span {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.support-pledge strong {
+  color: var(--ink);
+  font-size: 1.25rem;
+}
+
+.support-pledge p,
+.support-pledge small {
+  color: var(--muted);
+  margin: 0;
+}
+
 .creator-form,
 .creator-output,
 .journal-trail-group {
@@ -1681,6 +1751,7 @@ select:focus {
   .creator-card dl,
   .about-grid,
   .support-grid,
+  .support-builder,
   .search-panel,
   .trail-type-strip,
   .framework-grid {
@@ -1688,6 +1759,10 @@ select:focus {
   }
 
   .trail-loop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .amount-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
