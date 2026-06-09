@@ -14,7 +14,12 @@ const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
 const shareAdventureButtons = document.querySelectorAll("[data-share-adventure]");
-const supportActionButtons = document.querySelectorAll("[data-support-action]");
+const supportOptionButtons = document.querySelectorAll("[data-support-option]");
+const supportAmountOptionButtons = document.querySelectorAll("[data-support-amount-option]");
+const saveSupportPledgeButton = document.querySelector("[data-save-support-pledge]");
+const supportTypeInput = document.querySelector("[data-support-type]");
+const supportAmountInput = document.querySelector("[data-support-amount]");
+const supportPledgeList = document.querySelector("[data-support-pledge-list]");
 const supportStatus = document.querySelector("[data-support-status]");
 const resetTrailButton = document.querySelector("[data-reset-trail]");
 const stepButtons = document.querySelectorAll("[data-complete-step]");
@@ -153,10 +158,10 @@ let isConversionFollowupConfirmed =
 let watermarkCompassDetail = "";
 
 const redemptionPasses = {
-  "GV-WM-NO1-001": {
-    location: "Watermark Coffee Shop",
+  "DEMO-NOT-REDEEMABLE": {
+    location: "Prototype only",
     adventure: "Gold Vein No. 1",
-    treasure: "One coffee"
+    treasure: "No active redemption"
   }
 };
 
@@ -211,6 +216,18 @@ const getAdventureDrafts = () => {
 
 const setAdventureDrafts = (drafts) => {
   localStorage.setItem("gold-vein-adventure-drafts", JSON.stringify(drafts));
+};
+
+const getSupportPledges = () => {
+  try {
+    return JSON.parse(localStorage.getItem("gold-vein-support-pledges") || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const setSupportPledges = (pledges) => {
+  localStorage.setItem("gold-vein-support-pledges", JSON.stringify(pledges));
 };
 
 const escapeHtml = (value) =>
@@ -427,6 +444,34 @@ const renderAdventureDrafts = () => {
     .join("");
 };
 
+const renderSupportPledges = () => {
+  if (!supportPledgeList) {
+    return;
+  }
+
+  const pledges = getSupportPledges();
+
+  if (!pledges.length) {
+    supportPledgeList.innerHTML = '<p class="empty-journal">No support pledges saved yet.</p>';
+    return;
+  }
+
+  supportPledgeList.innerHTML = pledges
+    .map(
+      (pledge) => `
+        <article class="support-pledge">
+          <div>
+            <span>${escapeHtml(pledge.supportType)}</span>
+            <strong>$${escapeHtml(pledge.amount)}</strong>
+          </div>
+          <p>${escapeHtml(pledge.purpose || "No purpose note added.")}</p>
+          <small>${escapeHtml(pledge.note || "No contact note.")}</small>
+        </article>
+      `
+    )
+    .join("");
+};
+
 const getHashParts = () => {
   const hash = window.location.hash.replace("#", "");
   const [pageId, detail] = hash.split("/");
@@ -442,7 +487,7 @@ const showActivePage = () => {
   });
 
   if (pageId === "redeem") {
-    activeRedeemCode = detail || "GV-WM-NO1-001";
+    activeRedeemCode = detail || "DEMO-NOT-REDEEMABLE";
     renderRedemption();
   }
 
@@ -835,7 +880,7 @@ const renderRedemption = () => {
     redeemTreasure.textContent = "Unknown";
     redeemState.textContent = "Invalid Code";
     redeemMessage.textContent =
-      "This code is not currently listed as a valid Gold Vein redemption pass.";
+      "This code is not currently listed as an active Gold Vein pass. No public redemption is available.";
     redeemButton.disabled = true;
     return;
   }
@@ -846,13 +891,13 @@ const renderRedemption = () => {
   redeemButton.disabled = isRedeemed;
 
   if (isRedeemed) {
-    redeemState.textContent = "Already Redeemed";
+    redeemState.textContent = "Demo Reviewed";
     redeemMessage.textContent =
-      "This coffee pass has already been marked redeemed on this device. Return to the trail and continue the adventure.";
+      "This demo pass has already been reviewed on this device. Return to the trail and continue the adventure.";
   } else {
-    redeemState.textContent = "Valid Pass";
+    redeemState.textContent = "Demo Only";
     redeemMessage.textContent =
-      "Redeem one coffee from the Gold Vein balance, then mark this code redeemed.";
+      "This prototype does not authorize a free coffee, item, or staff redemption. Mark it reviewed only for testing.";
   }
 };
 
@@ -892,7 +937,7 @@ const renderTrail = () => {
   if (appStatus) {
     appStatus.textContent =
       trailProgress === 0
-        ? "Step 1 is ready. Check your location to unlock the first confirmation."
+        ? "Step 1 is ready. Location verification is disabled in this public prototype."
         : stepStatusMessages[trailProgress - 1] || "Trail progress saved.";
   }
 
@@ -905,7 +950,9 @@ const renderTrail = () => {
         ? "Trail complete. Carry the treasure forward."
         : trailProgress === 0
           ? watermarkCompassDetail ||
-            (isLocationVerified ? "At Watermark. Step 1 is ready." : "Awaiting location check.")
+            (isLocationVerified
+              ? "Prototype location reviewed. Step 1 is ready."
+              : "Location verification is disabled in this public prototype.")
           : stepStatusMessages[trailProgress - 1] || "Trail progress saved.",
     state: trailProgress === 0 && !isLocationVerified && watermarkCompassDetail ? "error" : ""
   });
@@ -1359,14 +1406,58 @@ shareAdventureButtons.forEach((button) => {
   });
 });
 
-supportActionButtons.forEach((button) => {
+supportOptionButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    if (supportStatus) {
-      supportStatus.textContent =
-        "Payment support is not connected yet. This option is reserved for the next build.";
+    if (supportTypeInput) {
+      supportTypeInput.value = button.dataset.supportOption || "Give Freely";
     }
-    setTemporaryButtonText(button, "Coming Soon");
+    if (supportStatus) {
+      supportStatus.textContent = `${supportTypeInput?.value || "Support"} selected. Choose an amount and save a pledge.`;
+    }
+    setTemporaryButtonText(button, "Selected");
   });
+});
+
+supportAmountOptionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (supportAmountInput) {
+      supportAmountInput.value = button.dataset.supportAmountOption || "";
+    }
+  });
+});
+
+saveSupportPledgeButton?.addEventListener("click", () => {
+  const form = saveSupportPledgeButton.closest("form");
+  const data = Object.fromEntries(new FormData(form).entries());
+  const amount = Number(data.amount);
+
+  if (!amount || amount < 1) {
+    if (supportStatus) {
+      supportStatus.textContent = "Choose or enter a support amount before saving a pledge.";
+    }
+    return;
+  }
+
+  const pledge = {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    supportType: data.supportType?.trim() || "Give Freely",
+    amount: amount.toFixed(0),
+    purpose: data.purpose?.trim() || "",
+    note: data.note?.trim() || ""
+  };
+  const pledges = getSupportPledges();
+  pledges.unshift(pledge);
+  setSupportPledges(pledges);
+  renderSupportPledges();
+  form.reset();
+  if (supportTypeInput) {
+    supportTypeInput.value = pledge.supportType;
+  }
+  if (supportStatus) {
+    supportStatus.textContent =
+      "Support pledge saved locally. Payment processing is still reserved for the next build.";
+  }
 });
 
 useWeatherButton?.addEventListener("click", () => {
@@ -1460,12 +1551,12 @@ checkLocationButton?.addEventListener("click", () => {
   }
 
   checkLocationButton.disabled = true;
-  setLocationStatus("Checking your location...", "checking");
+  setLocationStatus("Previewing the future location-check pattern...", "checking");
   updateTrailCompass({
     trailKey: "watermark",
     progress: trailProgress,
     total: totalTrailSteps,
-    detail: "Checking distance to Watermark...",
+    detail: "Previewing the future location-check pattern...",
     state: "checking"
   });
 
@@ -1480,13 +1571,13 @@ checkLocationButton?.addEventListener("click", () => {
 
       if (distanceMeters <= watermarkLocation.radiusMeters) {
         setLocationVerified(true);
-        watermarkCompassDetail = "At Watermark. Step 1 is ready.";
-        setLocationStatus("Location confirmed. You can complete Step 1.", "success");
+        watermarkCompassDetail = "Prototype location reviewed. Step 1 is ready.";
+        setLocationStatus("Prototype location reviewed. You can complete Step 1.", "success");
       } else {
         setLocationVerified(false);
-        watermarkCompassDetail = `About ${distanceMiles.toFixed(1)} miles from Watermark.`;
+        watermarkCompassDetail = `Future partner-location check previewed from about ${distanceMiles.toFixed(1)} miles away.`;
         setLocationStatus(
-          `You are about ${distanceMiles.toFixed(1)} miles from the trail location.`,
+          `Future partner-location check previewed from about ${distanceMiles.toFixed(1)} miles away.`,
           "error"
         );
       }
@@ -1953,7 +2044,7 @@ resetTrailButton?.addEventListener("click", () => {
     const stepIndex = Number(button.dataset.completeStep);
     const labels = [
       "I'm at the location",
-      "I received the small gift",
+      "I understand this is a demo",
       "I experienced the passage",
       "I connected with someone",
       "I gave the treasure"
@@ -2177,7 +2268,7 @@ redeemButton?.addEventListener("click", () => {
   }
 
   renderRedemption();
-  redeemMessage.textContent = "Coffee redeemed. Returning to the trail with Step 3 unlocked.";
+  redeemMessage.textContent = "Demo reviewed. Returning to the trail with Step 3 unlocked.";
   continueAdventureAfterRedemption();
 });
 
@@ -2195,5 +2286,6 @@ renderConversionTrail();
 setJournalDateTimeDefaults();
 renderJournalEntries();
 renderAdventureDrafts();
+renderSupportPledges();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);
