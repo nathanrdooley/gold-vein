@@ -25,22 +25,21 @@ This first version is a static PWA-style website with multiple prototype adventu
 - Local note saving in the browser
 - Testimony preparation flow
 
-See `PILOT_PLAN.md` for the current pilot plan, Watermark coffee test, unlock system, and suggested
+See `PILOT_PLAN.md` for the future partner-location pilot, unlock system, and suggested
 next technical milestones.
 
 See `MOBILE_APP_PLAN.md` for the Capacitor app-store path, native build steps, required developer
 tools, and store submission checklist.
 
-## Redemption Pilot
+## Redemption Pilot Status
 
-The first real-world coffee test can use prepaid shop credit instead of payment automation.
+The public V1 is a prototype. No Watermark Coffee Shop redemption is active, and the app should not
+be presented to staff as a free coffee pass.
 
-- A $20 Watermark gift card balance is used to start the pilot.
-- The app shows a unique code such as `GV-WM-NO1-001`.
-- The code proves the participant is on Gold Vein Adventure No. 1.
-- Watermark redeems one coffee from the prepaid Gold Vein gift card balance.
-- The code is checked off manually for the pilot.
-- Later, Glen can turn this into digital redemption tracking with one-time codes.
+- The app may show non-redeemable demo pass language while the concept is tested.
+- Any real partner-location redemption must be separately approved, funded, and communicated with
+  the partner before launch.
+- A future version can turn this into digital redemption tracking with one-time codes.
 
 ## Local Preview
 

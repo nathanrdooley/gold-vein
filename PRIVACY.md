@@ -29,10 +29,10 @@ participant chooses to submit them.
 
 ### Redemption Codes
 
-Gold Vein may display or redeem adventure passes, such as a coffee pass.
+Gold Vein may eventually display or redeem adventure passes, such as a prepared-gift pass.
 
-In the current V1 prototype, redemption status is stored locally on the device. A future version may
-use a server to validate one-time codes across devices.
+In the current public V1 prototype, no live redemption is active. Demo status is stored locally on
+the device. A future version may use a server to validate one-time codes across devices.
 
 ## How Information Is Used
 

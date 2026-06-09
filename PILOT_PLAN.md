@@ -36,7 +36,7 @@ https://gold-vein.vercel.app/
 
 **Gold Vein No. 1: What Does It Mean to Enter the Kingdom of Christ?**
 
-- Location: Watermark Coffee Shop
+- Location: future approved partner location
 - Scripture Map: 2 Peter 1:3-11
 - Unlocks: Place, Pass, Word, Person, Gift/Witness
 - Special feature: coffee redemption pass
@@ -78,7 +78,7 @@ The participant confirms they are in the intended place.
 
 Examples:
 
-- GPS check for Watermark
+- GPS check for an approved partner location
 - nearby public place confirmation
 - home place confirmation
 - walking trail or road confirmation
@@ -117,39 +117,39 @@ follow-up.
 The participant gives the treasure through prayer, encouragement, service, generosity, testimony,
 hospitality, listening, or follow-up, then records a short witness note.
 
-## Watermark Coffee Pilot
+## Future Partner-Location Pilot
 
-The first real-world test can use prepaid shop credit instead of payment automation.
+Status: not active in the public prototype.
+
+The public V1 must not imply that Watermark Coffee Shop staff should redeem a pass, scan a code, or
+provide free coffee. Any real-world test should be separately approved, funded, and communicated
+with Watermark staff before launch.
 
 ### Simple Version
 
-1. Put a small Gold Vein balance on file at Watermark, such as the existing $20 gift card.
-2. Participant reaches Step 2 and shows the Gold Vein coffee pass.
-3. Barista opens or scans the pass.
-4. Barista confirms it is valid.
-5. Barista marks the pass redeemed.
-6. Participant receives coffee from the Gold Vein balance.
-7. App returns participant to the trail with Step 3 unlocked.
+1. Confirm approval, funding, staff instructions, and redemption limits with Watermark.
+2. Create a real one-time pass system that cannot be reused across devices.
+3. Train the staff-facing flow before inviting participants.
+4. Launch only after the app copy, QR codes, and support process match the approved pilot.
 
-### Current Code
+### Public Prototype Code
 
 ```txt
-GV-WM-NO1-001
+DEMO-NOT-REDEEMABLE
 ```
 
 Meaning:
 
 - `GV` = Gold Vein
-- `WM` = Watermark
-- `NO1` = Adventure No. 1
-- `001` = first pilot redemption code
+- `DEMO` = prototype only
+- `NOT-REDEEMABLE` = no free item or staff-facing redemption is authorized
 
 ### Current Limitation
 
-The current redemption system stores redemption state in the local browser only.
+The current demo system stores status in the local browser only.
 
-That means it demonstrates the experience, but it does not yet prevent the same code from being
-redeemed on a different device.
+That means it demonstrates a possible experience, but it does not validate one-time codes across
+devices and should not be used for real redemption.
 
 ## What Needs Testing
 
@@ -161,7 +161,7 @@ redeemed on a different device.
 - Does the app feel like an adventure instead of a form?
 - Does the participant know what to do next at each step?
 
-### Watermark Pilot
+### Partner-Location Pilot
 
 - Will the barista understand the pass?
 - Is the wording clear enough at the counter?
@@ -197,7 +197,7 @@ Needed features:
 - code status: issued, valid, redeemed, expired
 - redemption timestamp
 - device or redeemer notes
-- admin view for Watermark or Gold Vein
+- admin view for the partner location or Gold Vein
 - prevention of duplicate redemption across devices
 
 ### Trail Engine
@@ -248,15 +248,15 @@ Later, Gold Vein may need:
 - group/church trails
 - consent-aware sharing
 
-## Questions for Watermark
+## Questions for a Future Partner Location
 
-- Can a Gold Vein balance be held at the coffee shop?
-- Can baristas redeem from that balance manually?
+- Can a Gold Vein balance be held at the partner location?
+- Can staff redeem from that balance manually?
 - Would staff prefer a printed code sheet, a QR page, or both?
 - What wording would feel natural at the counter?
 - How many pilot redemptions should be allowed?
 - Who should approve or monitor the pilot?
-- Would Watermark want this limited to certain days or times?
+- Would the partner want this limited to certain days or times?
 
 ## Questions for Glen
 
@@ -273,7 +273,7 @@ Run one small pilot.
 
 Suggested pilot:
 
-1. Keep Watermark Adventure as the first location-based test.
+1. Keep the prepared-gift trail as the first location-based test.
 2. Use one Gold Vein code and one small prepaid balance.
 3. Have one or two trusted participants complete the adventure.
 4. Watch where they hesitate.
