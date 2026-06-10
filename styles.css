@@ -436,6 +436,153 @@ h3 {
   grid-column: 1 / -1;
 }
 
+.adventure-category-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 22px;
+}
+
+.category-card {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 20px;
+  min-height: 310px;
+  padding: 20px;
+}
+
+.category-card.featured {
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.16), rgba(132, 214, 161, 0.08)),
+    rgba(255, 255, 255, 0.055);
+  border-color: rgba(245, 199, 95, 0.34);
+}
+
+.category-card span,
+.journey-node span {
+  color: var(--gold);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.category-card h3,
+.shared-journey-copy h3 {
+  margin: 8px 0 10px;
+}
+
+.category-card p,
+.shared-journey-copy p,
+.journey-node small,
+.traveler-board span {
+  color: var(--muted);
+  margin: 0;
+}
+
+.trail-chip-list {
+  align-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trail-chip-list a {
+  background: rgba(15, 20, 23, 0.52);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
+.shared-journey-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(245, 199, 95, 0.08)),
+    rgba(15, 20, 23, 0.28);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1fr) minmax(250px, 0.8fr);
+  margin: 0 0 24px;
+  padding: 22px;
+}
+
+.journey-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.journey-map {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.journey-node {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  min-height: 118px;
+  padding: 14px;
+  position: relative;
+}
+
+.journey-node.active {
+  border-color: rgba(245, 199, 95, 0.55);
+  box-shadow: 0 0 0 1px rgba(245, 199, 95, 0.18);
+}
+
+.journey-node.complete {
+  border-color: rgba(132, 214, 161, 0.42);
+}
+
+.journey-node strong {
+  align-self: end;
+}
+
+.traveler-board {
+  display: grid;
+  gap: 10px;
+}
+
+.traveler-board article {
+  align-items: center;
+  background: rgba(15, 20, 23, 0.42);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 48px 1fr;
+  padding: 12px;
+}
+
+.traveler-pin {
+  align-items: center;
+  background: linear-gradient(135deg, var(--gold), #ffe19b);
+  border-radius: 999px;
+  color: #201404;
+  display: flex;
+  font-size: 0.72rem;
+  font-weight: 900;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.traveler-pin.quiet {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+}
+
 .adventure-card-grid {
   display: grid;
   gap: 16px;
@@ -1778,9 +1925,11 @@ select:focus {
   .creator-layout,
   .creator-card dl,
   .about-grid,
+  .adventure-category-grid,
   .support-grid,
   .support-builder,
   .venmo-panel,
+  .shared-journey-panel,
   .search-panel,
   .trail-type-strip,
   .framework-grid {
