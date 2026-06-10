@@ -37,6 +37,11 @@ Keep `SUPABASE_SERVICE_ROLE_KEY` private. It belongs only in Vercel environment 
 
 ## API Routes
 
+### `GET /api/health`
+
+Checks whether the Vercel function can see the Supabase environment variables and reach the
+database. This route never returns the secret key.
+
 ### `GET /api/adventures`
 
 Returns adventure categories with their trails.
