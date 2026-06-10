@@ -10,3 +10,5 @@ android/build/
 
 # Local machine files
 .DS_Store
+.env
+.env.local

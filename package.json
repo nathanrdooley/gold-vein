@@ -4,6 +4,7 @@
   "private": true,
   "description": "Gold Vein mobile app wrapper for the discipleship adventure prototype.",
   "scripts": {
+    "check:api": "node --check api/_lib/supabase.js && node --check api/adventures.js && node --check api/journeys.js && node --check api/members.js && node --check api/progress.js && node --check api/messages.js && node --check api/field-notes.js && node --check api/support-notes.js && node --check api/redemptions.js",
     "mobile:prepare": "mkdir -p www && cp index.html styles.css script.js manifest.json service-worker.js www/ && mkdir -p www/assets && cp -R assets/. www/assets/",
     "mobile:sync": "npm run mobile:prepare && npx cap sync",
     "mobile:open:ios": "npm run mobile:sync && npx cap open ios",

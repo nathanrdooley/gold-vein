@@ -31,6 +31,9 @@ next technical milestones.
 See `MOBILE_APP_PLAN.md` for the Capacitor app-store path, native build steps, required developer
 tools, and store submission checklist.
 
+See `BACKEND.md` for the Supabase database schema, Vercel API routes, shared journey model,
+progress tracking, messages, support notes, and redemption-code backend.
+
 ## Redemption Pilot Status
 
 The public V1 is a prototype. No Watermark Coffee Shop redemption is active, and the app should not
@@ -79,6 +82,9 @@ On iPhone, open the URL in Safari, tap Share, then choose **Add to Home Screen**
 - `PILOT_PLAN.md` - project brief and V1 pilot plan
 - `MOBILE_APP_PLAN.md` - iOS/Android app-store preparation plan
 - `PRIVACY.md` - privacy policy draft for review before public launch
+- `BACKEND.md` - backend setup guide and API route documentation
+- `db/schema.sql` - Supabase/Postgres database schema and seed data
+- `api/` - Vercel serverless API routes for adventures, journeys, progress, messages, notes, support, and redemptions
 - `capacitor.config.json` - Capacitor native app wrapper configuration
 - `package.json` - mobile wrapper scripts and dependencies
 - `assets/gold-vein-hero.png` - hero image
