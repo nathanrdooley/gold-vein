@@ -452,7 +452,7 @@ const renderSupportPledges = () => {
   const pledges = getSupportPledges();
 
   if (!pledges.length) {
-    supportPledgeList.innerHTML = '<p class="empty-journal">No support pledges saved yet.</p>';
+    supportPledgeList.innerHTML = '<p class="empty-journal">No support notes saved yet.</p>';
     return;
   }
 
@@ -1412,7 +1412,7 @@ supportOptionButtons.forEach((button) => {
       supportTypeInput.value = button.dataset.supportOption || "Give Freely";
     }
     if (supportStatus) {
-      supportStatus.textContent = `${supportTypeInput?.value || "Support"} selected. Choose an amount and save a pledge.`;
+      supportStatus.textContent = `${supportTypeInput?.value || "Support"} selected. Add an amount, save a note, then open Venmo.`;
     }
     setTemporaryButtonText(button, "Selected");
   });
@@ -1433,7 +1433,7 @@ saveSupportPledgeButton?.addEventListener("click", () => {
 
   if (!amount || amount < 1) {
     if (supportStatus) {
-      supportStatus.textContent = "Choose or enter a support amount before saving a pledge.";
+      supportStatus.textContent = "Choose or enter a support amount before saving a support note.";
     }
     return;
   }
@@ -1456,7 +1456,7 @@ saveSupportPledgeButton?.addEventListener("click", () => {
   }
   if (supportStatus) {
     supportStatus.textContent =
-      "Support pledge saved locally. Payment processing is still reserved for the next build.";
+      "Support note saved locally. Open Venmo to send the gift when you are ready.";
   }
 });
 

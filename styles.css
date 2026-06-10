@@ -1324,6 +1324,34 @@ dd {
   margin: 0;
 }
 
+.venmo-panel {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.18), rgba(132, 214, 161, 0.08)),
+    rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(245, 199, 95, 0.34);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 22px;
+  padding: 22px;
+}
+
+.venmo-panel span {
+  color: var(--gold);
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.venmo-panel p {
+  color: var(--muted);
+  margin: 0;
+}
+
 .support-grid {
   display: grid;
   gap: 16px;
@@ -1752,6 +1780,7 @@ select:focus {
   .about-grid,
   .support-grid,
   .support-builder,
+  .venmo-panel,
   .search-panel,
   .trail-type-strip,
   .framework-grid {
