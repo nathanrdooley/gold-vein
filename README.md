@@ -83,7 +83,8 @@ On iPhone, open the URL in Safari, tap Share, then choose **Add to Home Screen**
 - `MOBILE_APP_PLAN.md` - iOS/Android app-store preparation plan
 - `PRIVACY.md` - privacy policy draft for review before public launch
 - `BACKEND.md` - backend setup guide and API route documentation
-- `db/schema.sql` - Supabase/Postgres database schema and seed data
+- `db/schema.sql` - Supabase/Postgres database schema and category/trail seed data
+- `db/seed-trail-steps.sql` - Supabase trail-step seed data for the interactive trail structure
 - `api/` - Vercel serverless API routes for adventures, journeys, progress, messages, notes, support, and redemptions
 - `capacitor.config.json` - Capacitor native app wrapper configuration
 - `package.json` - mobile wrapper scripts and dependencies

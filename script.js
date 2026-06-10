@@ -13,6 +13,8 @@ const creatorStatus = document.querySelector("[data-creator-status]");
 const testimonyButton = document.querySelector("[data-testimony]");
 const printButton = document.querySelector("[data-print-letter]");
 const searchButton = document.querySelector("[data-search-trails]");
+const adventureCategoryGrid = document.querySelector("[data-adventure-category-grid]");
+const backendAdventuresStatus = document.querySelector("[data-backend-adventures-status]");
 const shareAdventureButtons = document.querySelectorAll("[data-share-adventure]");
 const supportOptionButtons = document.querySelectorAll("[data-support-option]");
 const supportAmountOptionButtons = document.querySelectorAll("[data-support-amount-option]");
@@ -237,6 +239,88 @@ const escapeHtml = (value) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+
+const trailLinks = {
+  "coffee-shop-trail": "adventure-app",
+  "conversion-trail": "conversion-adventure-app",
+  "emmaus-road": "emmaus-adventure-app",
+  "home-peace-trail": "home-adventure-app",
+  "nearby-neighbor": "global-adventure-app",
+  "the-word-trail": "adventure"
+};
+
+const categoryHeadlines = {
+  "gospel-adventure": "Look to Christ.",
+  "disciple-maker-adventure": "Carry the treasure.",
+  "freedom-adventure": "Walk out of hiding.",
+  "prepared-gift-adventure": "Bless with a tangible sign."
+};
+
+const getTrailHref = (trail) => `#${trailLinks[trail.slug] || "creator"}`;
+
+const renderBackendAdventureCategories = (categories) => {
+  if (!adventureCategoryGrid || !Array.isArray(categories) || !categories.length) {
+    return;
+  }
+
+  adventureCategoryGrid.innerHTML = categories
+    .map((category, index) => {
+      const trails = Array.isArray(category.trails) ? category.trails : [];
+      const trailLinksHtml = trails.length
+        ? trails
+            .map(
+              (trail) =>
+                `<a href="${escapeHtml(getTrailHref(trail))}">${escapeHtml(trail.title)}</a>`
+            )
+            .join("")
+        : '<a href="#creator">Create first trail</a>';
+
+      return `
+        <article class="category-card ${index === 0 ? "featured" : ""}">
+          <div>
+            <span>${escapeHtml(category.title)}</span>
+            <h3>${escapeHtml(categoryHeadlines[category.slug] || "Follow the trail.")}</h3>
+            <p>${escapeHtml(category.summary)}</p>
+          </div>
+          <div class="trail-chip-list">
+            ${trailLinksHtml}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+};
+
+const loadBackendAdventures = async () => {
+  if (!adventureCategoryGrid) {
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/adventures", {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Adventure API unavailable");
+    }
+
+    const data = await response.json();
+    renderBackendAdventureCategories(data.categories);
+    if (backendAdventuresStatus) {
+      backendAdventuresStatus.textContent = "Adventure categories loaded from the backend.";
+      backendAdventuresStatus.dataset.state = "success";
+    }
+  } catch {
+    if (backendAdventuresStatus) {
+      backendAdventuresStatus.textContent =
+        "Using built-in adventure categories until the backend is available.";
+      backendAdventuresStatus.dataset.state = "quiet";
+    }
+  }
+};
 
 const setJournalDateTimeDefaults = () => {
   const now = new Date();
@@ -2287,5 +2371,6 @@ setJournalDateTimeDefaults();
 renderJournalEntries();
 renderAdventureDrafts();
 renderSupportPledges();
+loadBackendAdventures();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

@@ -1,4 +1,4 @@
-const CACHE_NAME = "gold-vein-v44";
+const CACHE_NAME = "gold-vein-v45";
 const ASSETS = [
   "./",
   "./index.html",
@@ -30,6 +30,11 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.pathname.startsWith("/api/")) {
     return;
   }
 

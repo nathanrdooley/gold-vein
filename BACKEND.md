@@ -22,15 +22,16 @@ with a server-only key.
 1. Create a Supabase project.
 2. Open the Supabase SQL editor.
 3. Paste and run [`db/schema.sql`](db/schema.sql).
-4. In Vercel, open the Gold Vein project settings.
-5. Add these environment variables:
+4. Paste and run [`db/seed-trail-steps.sql`](db/seed-trail-steps.sql).
+5. In Vercel, open the Gold Vein project settings.
+6. Add these environment variables:
 
 ```txt
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-6. Redeploy the Vercel project.
+7. Redeploy the Vercel project.
 
 Keep `SUPABASE_SERVICE_ROLE_KEY` private. It belongs only in Vercel environment variables, never in
 `index.html`, `script.js`, or any browser-facing file.
@@ -135,8 +136,11 @@ Marks a prepared treasure as redeemed.
 
 ## Next Build
 
-The next frontend step is to connect the Discover page to `GET /api/adventures`, then connect the
-Shared Journey panel to `/api/journeys`, `/api/progress`, and `/api/messages`.
+The Discover page now attempts to load adventure categories and trails from `GET /api/adventures`,
+then falls back to the built-in cards if the backend is unavailable.
+
+The next frontend step is to connect the Shared Journey panel to `/api/journeys`, `/api/progress`,
+and `/api/messages`.
 
 The next security step is adding real user accounts before storing private contacts, live location,
 or sensitive field notes.
