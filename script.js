@@ -31,6 +31,11 @@ const appStatus = document.querySelector("[data-app-status]");
 const appPages = document.querySelectorAll("[data-page]");
 const heroAdventureToggle = document.querySelector("[data-toggle-hero-adventures]");
 const heroAdventureChooser = document.querySelector("[data-hero-adventures]");
+const adventureIntro = document.querySelector("[data-adventure-intro]");
+const contextGrid = document.querySelector("[data-context-grid]");
+const adventureReturnBar = document.querySelector("[data-adventure-return-bar]");
+const returnToAdventuresButton = document.querySelector("[data-return-to-adventures]");
+const returnToWebButton = document.querySelector("[data-return-to-web]");
 const contextOptionButtons = document.querySelectorAll("[data-context-option]");
 const contextTitle = document.querySelector("[data-context-title]");
 const contextSummary = document.querySelector("[data-context-summary]");
@@ -47,8 +52,11 @@ const completeContextCheckpointButton = document.querySelector("[data-complete-c
 const resetContextAdventureButton = document.querySelector("[data-reset-context-adventure]");
 const generateContextMovementButton = document.querySelector("[data-generate-context-movement]");
 const activeWeb = document.querySelector("[data-active-web]");
+const adaptiveAdventure = document.querySelector("[data-adaptive-adventure]");
 const missionTabButtons = document.querySelectorAll("[data-mission-tab]");
+const missionHub = document.querySelector("[data-mission-hub]");
 const missionPanel = document.querySelector("[data-mission-panel]");
+const journalReturnButton = document.querySelector("[data-journal-return]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
 const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
 const checkLocationButton = document.querySelector("[data-check-location]");
@@ -146,6 +154,7 @@ let activeRedeemCode = "";
 let activeContextKey = localStorage.getItem("gold-vein-active-context") || "home";
 let activeContextProgress = Number(localStorage.getItem(`gold-vein-context-${activeContextKey}-progress`) || "0");
 let activeMissionTab = localStorage.getItem("gold-vein-active-mission-tab") || "map";
+let activeAdventureView = localStorage.getItem("gold-vein-active-adventure-view") || "choose";
 let activeTreasureType = "Financial gift";
 
 const watermarkLocation = {
@@ -821,6 +830,60 @@ const setContextStatus = (message, state = "") => {
   contextStatus.dataset.state = state;
 };
 
+const setActiveAdventureView = (view) => {
+  activeAdventureView = view;
+  localStorage.setItem("gold-vein-active-adventure-view", view);
+  updateAdventureFocus();
+};
+
+const updateAdventureFocus = () => {
+  const isChoosing = activeAdventureView === "choose";
+  const isPathFocused = activeAdventureView === "path";
+  const isWebFocused = activeAdventureView === "web";
+
+  document.body.dataset.adventureFocus = activeAdventureView;
+
+  if (adventureIntro) {
+    adventureIntro.hidden = isPathFocused;
+  }
+  if (contextGrid) {
+    contextGrid.hidden = !isChoosing;
+  }
+  if (adventureReturnBar) {
+    adventureReturnBar.hidden = isChoosing;
+  }
+  if (activeWeb) {
+    activeWeb.hidden = isChoosing || isPathFocused;
+  }
+  if (adaptiveAdventure) {
+    adaptiveAdventure.dataset.focusMode = activeAdventureView;
+  }
+  if (missionHub) {
+    missionHub.hidden = isChoosing;
+  }
+  if (returnToWebButton) {
+    returnToWebButton.hidden = isChoosing || isWebFocused;
+  }
+};
+
+const openMissionPath = (key, shouldScroll = true) => {
+  activeMissionTab = key;
+  localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
+  setActiveAdventureView("path");
+  renderMissionPanel();
+  renderActiveWeb();
+
+  if (shouldScroll) {
+    missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+const returnToActiveWeb = () => {
+  setActiveAdventureView("web");
+  renderActiveWeb();
+  activeWeb?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
 const renderContextAdventure = () => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
   const checkpoints = getAdaptiveCheckpoints(activeContextKey);
@@ -924,6 +987,7 @@ const renderContextAdventure = () => {
   }
   renderActiveWeb();
   renderMissionPanel();
+  updateAdventureFocus();
 };
 
 const getActiveWebNodes = () => {
@@ -1046,8 +1110,12 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
   activeContextKey = contextKey;
   activeContextProgress = Number(localStorage.getItem(getContextProgressKey(contextKey)) || "0");
   localStorage.setItem("gold-vein-active-context", contextKey);
+  activeMissionTab = "map";
+  localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
+  setActiveAdventureView("web");
   renderContextAdventure();
   setContextStatus(message, "success");
+  activeWeb?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
 const renderActionOptions = (type) => {
@@ -1098,6 +1166,17 @@ const renderActionOptions = (type) => {
   `;
 };
 
+const renderMissionReturnControls = () => `
+  <div class="mission-return-controls">
+    <button class="button secondary" type="button" data-return-to-web>
+      Back to Active Web
+    </button>
+    <button class="button secondary" type="button" data-open-journal-from-path>
+      Open Journal
+    </button>
+  </div>
+`;
+
 const renderMissionPanel = () => {
   if (!missionPanel) {
     return;
@@ -1114,6 +1193,7 @@ const renderMissionPanel = () => {
   if (activeMissionTab === "map") {
     missionPanel.innerHTML = `
       <article class="scripture-map-card">
+        ${renderMissionReturnControls()}
         <span>Scripture Map</span>
         <h3>${escapeHtml(map.passage)}</h3>
         <div class="map-grid">
@@ -1145,6 +1225,7 @@ const renderMissionPanel = () => {
   if (activeMissionTab === "challenge") {
     missionPanel.innerHTML = `
       <article class="mission-card">
+        ${renderMissionReturnControls()}
         <span>Challenge Options</span>
         <h3>Choose a step to unlock.</h3>
         <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}.</p>
@@ -1162,6 +1243,7 @@ const renderMissionPanel = () => {
   if (activeMissionTab === "reward") {
     missionPanel.innerHTML = `
       <article class="mission-card">
+        ${renderMissionReturnControls()}
         <span>Reward Options</span>
         <h3>Name the treasure uncovered.</h3>
         <p>Rewards are not trophies. They are signs of grace received, noticed, and carried outward.</p>
@@ -1174,6 +1256,7 @@ const renderMissionPanel = () => {
   if (activeMissionTab === "connect") {
     missionPanel.innerHTML = `
       <article class="mission-card">
+        ${renderMissionReturnControls()}
         <span>Connection Options</span>
         <h3>Bring someone onto the trail.</h3>
         <p>Invite prayer, encouragement, counsel, service, or witness so the adventure does not stay private.</p>
@@ -1185,6 +1268,7 @@ const renderMissionPanel = () => {
 
   missionPanel.innerHTML = `
     <article class="mission-card">
+      ${renderMissionReturnControls()}
       <span>Treasure Options</span>
       <h3>Give a real-world treasure.</h3>
       <p>Choose a tangible act that fits the person and the trail: a financial gift, note, prayer, service, meal, resource, or follow-up.</p>
@@ -1230,6 +1314,43 @@ const setJournalDateTimeDefaults = () => {
 
   if (journalTimeInput && !journalTimeInput.value) {
     journalTimeInput.value = time;
+  }
+};
+
+const prefillJournalFromActiveAdventure = () => {
+  const form = notesButton?.closest("form");
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const movement = getContextMovement(activeContextKey);
+
+  if (!form || !adventure) {
+    return;
+  }
+
+  const trailInput = form.elements.trail;
+  const placeInput = form.elements.place;
+  const scriptureInput = form.elements.scripture;
+
+  if (trailInput && !trailInput.value) {
+    trailInput.value = `${adventure.title}${movement ? ` · Movement ${movement + 1}` : ""}`;
+  }
+  if (placeInput && !placeInput.value) {
+    placeInput.value = adventure.outdoor?.title || adventure.title;
+  }
+  if (scriptureInput && !scriptureInput.value) {
+    scriptureInput.value = adventure.map?.passage || "";
+  }
+};
+
+const returnFromJournal = () => {
+  const returnHash = localStorage.getItem("gold-vein-journal-return-hash") || "now-adventure";
+  window.location.hash = returnHash;
+
+  if (returnHash === "now-adventure") {
+    setActiveAdventureView(activeAdventureView === "choose" ? "web" : activeAdventureView);
+    window.requestAnimationFrame(() => {
+      const target = activeAdventureView === "path" ? missionPanel : activeWeb;
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 };
 
@@ -1470,6 +1591,11 @@ const showActivePage = () => {
   if (pageId === "redeem") {
     activeRedeemCode = detail || "DEMO-NOT-REDEEMABLE";
     renderRedemption();
+  }
+
+  if (pageId === "field-notes") {
+    setJournalDateTimeDefaults();
+    prefillJournalFromActiveAdventure();
   }
 
   if (activePage) {
@@ -2332,7 +2458,10 @@ notesButton?.addEventListener("click", () => {
   form.reset();
   setJournalDateTimeDefaults();
   setStatus(notesButton, "Journal entry saved in this browser.");
+  window.setTimeout(returnFromJournal, 450);
 });
+
+journalReturnButton?.addEventListener("click", returnFromJournal);
 
 previewAdventureButton?.addEventListener("click", () => {
   const draft = getCreatorFormData();
@@ -2530,13 +2659,16 @@ contextOptionButtons.forEach((button) => {
 
 missionTabButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    activeMissionTab = button.dataset.missionTab || "map";
-    localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
-    renderMissionPanel();
-    renderActiveWeb();
-    missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    openMissionPath(button.dataset.missionTab || "map");
   });
 });
+
+returnToAdventuresButton?.addEventListener("click", () => {
+  setActiveAdventureView("choose");
+  contextGrid?.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+returnToWebButton?.addEventListener("click", returnToActiveWeb);
 
 activeWeb?.addEventListener("click", (event) => {
   const node = event.target.closest("[data-web-node], [data-web-line-to]");
@@ -2549,21 +2681,31 @@ activeWeb?.addEventListener("click", (event) => {
   const action = node.dataset.webAction || "tab";
 
   if (action === "journal") {
+    localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
     window.location.hash = "field-notes";
     document.querySelector("#field-notes")?.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
 
-  activeMissionTab = key;
-  localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
-  renderMissionPanel();
-  renderActiveWeb();
-  missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+  openMissionPath(key);
   const openedNode = activeWeb.querySelector(`[data-web-node="${CSS.escape(key)}"] span`);
   setContextStatus(`${openedNode?.textContent || "Node"} opened on the active web.`, "success");
 });
 
 missionPanel?.addEventListener("click", (event) => {
+  const returnButton = event.target.closest("[data-return-to-web]");
+  if (returnButton) {
+    returnToActiveWeb();
+    return;
+  }
+
+  const journalButton = event.target.closest("[data-open-journal-from-path]");
+  if (journalButton) {
+    localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+    window.location.hash = "field-notes";
+    return;
+  }
+
   const unlockButton = event.target.closest("[data-action-unlock]");
   if (unlockButton) {
     const type = unlockButton.dataset.actionUnlock;

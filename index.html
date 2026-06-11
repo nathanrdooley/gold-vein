@@ -118,7 +118,7 @@
 
       <section class="section now-adventure-section app-page" id="now-adventure" aria-labelledby="now-adventure-title" data-page>
         <div class="section-inner">
-          <div class="section-heading">
+          <div class="section-heading" data-adventure-intro>
             <p class="section-label">Start Adventure</p>
             <h2 id="now-adventure-title">Begin where you are.</h2>
             <p>
@@ -127,7 +127,7 @@
             </p>
           </div>
 
-          <div class="context-grid" aria-label="Choose where your adventure begins">
+          <div class="context-grid" aria-label="Choose where your adventure begins" data-context-grid>
             <button type="button" data-context-option="gospel">
               <span>Gospel</span>
               <strong>Look to Christ, hear, respond, connect</strong>
@@ -158,9 +158,18 @@
             </button>
           </div>
 
+          <div class="focus-return-bar" data-adventure-return-bar hidden>
+            <button class="button secondary" type="button" data-return-to-adventures>
+              Choose Another Adventure
+            </button>
+            <button class="button secondary" type="button" data-return-to-web>
+              Back to Active Web
+            </button>
+          </div>
+
           <div class="active-web" data-active-web aria-label="Active Gold Vein web"></div>
 
-          <div class="adaptive-adventure">
+          <div class="adaptive-adventure" data-adaptive-adventure>
             <aside class="adventure-state-panel">
               <p class="section-label">Active Adventure</p>
               <h3 data-context-title>Home Adventure</h3>
@@ -200,7 +209,7 @@
 
             <div class="checkpoint-stack" data-context-checkpoints aria-label="Adventure checkpoints"></div>
 
-            <div class="mission-hub" aria-label="Interactive adventure actions">
+            <div class="mission-hub" aria-label="Interactive adventure actions" data-mission-hub>
               <div class="mission-tabs" role="tablist" aria-label="Adventure tools">
                 <button class="active" type="button" data-mission-tab="map">Map</button>
                 <button type="button" data-mission-tab="challenge">Challenge</button>
@@ -2244,6 +2253,9 @@
               Save simple dated journal entries as you travel. Your entries are grouped by
               trail so you can see what was uncovered over time.
             </p>
+            <button class="button secondary" type="button" data-journal-return>
+              Return to Trail
+            </button>
           </div>
 
           <form class="notes-form">
