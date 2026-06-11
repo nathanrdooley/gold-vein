@@ -456,8 +456,7 @@ h3 {
 }
 
 .adventure-state-panel,
-.checkpoint-stack,
-.reward-board article {
+.checkpoint-stack {
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -468,8 +467,7 @@ h3 {
   padding: 22px;
 }
 
-.adventure-state-panel > p:not(.section-label),
-.reward-board p {
+.adventure-state-panel > p:not(.section-label) {
   color: var(--muted);
 }
 
@@ -497,8 +495,7 @@ h3 {
   box-shadow: 0 0 0 1px rgba(245, 199, 95, 0.18);
 }
 
-.checkpoint-card span,
-.reward-board span {
+.checkpoint-card span {
   color: var(--gold);
   font-size: 0.72rem;
   font-weight: 900;
@@ -510,14 +507,153 @@ h3 {
   margin: 0;
 }
 
-.reward-board {
+.mission-hub {
   display: grid;
   gap: 12px;
 }
 
-.reward-board article {
-  min-height: 170px;
+.mission-tabs {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.mission-tabs button {
+  background: rgba(15, 20, 23, 0.54);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 900;
+  min-height: 42px;
+  padding: 9px;
+}
+
+.mission-tabs button.active {
+  background: rgba(245, 199, 95, 0.18);
+  border-color: rgba(245, 199, 95, 0.55);
+  color: var(--gold);
+}
+
+.mission-panel,
+.mission-card,
+.scripture-map-card {
+  display: grid;
+  gap: 14px;
+}
+
+.mission-card,
+.scripture-map-card {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 18px;
+}
+
+.mission-card > span,
+.scripture-map-card > span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.mission-card p,
+.scripture-map-card p,
+.mission-option-grid small,
+.treasure-log span {
+  color: var(--muted);
+  margin: 0;
+}
+
+.map-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.map-grid details {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.map-grid summary {
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.map-grid p {
+  margin-top: 10px;
+}
+
+.reference-strip,
+.treasure-action-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reference-strip span {
+  background: rgba(245, 199, 95, 0.14);
+  border: 1px solid rgba(245, 199, 95, 0.25);
+  border-radius: 999px;
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 7px 10px;
+}
+
+.mission-option-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.mission-option-grid button,
+.treasure-action-grid button {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  text-align: left;
+}
+
+.mission-option-grid button.selected,
+.treasure-action-grid button.selected {
+  border-color: rgba(132, 214, 161, 0.58);
+  box-shadow: 0 0 0 1px rgba(132, 214, 161, 0.18);
+}
+
+.mission-option-grid span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.treasure-action-grid button {
+  display: block;
+  font-weight: 900;
+}
+
+.treasure-log {
+  display: grid;
+  gap: 8px;
+}
+
+.treasure-log article {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
 }
 
 .search-panel {

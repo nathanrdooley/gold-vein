@@ -45,6 +45,8 @@ const contextRewardCopy = document.querySelector("[data-context-reward-copy]");
 const contextStatus = document.querySelector("[data-context-status]");
 const completeContextCheckpointButton = document.querySelector("[data-complete-context-checkpoint]");
 const resetContextAdventureButton = document.querySelector("[data-reset-context-adventure]");
+const missionTabButtons = document.querySelectorAll("[data-mission-tab]");
+const missionPanel = document.querySelector("[data-mission-panel]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
 const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
 const checkLocationButton = document.querySelector("[data-check-location]");
@@ -141,6 +143,8 @@ let conversionTrailProgress = Number(localStorage.getItem("gold-vein-conversion-
 let activeRedeemCode = "";
 let activeContextKey = localStorage.getItem("gold-vein-active-context") || "home";
 let activeContextProgress = Number(localStorage.getItem(`gold-vein-context-${activeContextKey}-progress`) || "0");
+let activeMissionTab = localStorage.getItem("gold-vein-active-mission-tab") || "map";
+let activeTreasureType = "Financial gift";
 
 const watermarkLocation = {
   latitude: 32.9231644,
@@ -193,6 +197,31 @@ const contextAdventures = {
     challengeCopy: "Clear one small space and ask what love requires here.",
     reward: "Peace received.",
     rewardCopy: "A quiet place becomes a sign of grace received and carried outward.",
+    map: {
+      passage: "Luke 10:38-42",
+      history: "Jesus enters the home of Martha and Mary during His journey toward Jerusalem.",
+      context: "The passage contrasts anxious service with attentive discipleship at Jesus' feet.",
+      inner: "Notice the pull between performance, distraction, resentment, and receiving Christ's presence.",
+      power: "Christ names the good portion and invites the household into peace before productivity.",
+      crossReferences: ["Psalm 46:10", "John 15:4-5", "Philippians 4:6-7"]
+    },
+    actions: {
+      challenge: [
+        ["Prepare a place", "Clear one small surface and make it available for prayer, Scripture, or hospitality."],
+        ["Practice presence", "Sit for two minutes without fixing anything. Ask what Jesus is drawing your attention toward."],
+        ["Serve from peace", "Do one quiet act of service without announcing it."]
+      ],
+      reward: [
+        ["Peace marker", "Name one place where anxiety loosened."],
+        ["Household grace", "Notice one sign that Christ is already present in the room."],
+        ["Good portion", "Write one sentence about what mattered most."]
+      ],
+      connect: [
+        ["Invite prayer", "Text someone: I am doing a Gold Vein Home Adventure. Would you pray for peace in my home?"],
+        ["Bless the room", "Encourage someone who shares or enters this space."],
+        ["Ask and listen", "Ask: how are you doing in this season at home?"]
+      ]
+    },
     checkpoints: [
       ["Notice", "Look around the room. What is your body carrying here?"],
       ["Receive", "Ask the Lord to meet you in this ordinary place."],
@@ -209,6 +238,31 @@ const contextAdventures = {
     challengeCopy: "Choose one task and do it before the Lord with attention and love.",
     reward: "Faithful presence.",
     rewardCopy: "Your labor becomes a place where hidden obedience can reveal Christ.",
+    map: {
+      passage: "Colossians 3:23-24",
+      history: "Paul wrote Colossians while imprisoned, teaching believers how union with Christ reshapes ordinary life, households, work, and witness.",
+      context: "Colossians 3 moves from the new self in Christ into daily relationships. Work is no longer merely performed for human approval; it is offered to the Lord.",
+      inner: "The passage exposes divided motives: resentment, eye-service, fear of people, laziness, ambition, or despair. It asks the worker to become present before Christ.",
+      power: "The reward is not merely a paycheck or recognition. The inheritance comes from the Lord Christ, who gives dignity and eternal weight to hidden faithfulness.",
+      crossReferences: ["Ephesians 6:5-8", "1 Corinthians 10:31", "Proverbs 16:3", "Matthew 5:16"]
+    },
+    actions: {
+      challenge: [
+        ["Single-task offering", "Choose one task and do it as unto the Lord, without cutting corners or seeking applause."],
+        ["Hidden faithfulness", "Do one unseen act that helps the work or the people around you."],
+        ["Integrity checkpoint", "Correct one small thing that would be easy to ignore."]
+      ],
+      reward: [
+        ["Dignity restored", "Name how Christ gives meaning to work that feels ordinary or unseen."],
+        ["Clean motive", "Notice one place where fear of people loosened."],
+        ["Witness spark", "Record any opening for kindness, excellence, prayer, or gospel witness."]
+      ],
+      connect: [
+        ["Encourage a coworker", "Send or speak one specific encouragement to someone connected to your work."],
+        ["Ask for wisdom", "Invite a trusted believer to pray over a task, decision, or pressure point."],
+        ["Serve the team", "Do one practical thing that lightens someone else's burden."]
+      ]
+    },
     checkpoints: [
       ["Notice", "Name the pressure, person, or task most present right now."],
       ["Receive", "Ask the Lord for wisdom, courage, patience, and clean motives."],
@@ -225,6 +279,31 @@ const contextAdventures = {
     challengeCopy: "Pick one action small enough to complete and meaningful enough to matter.",
     reward: "Clarity uncovered.",
     rewardCopy: "A project becomes a place to practice stewardship instead of striving.",
+    map: {
+      passage: "Nehemiah 2:17-18",
+      history: "Nehemiah returns to Jerusalem after exile and calls the people to rebuild what is broken.",
+      context: "The work begins with honest assessment, shared burden, and confidence in the gracious hand of God.",
+      inner: "Notice fear of failure, scattered attention, false urgency, and the desire to build alone.",
+      power: "God strengthens willing hands when calling becomes shared obedience.",
+      crossReferences: ["Proverbs 16:3", "Haggai 1:7-8", "Ephesians 2:10", "James 1:5"]
+    },
+    actions: {
+      challenge: [
+        ["Name the wall", "Write the project in one clear sentence and name what is broken or unfinished."],
+        ["Small build", "Complete one task that moves the work forward today."],
+        ["Remove friction", "Clear one distraction or obstacle from the project space."]
+      ],
+      reward: [
+        ["Clarity", "Write the next step that became clearer."],
+        ["Shared courage", "Notice where courage increased after naming the work."],
+        ["Stewardship", "Identify one gift or resource already in your hand."]
+      ],
+      connect: [
+        ["Invite counsel", "Ask one person for wisdom, prayer, or practical help."],
+        ["Report progress", "Tell a trusted person what step you completed."],
+        ["Serve through the project", "Name who this work is meant to bless."]
+      ]
+    },
     checkpoints: [
       ["Name", "Write the project, burden, or assignment in one clear sentence."],
       ["Receive", "Ask what grace is already present for this work."],
@@ -241,6 +320,31 @@ const contextAdventures = {
     challengeCopy: "Pause long enough to see who is near while you are moving.",
     reward: "The road becomes holy ground.",
     rewardCopy: "Travel becomes more than getting there; it becomes attention to Christ on the way.",
+    map: {
+      passage: "Luke 24:13-35",
+      history: "Two disciples walk away from Jerusalem after the crucifixion, confused and disappointed, before the risen Jesus draws near.",
+      context: "Jesus interprets Scripture on the road and turns ordinary travel into revelation, burning hearts, and witness.",
+      inner: "Notice grief, distraction, delay, disappointment, and the places where hope feels hidden.",
+      power: "The risen Christ is able to meet travelers on the way and send them back with witness.",
+      crossReferences: ["Psalm 119:105", "Isaiah 40:31", "Hebrews 13:2", "Acts 8:26-40"]
+    },
+    actions: {
+      challenge: [
+        ["Attentive movement", "Move through this route without numbing out. Notice who is near."],
+        ["Delay as doorway", "If interrupted, receive the delay as part of the trail."],
+        ["Road prayer", "Pray for one person or place you pass."]
+      ],
+      reward: [
+        ["Burning heart", "Name one truth that became warm or alive on the way."],
+        ["Holy ground", "Notice one ordinary place that became spiritually significant."],
+        ["Witness carried", "Record what you can carry into your destination."]
+      ],
+      connect: [
+        ["Kindness in transit", "Speak kindness to someone serving, waiting, or traveling."],
+        ["Send witness", "Message someone one sentence of encouragement from the road."],
+        ["Arrive with purpose", "Enter your destination ready to bless, not merely arrive."]
+      ]
+    },
     checkpoints: [
       ["Begin", "Ask the Lord to make you attentive while you move."],
       ["Receive", "Receive the delay, route, or errand as part of the trail."],
@@ -257,6 +361,31 @@ const contextAdventures = {
     challengeCopy: "Before reacting, ask what humility, truth, or mercy requires.",
     reward: "Grace in the hard place.",
     rewardCopy: "Conflict becomes a checkpoint where repentance and love can become visible.",
+    map: {
+      passage: "Matthew 5:23-24",
+      history: "In the Sermon on the Mount, Jesus teaches kingdom righteousness that reaches motives, relationships, anger, and reconciliation.",
+      context: "Worship and reconciliation are held together. Jesus calls disciples to take relational repair seriously.",
+      inner: "Notice defensiveness, fear, anger, avoidance, shame, and the temptation to win instead of love.",
+      power: "Christ brings truth and mercy into the hard place, creating a path toward repentance, repair, and peace.",
+      crossReferences: ["Romans 12:18", "James 1:19-20", "Ephesians 4:29-32", "2 Corinthians 5:18-20"]
+    },
+    actions: {
+      challenge: [
+        ["Pause before reacting", "Name what you feel and ask what obedience requires before responding."],
+        ["Own your part", "Write one sentence of confession without blame-shifting."],
+        ["Move toward peace", "Choose a wise next step: prayer, counsel, apology, boundary, or honest conversation."]
+      ],
+      reward: [
+        ["Humility unlocked", "Name one place where self-protection loosened."],
+        ["Truth with mercy", "Record one truthful sentence that does not attack."],
+        ["Repair path", "Identify the next faithful step toward peace."]
+      ],
+      connect: [
+        ["Ask for prayer", "Invite a mature believer to pray before you act."],
+        ["Seek counsel", "Ask someone wise to help you see clearly."],
+        ["Reach carefully", "Send a humble, truthful message that opens the door to repair."]
+      ]
+    },
     checkpoints: [
       ["Pause", "Name what you feel without letting it rule you."],
       ["Receive", "Ask Jesus for humility, truth, courage, and mercy."],
@@ -422,6 +551,40 @@ const loadBackendAdventures = async () => {
 };
 
 const getContextProgressKey = (contextKey) => `gold-vein-context-${contextKey}-progress`;
+const getContextUnlockKey = (contextKey) => `gold-vein-context-${contextKey}-unlocks`;
+const getContextTreasureKey = (contextKey) => `gold-vein-context-${contextKey}-treasures`;
+
+const getContextUnlocks = (contextKey) => {
+  try {
+    return JSON.parse(localStorage.getItem(getContextUnlockKey(contextKey)) || "{}");
+  } catch {
+    return {};
+  }
+};
+
+const setContextUnlock = (contextKey, type, index) => {
+  const unlocks = getContextUnlocks(contextKey);
+  unlocks[type] = index;
+  localStorage.setItem(getContextUnlockKey(contextKey), JSON.stringify(unlocks));
+};
+
+const getContextTreasures = (contextKey) => {
+  try {
+    return JSON.parse(localStorage.getItem(getContextTreasureKey(contextKey)) || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const saveContextTreasure = (contextKey, treasure) => {
+  const treasures = getContextTreasures(contextKey);
+  treasures.unshift({
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    ...treasure
+  });
+  localStorage.setItem(getContextTreasureKey(contextKey), JSON.stringify(treasures.slice(0, 8)));
+};
 
 const setContextStatus = (message, state = "") => {
   if (!contextStatus) {
@@ -495,6 +658,7 @@ const renderContextAdventure = () => {
       })
       .join("");
   }
+  renderMissionPanel();
 };
 
 const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
@@ -507,6 +671,145 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
   localStorage.setItem("gold-vein-active-context", contextKey);
   renderContextAdventure();
   setContextStatus(message, "success");
+};
+
+const renderActionOptions = (type) => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const options = adventure.actions?.[type] || [];
+  const unlocks = getContextUnlocks(activeContextKey);
+  const selectedIndex = Number.isInteger(unlocks[type]) ? unlocks[type] : -1;
+
+  return `
+    <div class="mission-option-grid">
+      ${options
+        .map(
+          ([title, copy], index) => `
+            <button class="${selectedIndex === index ? "selected" : ""}" type="button" data-action-unlock="${escapeHtml(type)}" data-action-index="${index}">
+              <span>${selectedIndex === index ? "Unlocked" : "Option"} · ${escapeHtml(type)}</span>
+              <strong>${escapeHtml(title)}</strong>
+              <small>${escapeHtml(copy)}</small>
+            </button>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+};
+
+const renderMissionPanel = () => {
+  if (!missionPanel) {
+    return;
+  }
+
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const map = adventure.map;
+  const treasures = getContextTreasures(activeContextKey);
+
+  missionTabButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.missionTab === activeMissionTab);
+  });
+
+  if (activeMissionTab === "map") {
+    missionPanel.innerHTML = `
+      <article class="scripture-map-card">
+        <span>Scripture Map</span>
+        <h3>${escapeHtml(map.passage)}</h3>
+        <div class="map-grid">
+          <details open>
+            <summary>History</summary>
+            <p>${escapeHtml(map.history)}</p>
+          </details>
+          <details open>
+            <summary>Context</summary>
+            <p>${escapeHtml(map.context)}</p>
+          </details>
+          <details>
+            <summary>Bodily / Psychological Awareness</summary>
+            <p>${escapeHtml(map.inner)}</p>
+          </details>
+          <details>
+            <summary>Power</summary>
+            <p>${escapeHtml(map.power)}</p>
+          </details>
+        </div>
+        <div class="reference-strip">
+          ${map.crossReferences.map((reference) => `<span>${escapeHtml(reference)}</span>`).join("")}
+        </div>
+      </article>
+    `;
+    return;
+  }
+
+  if (activeMissionTab === "challenge") {
+    missionPanel.innerHTML = `
+      <article class="mission-card">
+        <span>Challenge Options</span>
+        <h3>Choose a step to unlock.</h3>
+        <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}.</p>
+        ${renderActionOptions("challenge")}
+      </article>
+    `;
+    return;
+  }
+
+  if (activeMissionTab === "reward") {
+    missionPanel.innerHTML = `
+      <article class="mission-card">
+        <span>Reward Options</span>
+        <h3>Name the treasure uncovered.</h3>
+        <p>Rewards are not trophies. They are signs of grace received, noticed, and carried outward.</p>
+        ${renderActionOptions("reward")}
+      </article>
+    `;
+    return;
+  }
+
+  if (activeMissionTab === "connect") {
+    missionPanel.innerHTML = `
+      <article class="mission-card">
+        <span>Connection Options</span>
+        <h3>Bring someone onto the trail.</h3>
+        <p>Invite prayer, encouragement, counsel, service, or witness so the adventure does not stay private.</p>
+        ${renderActionOptions("connect")}
+      </article>
+    `;
+    return;
+  }
+
+  missionPanel.innerHTML = `
+    <article class="mission-card">
+      <span>Treasure Options</span>
+      <h3>Give a real-world treasure.</h3>
+      <p>Choose a tangible act that fits the person and the trail: a financial gift, note, prayer, service, meal, resource, or follow-up.</p>
+      <div class="treasure-action-grid">
+        <button class="${activeTreasureType === "Financial gift" ? "selected" : ""}" type="button" data-treasure-type="Financial gift">Financial Gift</button>
+        <button class="${activeTreasureType === "Written note" ? "selected" : ""}" type="button" data-treasure-type="Written note">Write Note</button>
+        <button class="${activeTreasureType === "Prayer" ? "selected" : ""}" type="button" data-treasure-type="Prayer">Pray</button>
+        <button class="${activeTreasureType === "Service" ? "selected" : ""}" type="button" data-treasure-type="Service">Serve</button>
+      </div>
+      <label>
+        Treasure note
+        <textarea data-treasure-note rows="3" placeholder="Who are you blessing, and what treasure are you giving?"></textarea>
+      </label>
+      <button class="button primary" type="button" data-save-context-treasure>Save Treasure</button>
+      <div class="treasure-log">
+        ${
+          treasures.length
+            ? treasures
+                .map(
+                  (treasure) => `
+                    <article>
+                      <strong>${escapeHtml(treasure.type)}</strong>
+                      <span>${escapeHtml(treasure.note || "No note added.")}</span>
+                    </article>
+                  `
+                )
+                .join("")
+            : '<p class="empty-journal">No treasures saved on this context yet.</p>'
+        }
+      </div>
+    </article>
+  `;
 };
 
 const setJournalDateTimeDefaults = () => {
@@ -1816,6 +2119,47 @@ contextOptionButtons.forEach((button) => {
     const contextKey = button.dataset.contextOption || "home";
     selectContextAdventure(contextKey, `${contextAdventures[contextKey]?.title || "Adventure"} opened.`);
   });
+});
+
+missionTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeMissionTab = button.dataset.missionTab || "map";
+    localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
+    renderMissionPanel();
+  });
+});
+
+missionPanel?.addEventListener("click", (event) => {
+  const unlockButton = event.target.closest("[data-action-unlock]");
+  if (unlockButton) {
+    const type = unlockButton.dataset.actionUnlock;
+    const index = Number(unlockButton.dataset.actionIndex || 0);
+    setContextUnlock(activeContextKey, type, index);
+    renderMissionPanel();
+    setContextStatus(`${type[0].toUpperCase()}${type.slice(1)} unlocked for this trail.`, "success");
+    return;
+  }
+
+  const treasureButton = event.target.closest("[data-treasure-type]");
+  if (treasureButton) {
+    activeTreasureType = treasureButton.dataset.treasureType || "Financial gift";
+    missionPanel.querySelectorAll("[data-treasure-type]").forEach((button) => {
+      button.classList.toggle("selected", button === treasureButton);
+    });
+    setContextStatus(`${activeTreasureType} selected as a treasure option.`, "success");
+    return;
+  }
+
+  const saveTreasureButton = event.target.closest("[data-save-context-treasure]");
+  if (saveTreasureButton) {
+    const note = missionPanel.querySelector("[data-treasure-note]")?.value?.trim() || "";
+    saveContextTreasure(activeContextKey, {
+      type: activeTreasureType,
+      note
+    });
+    renderMissionPanel();
+    setContextStatus("Treasure saved to this adventure context.", "success");
+  }
 });
 
 completeContextCheckpointButton?.addEventListener("click", () => {

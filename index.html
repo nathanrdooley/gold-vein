@@ -179,22 +179,16 @@
 
             <div class="checkpoint-stack" data-context-checkpoints aria-label="Adventure checkpoints"></div>
 
-            <div class="reward-board" aria-label="Challenges and rewards">
-              <article>
-                <span>Challenge</span>
-                <h3 data-context-challenge>Prepare the room.</h3>
-                <p data-context-challenge-copy>Clear one small space and ask what love requires here.</p>
-              </article>
-              <article>
-                <span>Reward</span>
-                <h3 data-context-reward>Peace received.</h3>
-                <p data-context-reward-copy>A quiet place becomes a sign of grace received and carried outward.</p>
-              </article>
-              <article>
-                <span>Connection</span>
-                <h3 data-context-connection>Invite someone into the trail.</h3>
-                <p>Send the adventure, ask for prayer, serve someone nearby, or share the treasure discovered.</p>
-              </article>
+            <div class="mission-hub" aria-label="Interactive adventure actions">
+              <div class="mission-tabs" role="tablist" aria-label="Adventure tools">
+                <button class="active" type="button" data-mission-tab="map">Map</button>
+                <button type="button" data-mission-tab="challenge">Challenge</button>
+                <button type="button" data-mission-tab="reward">Reward</button>
+                <button type="button" data-mission-tab="connect">Connect</button>
+                <button type="button" data-mission-tab="treasure">Treasure</button>
+              </div>
+
+              <div class="mission-panel" data-mission-panel aria-live="polite"></div>
             </div>
           </div>
         </div>
