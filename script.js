@@ -638,12 +638,36 @@ const hasCurrentEvidence = (contextKey) => {
 };
 
 const saveCurrentEvidence = (contextKey, note) => {
+  const adventure = contextAdventures[contextKey] || contextAdventures.home;
+  const checkpoints = getAdaptiveCheckpoints(contextKey);
+  const progress = Number(localStorage.getItem(getContextProgressKey(contextKey)) || "0");
+  const movement = getContextMovement(contextKey);
+  const [checkpointLabel] = checkpoints[progress] || ["Checkpoint"];
   const evidence = getContextEvidence(contextKey);
   evidence[getCurrentEvidenceId(contextKey)] = {
     note,
+    checkpoint: checkpointLabel,
+    movement,
     savedAt: new Date().toISOString()
   };
   localStorage.setItem(getContextEvidenceKey(contextKey), JSON.stringify(evidence));
+
+  const now = new Date();
+  const entries = getJournalEntries();
+  entries.unshift({
+    id: Date.now(),
+    savedAt: now.toISOString(),
+    trail: `${adventure.title}${movement ? ` · Movement ${movement + 1}` : ""}`,
+    date: now.toISOString().slice(0, 10),
+    time: now.toTimeString().slice(0, 5),
+    weather: cleanWeatherValue(journalWeatherInput?.value || ""),
+    place: adventure.outdoor?.title || adventure.title,
+    scripture: adventure.map.passage,
+    treasure: note,
+    nextStep: `Checkpoint evidence: ${checkpointLabel}`
+  });
+  setJournalEntries(entries);
+  renderJournalEntries();
 };
 
 const getSelectedActionTitle = (adventure, unlocks, type, fallback) => {

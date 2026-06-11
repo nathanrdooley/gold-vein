@@ -487,8 +487,9 @@ h3 {
 }
 
 .trail-web-line {
-  background: linear-gradient(90deg, rgba(245, 199, 95, 0.18), rgba(245, 199, 95, 0.9), rgba(245, 199, 95, 0.18));
-  height: 2px;
+  background: linear-gradient(90deg, rgba(245, 199, 95, 0.18), rgba(245, 199, 95, 0.95), rgba(132, 214, 161, 0.72), rgba(245, 199, 95, 0.18));
+  box-shadow: 0 0 18px rgba(245, 199, 95, 0.22);
+  height: 3px;
   left: 8%;
   position: absolute;
   right: 8%;
@@ -658,6 +659,17 @@ h3 {
 .mission-option-grid {
   display: grid;
   gap: 10px;
+  position: relative;
+}
+
+.mission-option-grid::before {
+  background: linear-gradient(180deg, rgba(245, 199, 95, 0.12), rgba(245, 199, 95, 0.82), rgba(245, 199, 95, 0.12));
+  bottom: 18px;
+  content: "";
+  left: 20px;
+  position: absolute;
+  top: 18px;
+  width: 2px;
 }
 
 .evidence-panel,
@@ -698,7 +710,9 @@ h3 {
   display: grid;
   gap: 8px;
   padding: 14px;
+  position: relative;
   text-align: left;
+  z-index: 1;
 }
 
 .mission-option-grid button.selected,
