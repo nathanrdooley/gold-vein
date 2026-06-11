@@ -223,6 +223,12 @@ const contextAdventures = {
         ["Ask and listen", "Ask: how are you doing in this season at home?"]
       ]
     },
+    outdoor: {
+      title: "Threshold Walk",
+      from: "Inside the room",
+      to: "Doorway, porch, sidewalk, or mailbox",
+      prompt: "Notice the change in your body as you cross the threshold. Ask how peace can move from the room into the world."
+    },
     checkpoints: [
       ["Notice", "Look around the room. What is your body carrying here?"],
       ["Receive", "Ask the Lord to meet you in this ordinary place."],
@@ -263,6 +269,12 @@ const contextAdventures = {
         ["Ask for wisdom", "Invite a trusted believer to pray over a task, decision, or pressure point."],
         ["Serve the team", "Do one practical thing that lightens someone else's burden."]
       ]
+    },
+    outdoor: {
+      title: "Workplace Walk",
+      from: "Your task space",
+      to: "Break area, parking lot, hallway, or nearby coffee shop",
+      prompt: "As you move, notice who makes your work possible. Pray for one person connected to your labor."
     },
     checkpoints: [
       ["Notice", "Name the pressure, person, or task most present right now."],
@@ -305,6 +317,12 @@ const contextAdventures = {
         ["Serve through the project", "Name who this work is meant to bless."]
       ]
     },
+    outdoor: {
+      title: "Clarity Walk",
+      from: "Your project space",
+      to: "A sidewalk, courtyard, nearby table, or window with open sky",
+      prompt: "Let movement clear the fog. Name one next faithful step before returning to the work."
+    },
     checkpoints: [
       ["Name", "Write the project, burden, or assignment in one clear sentence."],
       ["Receive", "Ask what grace is already present for this work."],
@@ -346,6 +364,12 @@ const contextAdventures = {
         ["Arrive with purpose", "Enter your destination ready to bless, not merely arrive."]
       ]
     },
+    outdoor: {
+      title: "Road Attention",
+      from: "Where you are now",
+      to: "The next stop on your route",
+      prompt: "Treat the space between points as part of the trail. Notice interruption, patience, and who is near."
+    },
     checkpoints: [
       ["Begin", "Ask the Lord to make you attentive while you move."],
       ["Receive", "Receive the delay, route, or errand as part of the trail."],
@@ -386,6 +410,12 @@ const contextAdventures = {
         ["Seek counsel", "Ask someone wise to help you see clearly."],
         ["Reach carefully", "Send a humble, truthful message that opens the door to repair."]
       ]
+    },
+    outdoor: {
+      title: "Cooling Walk",
+      from: "The place of tension",
+      to: "A neutral place where you can breathe and pray",
+      prompt: "Walk slowly enough for your body to come under love. Ask what truth and mercy require before you return."
     },
     checkpoints: [
       ["Pause", "Name what you feel without letting it rule you."],
@@ -555,6 +585,7 @@ const getContextProgressKey = (contextKey) => `gold-vein-context-${contextKey}-p
 const getContextUnlockKey = (contextKey) => `gold-vein-context-${contextKey}-unlocks`;
 const getContextTreasureKey = (contextKey) => `gold-vein-context-${contextKey}-treasures`;
 const getContextMovementKey = (contextKey) => `gold-vein-context-${contextKey}-movement`;
+const getContextEvidenceKey = (contextKey) => `gold-vein-context-${contextKey}-evidence`;
 
 const getContextUnlocks = (contextKey) => {
   try {
@@ -589,6 +620,31 @@ const saveContextTreasure = (contextKey, treasure) => {
 };
 
 const getContextMovement = (contextKey) => Number(localStorage.getItem(getContextMovementKey(contextKey)) || "0");
+
+const getContextEvidence = (contextKey) => {
+  try {
+    return JSON.parse(localStorage.getItem(getContextEvidenceKey(contextKey)) || "{}");
+  } catch {
+    return {};
+  }
+};
+
+const getCurrentEvidenceId = (contextKey) =>
+  `${getContextMovement(contextKey)}-${Number(localStorage.getItem(getContextProgressKey(contextKey)) || "0")}`;
+
+const hasCurrentEvidence = (contextKey) => {
+  const evidence = getContextEvidence(contextKey);
+  return Boolean(evidence[getCurrentEvidenceId(contextKey)]?.note);
+};
+
+const saveCurrentEvidence = (contextKey, note) => {
+  const evidence = getContextEvidence(contextKey);
+  evidence[getCurrentEvidenceId(contextKey)] = {
+    note,
+    savedAt: new Date().toISOString()
+  };
+  localStorage.setItem(getContextEvidenceKey(contextKey), JSON.stringify(evidence));
+};
 
 const getSelectedActionTitle = (adventure, unlocks, type, fallback) => {
   const index = unlocks[type];
@@ -686,22 +742,41 @@ const renderContextAdventure = () => {
   }
   if (contextCheckpoints) {
     const visibleCheckpoints = checkpoints.filter((_, index) => index <= activeContextProgress);
-    contextCheckpoints.innerHTML = visibleCheckpoints
+    const currentEvidenceSaved = hasCurrentEvidence(activeContextKey);
+    const webNodes = checkpoints
+      .map((_, index) => {
+        const state =
+          index < activeContextProgress
+            ? "complete"
+            : index === activeContextProgress
+              ? currentEvidenceSaved ? "revealed" : "active"
+              : "locked";
+        return `<span data-state="${state}"></span>`;
+      })
+      .join("");
+
+    contextCheckpoints.innerHTML = `
+      <div class="trail-web" aria-label="Gold Vein trail web">
+        <div class="trail-web-line"></div>
+        ${webNodes}
+      </div>
+    ` + visibleCheckpoints
       .map(([label, copy], index) => {
         const state =
           index < activeContextProgress
             ? "complete"
             : index === activeContextProgress && activeContextProgress < checkpoints.length
-              ? "active"
+              ? currentEvidenceSaved ? "active" : "gate"
               : "complete";
         const stateLabel =
-          state === "complete" ? "Complete" : "Now";
+          state === "complete" ? "Complete" : state === "gate" ? "Locked" : "Now";
+        const shouldHideCheckpoint = state === "gate";
 
         return `
           <article class="checkpoint-card" data-state="${state}">
             <span>${escapeHtml(stateLabel)} · ${escapeHtml(label)}</span>
-            <h3>${escapeHtml(label)}</h3>
-            <p>${escapeHtml(copy)}</p>
+            <h3>${escapeHtml(shouldHideCheckpoint ? "Mission gate" : label)}</h3>
+            <p>${escapeHtml(shouldHideCheckpoint ? "Record evidence from a challenge, connection, or outdoor movement to reveal this checkpoint." : copy)}</p>
           </article>
         `;
       })
@@ -717,7 +792,8 @@ const renderContextAdventure = () => {
         : "");
   }
   if (completeContextCheckpointButton) {
-    completeContextCheckpointButton.hidden = activeContextProgress >= checkpoints.length;
+    completeContextCheckpointButton.hidden =
+      activeContextProgress >= checkpoints.length || !hasCurrentEvidence(activeContextKey);
   }
   if (generateContextMovementButton) {
     generateContextMovementButton.hidden = activeContextProgress < checkpoints.length;
@@ -742,6 +818,8 @@ const renderActionOptions = (type) => {
   const options = adventure.actions?.[type] || [];
   const unlocks = getContextUnlocks(activeContextKey);
   const selectedIndex = Number.isInteger(unlocks[type]) ? unlocks[type] : -1;
+  const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : null;
+  const evidence = getContextEvidence(activeContextKey)[getCurrentEvidenceId(activeContextKey)];
 
   return `
     <div class="mission-option-grid">
@@ -757,6 +835,29 @@ const renderActionOptions = (type) => {
         )
         .join("")}
     </div>
+    ${
+      selectedOption
+        ? `
+          <div class="evidence-panel">
+            <span>Evidence Required</span>
+            <h3>${escapeHtml(selectedOption[0])}</h3>
+            <p>${escapeHtml(selectedOption[1])}</p>
+            <label>
+              What did you do?
+              <textarea data-evidence-note rows="3" placeholder="Write what happened, who was involved, what you noticed, or what you practiced.">${escapeHtml(evidence?.note || "")}</textarea>
+            </label>
+            <button class="button primary" type="button" data-save-context-evidence>
+              Save Evidence and Reveal Checkpoint
+            </button>
+          </div>
+        `
+        : `
+          <div class="evidence-panel muted-evidence">
+            <span>Mission Gate</span>
+            <p>Choose an option above, do it in real life, then record evidence to reveal the checkpoint.</p>
+          </div>
+        `
+    }
   `;
 };
 
@@ -810,6 +911,11 @@ const renderMissionPanel = () => {
         <span>Challenge Options</span>
         <h3>Choose a step to unlock.</h3>
         <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}.</p>
+        <div class="outdoor-prompt">
+          <span>Outdoor Movement</span>
+          <strong>${escapeHtml(adventure.outdoor.title)}</strong>
+          <p><b>Point A:</b> ${escapeHtml(adventure.outdoor.from)}<br><b>Point B:</b> ${escapeHtml(adventure.outdoor.to)}<br>${escapeHtml(adventure.outdoor.prompt)}</p>
+        </div>
         ${renderActionOptions("challenge")}
       </article>
     `;
@@ -2223,11 +2329,31 @@ missionPanel?.addEventListener("click", (event) => {
     });
     renderMissionPanel();
     setContextStatus("Treasure saved to this adventure context.", "success");
+    return;
+  }
+
+  const saveEvidenceButton = event.target.closest("[data-save-context-evidence]");
+  if (saveEvidenceButton) {
+    const note = missionPanel.querySelector("[data-evidence-note]")?.value?.trim() || "";
+
+    if (!note) {
+      setContextStatus("Write evidence from the action before revealing the checkpoint.", "error");
+      return;
+    }
+
+    saveCurrentEvidence(activeContextKey, note);
+    renderContextAdventure();
+    setContextStatus("Evidence saved. The checkpoint is now revealed.", "success");
   }
 });
 
 completeContextCheckpointButton?.addEventListener("click", () => {
   const checkpoints = getAdaptiveCheckpoints(activeContextKey);
+
+  if (!hasCurrentEvidence(activeContextKey)) {
+    setContextStatus("Complete a mission action and save evidence before this checkpoint opens.", "error");
+    return;
+  }
 
   if (activeContextProgress >= checkpoints.length) {
     setContextStatus("This movement is complete. Generate the next movement when you are ready.", "success");
@@ -2251,6 +2377,7 @@ generateContextMovementButton?.addEventListener("click", () => {
   localStorage.setItem(getContextMovementKey(activeContextKey), String(nextMovement));
   activeContextProgress = 0;
   localStorage.setItem(getContextProgressKey(activeContextKey), "0");
+  localStorage.removeItem(getContextUnlockKey(activeContextKey));
   activeMissionTab = "map";
   localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
   renderContextAdventure();

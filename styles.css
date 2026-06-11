@@ -477,6 +477,50 @@ h3 {
   padding: 16px;
 }
 
+.trail-web {
+  align-items: center;
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  min-height: 44px;
+  position: relative;
+}
+
+.trail-web-line {
+  background: linear-gradient(90deg, rgba(245, 199, 95, 0.18), rgba(245, 199, 95, 0.9), rgba(245, 199, 95, 0.18));
+  height: 2px;
+  left: 8%;
+  position: absolute;
+  right: 8%;
+  top: 50%;
+}
+
+.trail-web span {
+  background: #10191a;
+  border: 1px solid rgba(245, 199, 95, 0.35);
+  border-radius: 999px;
+  height: 18px;
+  justify-self: center;
+  position: relative;
+  width: 18px;
+  z-index: 1;
+}
+
+.trail-web span[data-state="complete"] {
+  background: #98e4b1;
+  border-color: rgba(152, 228, 177, 0.9);
+}
+
+.trail-web span[data-state="active"],
+.trail-web span[data-state="revealed"] {
+  background: var(--gold);
+  box-shadow: 0 0 18px rgba(245, 199, 95, 0.45);
+}
+
+.trail-web span[data-state="locked"] {
+  opacity: 0.42;
+}
+
 .checkpoint-card {
   background: rgba(15, 20, 23, 0.44);
   border: 1px solid var(--line);
@@ -493,6 +537,11 @@ h3 {
 .checkpoint-card[data-state="active"] {
   border-color: rgba(245, 199, 95, 0.6);
   box-shadow: 0 0 0 1px rgba(245, 199, 95, 0.18);
+}
+
+.checkpoint-card[data-state="gate"] {
+  border-color: rgba(245, 199, 95, 0.26);
+  opacity: 0.88;
 }
 
 .checkpoint-card span {
@@ -609,6 +658,34 @@ h3 {
 .mission-option-grid {
   display: grid;
   gap: 10px;
+}
+
+.evidence-panel,
+.outdoor-prompt {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid rgba(245, 199, 95, 0.22);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.evidence-panel span,
+.outdoor-prompt span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.evidence-panel p,
+.outdoor-prompt p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.muted-evidence {
+  border-color: var(--line);
 }
 
 .mission-option-grid button,

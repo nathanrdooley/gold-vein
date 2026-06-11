@@ -1,4 +1,4 @@
-const CACHE_NAME = "gold-vein-v48";
+const CACHE_NAME = "gold-vein-v49";
 const ASSETS = [
   "./",
   "./index.html",
