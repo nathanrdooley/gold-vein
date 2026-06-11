@@ -46,6 +46,7 @@ const contextStatus = document.querySelector("[data-context-status]");
 const completeContextCheckpointButton = document.querySelector("[data-complete-context-checkpoint]");
 const resetContextAdventureButton = document.querySelector("[data-reset-context-adventure]");
 const generateContextMovementButton = document.querySelector("[data-generate-context-movement]");
+const activeWeb = document.querySelector("[data-active-web]");
 const missionTabButtons = document.querySelectorAll("[data-mission-tab]");
 const missionPanel = document.querySelector("[data-mission-panel]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
@@ -670,6 +671,11 @@ const saveCurrentEvidence = (contextKey, note) => {
   renderJournalEntries();
 };
 
+const getContextJournalEntries = (contextKey) => {
+  const adventure = contextAdventures[contextKey] || contextAdventures.home;
+  return getJournalEntries().filter((entry) => normalizeTrailName(entry.trail).startsWith(adventure.title));
+};
+
 const getSelectedActionTitle = (adventure, unlocks, type, fallback) => {
   const index = unlocks[type];
   return Number.isInteger(index) && adventure.actions?.[type]?.[index]
@@ -822,7 +828,94 @@ const renderContextAdventure = () => {
   if (generateContextMovementButton) {
     generateContextMovementButton.hidden = activeContextProgress < checkpoints.length;
   }
+  renderActiveWeb();
   renderMissionPanel();
+};
+
+const getActiveWebNodes = () => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const unlocks = getContextUnlocks(activeContextKey);
+  const treasures = getContextTreasures(activeContextKey);
+  const journalEntries = getContextJournalEntries(activeContextKey);
+  const evidenceSaved = hasCurrentEvidence(activeContextKey);
+
+  return [
+    {
+      key: "map",
+      label: "Map",
+      detail: adventure.map.passage,
+      state: activeMissionTab === "map" ? "active" : "available",
+      action: "tab"
+    },
+    {
+      key: "challenge",
+      label: "Challenge",
+      detail: Number.isInteger(unlocks.challenge) ? "Chosen" : "Choose",
+      state: evidenceSaved ? "complete" : activeMissionTab === "challenge" ? "active" : "available",
+      action: "tab"
+    },
+    {
+      key: "connect",
+      label: "Connect",
+      detail: Number.isInteger(unlocks.connect) ? "Chosen" : "Invite",
+      state: Number.isInteger(unlocks.connect) ? "complete" : activeMissionTab === "connect" ? "active" : "available",
+      action: "tab"
+    },
+    {
+      key: "treasure",
+      label: "Treasure",
+      detail: treasures.length ? "Given" : "Give",
+      state: treasures.length ? "complete" : activeMissionTab === "treasure" ? "active" : "available",
+      action: "tab"
+    },
+    {
+      key: "journal",
+      label: "Journal",
+      detail: journalEntries.length ? `${journalEntries.length} saved` : "Record",
+      state: journalEntries.length ? "complete" : "available",
+      action: "journal"
+    }
+  ];
+};
+
+const renderActiveWeb = () => {
+  if (!activeWeb) {
+    return;
+  }
+
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const movement = getContextMovement(activeContextKey);
+  const nodes = getActiveWebNodes();
+  const nodeMarkup = nodes
+    .map(
+      (node) => `
+        <button type="button" data-web-node="${escapeHtml(node.key)}" data-web-action="${escapeHtml(node.action)}" data-state="${escapeHtml(node.state)}">
+          <span>${escapeHtml(node.label)}</span>
+          <strong>${escapeHtml(node.detail)}</strong>
+        </button>
+      `
+    )
+    .join("");
+
+  activeWeb.innerHTML = `
+    <div class="active-web-header">
+      <div>
+        <span>Active Web</span>
+        <h3>${escapeHtml(adventure.title)}${movement ? ` · Movement ${movement + 1}` : ""}</h3>
+      </div>
+      <p>Follow the gold vein. Each node opens the next place to move.</p>
+    </div>
+    <div class="active-web-map">
+      <div class="web-line horizontal"></div>
+      <div class="web-line left-branch"></div>
+      <div class="web-line right-branch"></div>
+      <div class="web-core" data-state="${hasCurrentEvidence(activeContextKey) ? "revealed" : "active"}">
+        <span>Now</span>
+        <strong>${escapeHtml(activeContextProgress + 1)}</strong>
+      </div>
+      ${nodeMarkup}
+    </div>
+  `;
 };
 
 const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
@@ -2320,7 +2413,30 @@ missionTabButtons.forEach((button) => {
     activeMissionTab = button.dataset.missionTab || "map";
     localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
     renderMissionPanel();
+    renderActiveWeb();
   });
+});
+
+activeWeb?.addEventListener("click", (event) => {
+  const node = event.target.closest("[data-web-node]");
+
+  if (!node) {
+    return;
+  }
+
+  const key = node.dataset.webNode || "map";
+  const action = node.dataset.webAction || "tab";
+
+  if (action === "journal") {
+    window.location.hash = "field-notes";
+    return;
+  }
+
+  activeMissionTab = key;
+  localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
+  renderMissionPanel();
+  renderActiveWeb();
+  setContextStatus(`${node.querySelector("span")?.textContent || "Node"} opened on the active web.`, "success");
 });
 
 missionPanel?.addEventListener("click", (event) => {

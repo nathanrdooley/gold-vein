@@ -449,6 +449,181 @@ h3 {
   border-color: rgba(245, 199, 95, 0.65);
 }
 
+.active-web {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(245, 199, 95, 0.11), transparent 44%),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 16px;
+  margin-bottom: 22px;
+  padding: 18px;
+}
+
+.active-web-header {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.active-web-header span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.active-web-header h3,
+.active-web-header p {
+  margin: 0;
+}
+
+.active-web-header p {
+  color: var(--muted);
+  max-width: 360px;
+}
+
+.active-web-map {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(3, 66px);
+  min-height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.web-line {
+  background: linear-gradient(90deg, rgba(245, 199, 95, 0.05), rgba(245, 199, 95, 0.9), rgba(132, 214, 161, 0.68), rgba(245, 199, 95, 0.05));
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(245, 199, 95, 0.28);
+  height: 2px;
+  position: absolute;
+  transform-origin: center;
+  z-index: 0;
+}
+
+.web-line.horizontal {
+  left: 9%;
+  right: 9%;
+  top: 50%;
+}
+
+.web-line.left-branch {
+  left: 23%;
+  top: 42%;
+  transform: rotate(-28deg);
+  width: 36%;
+}
+
+.web-line.right-branch {
+  right: 23%;
+  top: 42%;
+  transform: rotate(28deg);
+  width: 36%;
+}
+
+.web-core,
+.active-web-map button {
+  position: relative;
+  z-index: 1;
+}
+
+.web-core {
+  align-items: center;
+  aspect-ratio: 1;
+  background: #10191a;
+  border: 1px solid rgba(245, 199, 95, 0.6);
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(245, 199, 95, 0.28);
+  display: grid;
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: center;
+  min-width: 82px;
+  padding: 10px;
+  text-align: center;
+}
+
+.web-core span,
+.active-web-map button span {
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.web-core strong {
+  color: var(--ink);
+  font-size: 1.5rem;
+}
+
+.web-core[data-state="revealed"] {
+  border-color: rgba(132, 214, 161, 0.78);
+  box-shadow: 0 0 24px rgba(132, 214, 161, 0.24);
+}
+
+.active-web-map button {
+  background: rgba(15, 20, 23, 0.78);
+  border: 1px solid rgba(245, 199, 95, 0.25);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  min-height: 58px;
+  padding: 10px;
+  text-align: left;
+}
+
+.active-web-map button strong {
+  color: var(--muted);
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.active-web-map button[data-state="active"] {
+  background: rgba(245, 199, 95, 0.18);
+  border-color: rgba(245, 199, 95, 0.72);
+  box-shadow: 0 0 18px rgba(245, 199, 95, 0.22);
+}
+
+.active-web-map button[data-state="complete"] {
+  border-color: rgba(132, 214, 161, 0.64);
+  box-shadow: 0 0 18px rgba(132, 214, 161, 0.14);
+}
+
+.active-web-map [data-web-node="map"] {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.active-web-map [data-web-node="challenge"] {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.active-web-map [data-web-node="connect"] {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+.active-web-map [data-web-node="treasure"] {
+  grid-column: 5;
+  grid-row: 2;
+}
+
+.active-web-map [data-web-node="journal"] {
+  grid-column: 3;
+  grid-row: 3;
+}
+
 .adaptive-adventure {
   display: grid;
   gap: 18px;
@@ -2271,6 +2446,37 @@ select:focus {
 
   .context-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .active-web-header {
+    display: grid;
+  }
+
+  .active-web-header p {
+    max-width: none;
+  }
+
+  .active-web-map {
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    min-height: auto;
+  }
+
+  .web-line {
+    display: none;
+  }
+
+  .web-core,
+  .active-web-map [data-web-node] {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .web-core {
+    grid-column: 1 / -1;
+    min-height: 76px;
+    min-width: 76px;
   }
 
   .amount-grid {
