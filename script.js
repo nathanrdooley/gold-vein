@@ -31,6 +31,20 @@ const appStatus = document.querySelector("[data-app-status]");
 const appPages = document.querySelectorAll("[data-page]");
 const heroAdventureToggle = document.querySelector("[data-toggle-hero-adventures]");
 const heroAdventureChooser = document.querySelector("[data-hero-adventures]");
+const contextOptionButtons = document.querySelectorAll("[data-context-option]");
+const contextTitle = document.querySelector("[data-context-title]");
+const contextSummary = document.querySelector("[data-context-summary]");
+const contextAwareness = document.querySelector("[data-context-awareness]");
+const contextScripture = document.querySelector("[data-context-scripture]");
+const contextProgress = document.querySelector("[data-context-progress]");
+const contextCheckpoints = document.querySelector("[data-context-checkpoints]");
+const contextChallenge = document.querySelector("[data-context-challenge]");
+const contextChallengeCopy = document.querySelector("[data-context-challenge-copy]");
+const contextReward = document.querySelector("[data-context-reward]");
+const contextRewardCopy = document.querySelector("[data-context-reward-copy]");
+const contextStatus = document.querySelector("[data-context-status]");
+const completeContextCheckpointButton = document.querySelector("[data-complete-context-checkpoint]");
+const resetContextAdventureButton = document.querySelector("[data-reset-context-adventure]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
 const resetRedemptionButton = document.querySelector("[data-reset-redemption]");
 const checkLocationButton = document.querySelector("[data-check-location]");
@@ -125,6 +139,8 @@ let emmausTrailProgress = Number(localStorage.getItem("gold-vein-emmaus-progress
 const totalConversionTrailSteps = conversionSteps.length;
 let conversionTrailProgress = Number(localStorage.getItem("gold-vein-conversion-progress") || "0");
 let activeRedeemCode = "";
+let activeContextKey = localStorage.getItem("gold-vein-active-context") || "home";
+let activeContextProgress = Number(localStorage.getItem(`gold-vein-context-${activeContextKey}-progress`) || "0");
 
 const watermarkLocation = {
   latitude: 32.9231644,
@@ -164,6 +180,89 @@ const redemptionPasses = {
     location: "Prototype only",
     adventure: "Gold Vein No. 1",
     treasure: "No active redemption"
+  }
+};
+
+const contextAdventures = {
+  home: {
+    title: "Home Adventure",
+    summary: "Welcome Christ into the ordinary room and let peace become embodied obedience.",
+    awareness: "Bodily presence, attention, peace",
+    scripture: "Luke 10:38-42",
+    challenge: "Prepare the room.",
+    challengeCopy: "Clear one small space and ask what love requires here.",
+    reward: "Peace received.",
+    rewardCopy: "A quiet place becomes a sign of grace received and carried outward.",
+    checkpoints: [
+      ["Notice", "Look around the room. What is your body carrying here?"],
+      ["Receive", "Ask the Lord to meet you in this ordinary place."],
+      ["Connect", "Encourage, serve, or gently check on someone connected to this home."],
+      ["Give", "Carry peace outward through one concrete act of love."]
+    ]
+  },
+  work: {
+    title: "Work Adventure",
+    summary: "Let your workday become a trail of faithfulness, witness, excellence, and mercy.",
+    awareness: "Pressure, responsibility, integrity, people",
+    scripture: "Colossians 3:23-24",
+    challenge: "Bless the work in front of you.",
+    challengeCopy: "Choose one task and do it before the Lord with attention and love.",
+    reward: "Faithful presence.",
+    rewardCopy: "Your labor becomes a place where hidden obedience can reveal Christ.",
+    checkpoints: [
+      ["Notice", "Name the pressure, person, or task most present right now."],
+      ["Receive", "Ask the Lord for wisdom, courage, patience, and clean motives."],
+      ["Connect", "Encourage one coworker, customer, teammate, or leader."],
+      ["Give", "Serve with excellence and record what fruit appeared."]
+    ]
+  },
+  project: {
+    title: "Project Adventure",
+    summary: "Move your calling, burden, build, or study out of fog and into faithful next steps.",
+    awareness: "Focus, fear, stewardship, calling",
+    scripture: "Nehemiah 2:17-18",
+    challenge: "Take the next faithful step.",
+    challengeCopy: "Pick one action small enough to complete and meaningful enough to matter.",
+    reward: "Clarity uncovered.",
+    rewardCopy: "A project becomes a place to practice stewardship instead of striving.",
+    checkpoints: [
+      ["Name", "Write the project, burden, or assignment in one clear sentence."],
+      ["Receive", "Ask what grace is already present for this work."],
+      ["Connect", "Invite one trusted person to pray, advise, or build with you."],
+      ["Give", "Complete one concrete step and offer the fruit back to God."]
+    ]
+  },
+  travel: {
+    title: "Travel Adventure",
+    summary: "Let the road, commute, airport, errand, or transition become a trail of witness.",
+    awareness: "Movement, interruption, hospitality, patience",
+    scripture: "Luke 24:13-35",
+    challenge: "Notice the person along the way.",
+    challengeCopy: "Pause long enough to see who is near while you are moving.",
+    reward: "The road becomes holy ground.",
+    rewardCopy: "Travel becomes more than getting there; it becomes attention to Christ on the way.",
+    checkpoints: [
+      ["Begin", "Ask the Lord to make you attentive while you move."],
+      ["Receive", "Receive the delay, route, or errand as part of the trail."],
+      ["Connect", "Speak kindness, pray silently, or encourage someone along the way."],
+      ["Give", "Carry witness from the road into your destination."]
+    ]
+  },
+  conflict: {
+    title: "Conflict Adventure",
+    summary: "Bring a stuck, tense, or painful place into the light of Christ with humility.",
+    awareness: "Emotion, fear, anger, truth, repair",
+    scripture: "Matthew 5:23-24",
+    challenge: "Move toward repair.",
+    challengeCopy: "Before reacting, ask what humility, truth, or mercy requires.",
+    reward: "Grace in the hard place.",
+    rewardCopy: "Conflict becomes a checkpoint where repentance and love can become visible.",
+    checkpoints: [
+      ["Pause", "Name what you feel without letting it rule you."],
+      ["Receive", "Ask Jesus for humility, truth, courage, and mercy."],
+      ["Connect", "Reach toward repair, counsel, confession, prayer, or wise help."],
+      ["Give", "Offer a truthful next step without manipulation or avoidance."]
+    ]
   }
 };
 
@@ -320,6 +419,94 @@ const loadBackendAdventures = async () => {
       backendAdventuresStatus.dataset.state = "quiet";
     }
   }
+};
+
+const getContextProgressKey = (contextKey) => `gold-vein-context-${contextKey}-progress`;
+
+const setContextStatus = (message, state = "") => {
+  if (!contextStatus) {
+    return;
+  }
+
+  contextStatus.textContent = message;
+  contextStatus.dataset.state = state;
+};
+
+const renderContextAdventure = () => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  activeContextProgress = Math.min(
+    Math.max(activeContextProgress, 0),
+    adventure.checkpoints.length
+  );
+
+  contextOptionButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.contextOption === activeContextKey);
+  });
+
+  if (contextTitle) {
+    contextTitle.textContent = adventure.title;
+  }
+  if (contextSummary) {
+    contextSummary.textContent = adventure.summary;
+  }
+  if (contextAwareness) {
+    contextAwareness.textContent = adventure.awareness;
+  }
+  if (contextScripture) {
+    contextScripture.textContent = adventure.scripture;
+  }
+  if (contextProgress) {
+    const isComplete = activeContextProgress >= adventure.checkpoints.length;
+    contextProgress.textContent = isComplete
+      ? "Adventure open · current trail complete"
+      : `Checkpoint ${activeContextProgress + 1} of ${adventure.checkpoints.length}`;
+  }
+  if (contextChallenge) {
+    contextChallenge.textContent = adventure.challenge;
+  }
+  if (contextChallengeCopy) {
+    contextChallengeCopy.textContent = adventure.challengeCopy;
+  }
+  if (contextReward) {
+    contextReward.textContent = adventure.reward;
+  }
+  if (contextRewardCopy) {
+    contextRewardCopy.textContent = adventure.rewardCopy;
+  }
+  if (contextCheckpoints) {
+    contextCheckpoints.innerHTML = adventure.checkpoints
+      .map(([label, copy], index) => {
+        const state =
+          index < activeContextProgress
+            ? "complete"
+            : index === activeContextProgress
+              ? "active"
+              : "locked";
+        const stateLabel =
+          state === "complete" ? "Complete" : state === "active" ? "Now" : "Locked";
+
+        return `
+          <article class="checkpoint-card" data-state="${state}">
+            <span>${escapeHtml(stateLabel)} · ${escapeHtml(label)}</span>
+            <h3>${escapeHtml(label)}</h3>
+            <p>${escapeHtml(copy)}</p>
+          </article>
+        `;
+      })
+      .join("");
+  }
+};
+
+const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
+  if (!contextAdventures[contextKey]) {
+    return;
+  }
+
+  activeContextKey = contextKey;
+  activeContextProgress = Number(localStorage.getItem(getContextProgressKey(contextKey)) || "0");
+  localStorage.setItem("gold-vein-active-context", contextKey);
+  renderContextAdventure();
+  setContextStatus(message, "success");
 };
 
 const setJournalDateTimeDefaults = () => {
@@ -1624,6 +1811,40 @@ heroAdventureToggle?.addEventListener("click", () => {
   heroAdventureToggle.setAttribute("aria-expanded", String(!isOpen));
 });
 
+contextOptionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const contextKey = button.dataset.contextOption || "home";
+    selectContextAdventure(contextKey, `${contextAdventures[contextKey]?.title || "Adventure"} opened.`);
+  });
+});
+
+completeContextCheckpointButton?.addEventListener("click", () => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+
+  if (activeContextProgress >= adventure.checkpoints.length) {
+    setContextStatus("This trail is complete, but the adventure remains open. Choose another context or keep walking this one.", "success");
+    return;
+  }
+
+  activeContextProgress += 1;
+  localStorage.setItem(getContextProgressKey(activeContextKey), String(activeContextProgress));
+  renderContextAdventure();
+
+  if (activeContextProgress >= adventure.checkpoints.length) {
+    setContextStatus("Trail complete. The adventure remains open for new challenges, rewards, and connection.", "success");
+  } else {
+    const [nextLabel] = adventure.checkpoints[activeContextProgress];
+    setContextStatus(`Checkpoint saved. Next: ${nextLabel}.`, "success");
+  }
+});
+
+resetContextAdventureButton?.addEventListener("click", () => {
+  activeContextProgress = 0;
+  localStorage.setItem(getContextProgressKey(activeContextKey), "0");
+  renderContextAdventure();
+  setContextStatus("This context trail has been reset.", "success");
+});
+
 searchButton?.addEventListener("click", () => {
   setStatus(searchButton, "Choose a collection above, or open one of the available adventure cards.");
 });
@@ -2371,6 +2592,7 @@ setJournalDateTimeDefaults();
 renderJournalEntries();
 renderAdventureDrafts();
 renderSupportPledges();
+renderContextAdventure();
 loadBackendAdventures();
 showActivePage();
 window.addEventListener("hashchange", showActivePage);

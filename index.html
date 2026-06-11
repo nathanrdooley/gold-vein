@@ -24,6 +24,7 @@
         <a class="brand" href="#top">Gold Vein</a>
         <div class="nav-links">
           <a href="#v1">About</a>
+          <a href="#now-adventure">Start</a>
           <a href="#discover">Trails</a>
           <a href="#framework">Framework</a>
           <a href="#creator">Creator</a>
@@ -41,29 +42,29 @@
         </p>
         <div class="hero-actions">
           <button class="button primary" type="button" data-toggle-hero-adventures aria-expanded="false">
-            Choose Adventure
+            Start Adventure
           </button>
         </div>
         <div class="hero-adventure-chooser" data-hero-adventures hidden>
-          <a href="#adventure-app">
-            <span>Partner Concept</span>
-            <strong>Prepared Gift Trail</strong>
+          <a href="#now-adventure" data-context-option="home">
+            <span>Where I Live</span>
+            <strong>Home</strong>
           </a>
-          <a href="#global-adventure-app">
-            <span>Anywhere Nearby</span>
-            <strong>Nearby Neighbor</strong>
+          <a href="#now-adventure" data-context-option="work">
+            <span>Where I Work</span>
+            <strong>Work</strong>
           </a>
-          <a href="#home-adventure-app">
-            <span>Sacred Place</span>
-            <strong>Home Peace Trail</strong>
+          <a href="#now-adventure" data-context-option="project">
+            <span>What I Am Building</span>
+            <strong>Project</strong>
           </a>
-          <a href="#emmaus-adventure-app">
-            <span>Walkable / Hikeable</span>
-            <strong>Emmaus Road</strong>
+          <a href="#now-adventure" data-context-option="travel">
+            <span>Where I Am Going</span>
+            <strong>Travel</strong>
           </a>
-          <a href="#conversion-adventure-app">
-            <span>Gospel Response</span>
-            <strong>Conversion Trail</strong>
+          <a href="#now-adventure" data-context-option="conflict">
+            <span>What Feels Hard</span>
+            <strong>Conflict</strong>
           </a>
         </div>
       </div>
@@ -103,6 +104,98 @@
               <h3>The Big Treasure</h3>
               <p>The Big Treasure is Christ revealed and carried outward through faith, repentance, love, mercy, testimony, and disciple-making.</p>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section now-adventure-section app-page" id="now-adventure" aria-labelledby="now-adventure-title" data-page>
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="section-label">Start Adventure</p>
+            <h2 id="now-adventure-title">Begin where you are.</h2>
+            <p>
+              Choose your present space and state. Gold Vein opens an evolving trail with
+              checkpoints, challenges, rewards, connection, and a saved path you can continue.
+            </p>
+          </div>
+
+          <div class="context-grid" aria-label="Choose where your adventure begins">
+            <button type="button" data-context-option="home">
+              <span>Home</span>
+              <strong>Room, table, family, quiet place</strong>
+            </button>
+            <button type="button" data-context-option="work">
+              <span>Work</span>
+              <strong>Office, jobsite, shift, team</strong>
+            </button>
+            <button type="button" data-context-option="project">
+              <span>Project</span>
+              <strong>Calling, build, study, burden</strong>
+            </button>
+            <button type="button" data-context-option="travel">
+              <span>Travel</span>
+              <strong>Road, airport, errand, commute</strong>
+            </button>
+            <button type="button" data-context-option="conflict">
+              <span>Conflict</span>
+              <strong>Pressure, disagreement, stuck place</strong>
+            </button>
+          </div>
+
+          <div class="adaptive-adventure">
+            <aside class="adventure-state-panel">
+              <p class="section-label">Active Adventure</p>
+              <h3 data-context-title>Home Adventure</h3>
+              <p data-context-summary>
+                Welcome Christ into the ordinary room and let peace become embodied obedience.
+              </p>
+              <dl class="panel-meta">
+                <div>
+                  <dt>Awareness</dt>
+                  <dd data-context-awareness>Bodily presence, attention, peace</dd>
+                </div>
+                <div>
+                  <dt>Scripture Map</dt>
+                  <dd data-context-scripture>Luke 10:38-42</dd>
+                </div>
+                <div>
+                  <dt>Progress</dt>
+                  <dd data-context-progress>Checkpoint 1 of 4</dd>
+                </div>
+              </dl>
+              <div class="journey-actions">
+                <button class="button primary" type="button" data-complete-context-checkpoint>
+                  Complete Checkpoint
+                </button>
+                <button class="button secondary" type="button" data-reset-context-adventure>
+                  Reset
+                </button>
+              </div>
+              <button class="button secondary wide" type="button" data-share-adventure data-share-target="now-adventure" data-share-title="Gold Vein Now Adventure">
+                Invite Someone In
+              </button>
+              <p class="form-status" data-context-status aria-live="polite"></p>
+            </aside>
+
+            <div class="checkpoint-stack" data-context-checkpoints aria-label="Adventure checkpoints"></div>
+
+            <div class="reward-board" aria-label="Challenges and rewards">
+              <article>
+                <span>Challenge</span>
+                <h3 data-context-challenge>Prepare the room.</h3>
+                <p data-context-challenge-copy>Clear one small space and ask what love requires here.</p>
+              </article>
+              <article>
+                <span>Reward</span>
+                <h3 data-context-reward>Peace received.</h3>
+                <p data-context-reward-copy>A quiet place becomes a sign of grace received and carried outward.</p>
+              </article>
+              <article>
+                <span>Connection</span>
+                <h3 data-context-connection>Invite someone into the trail.</h3>
+                <p>Send the adventure, ask for prayer, serve someone nearby, or share the treasure discovered.</p>
+              </article>
+            </div>
           </div>
         </div>
       </section>

@@ -143,16 +143,20 @@ h1 {
   display: none;
 }
 
-.hero-adventure-chooser a {
+.hero-adventure-chooser a,
+.context-grid button {
   background: rgba(15, 20, 23, 0.72);
   border: 1px solid rgba(245, 199, 95, 0.3);
   border-radius: var(--radius);
+  color: var(--ink);
   display: grid;
   min-height: 96px;
   padding: 14px;
+  text-align: left;
 }
 
-.hero-adventure-chooser span {
+.hero-adventure-chooser span,
+.context-grid span {
   color: var(--gold);
   font-size: 0.7rem;
   font-weight: 900;
@@ -161,7 +165,8 @@ h1 {
   text-transform: uppercase;
 }
 
-.hero-adventure-chooser strong {
+.hero-adventure-chooser strong,
+.context-grid strong {
   align-self: end;
   color: var(--ink);
   line-height: 1.2;
@@ -417,6 +422,102 @@ h3 {
   background:
     radial-gradient(circle at 80% 15%, rgba(245, 199, 95, 0.12), transparent 30%),
     #111617;
+}
+
+.now-adventure-section {
+  background:
+    radial-gradient(circle at 78% 10%, rgba(245, 199, 95, 0.12), transparent 30%),
+    linear-gradient(135deg, #10191a, #191f18 52%, #201a25);
+  border-bottom: 1px solid var(--line);
+}
+
+.context-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+
+.context-grid button {
+  cursor: pointer;
+}
+
+.context-grid button.active {
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.2), rgba(132, 214, 161, 0.08)),
+    rgba(255, 255, 255, 0.055);
+  border-color: rgba(245, 199, 95, 0.65);
+}
+
+.adaptive-adventure {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.1fr) minmax(260px, 0.8fr);
+}
+
+.adventure-state-panel,
+.checkpoint-stack,
+.reward-board article {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.adventure-state-panel {
+  padding: 22px;
+}
+
+.adventure-state-panel > p:not(.section-label),
+.reward-board p {
+  color: var(--muted);
+}
+
+.checkpoint-stack {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.checkpoint-card {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.checkpoint-card[data-state="complete"] {
+  border-color: rgba(132, 214, 161, 0.48);
+}
+
+.checkpoint-card[data-state="active"] {
+  border-color: rgba(245, 199, 95, 0.6);
+  box-shadow: 0 0 0 1px rgba(245, 199, 95, 0.18);
+}
+
+.checkpoint-card span,
+.reward-board span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.checkpoint-card p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.reward-board {
+  display: grid;
+  gap: 12px;
+}
+
+.reward-board article {
+  min-height: 170px;
+  padding: 18px;
 }
 
 .search-panel {
@@ -1926,6 +2027,7 @@ select:focus {
   .creator-card dl,
   .about-grid,
   .adventure-category-grid,
+  .adaptive-adventure,
   .support-grid,
   .support-builder,
   .venmo-panel,
@@ -1937,6 +2039,10 @@ select:focus {
   }
 
   .trail-loop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .context-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1996,6 +2102,10 @@ select:focus {
   }
 
   .hero-adventure-chooser {
+    grid-template-columns: 1fr;
+  }
+
+  .context-grid {
     grid-template-columns: 1fr;
   }
 
