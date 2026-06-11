@@ -190,6 +190,100 @@ const redemptionPasses = {
 };
 
 const contextAdventures = {
+  gospel: {
+    title: "Gospel Adventure",
+    summary: "Look to Jesus Christ, bring honest questions into the light, and take the next step toward faith.",
+    awareness: "Longing, questions, conviction, hope",
+    scripture: "John 3:1-18",
+    challenge: "Look to Christ.",
+    challengeCopy: "Read the gospel invitation slowly and name what you honestly see, want, resist, or need.",
+    reward: "Christ revealed.",
+    rewardCopy: "The treasure is not a better self-image. The treasure is Jesus Christ given for sinners.",
+    map: {
+      passage: "John 3:1-18",
+      history: "Nicodemus, a respected religious teacher, comes to Jesus at night with questions about who He is and what God is doing.",
+      context: "Jesus tells him that entrance into the kingdom requires new birth from above, then points to the Son of Man lifted up so whoever believes may have eternal life.",
+      inner: "Notice curiosity, fear, shame, control, resistance, desire, and the ache to be made new rather than merely improved.",
+      power: "The gospel reveals God's love in the giving of His Son. The invitation is to look to Christ, believe, and receive life.",
+      crossReferences: ["Numbers 21:4-9", "Ezekiel 36:25-27", "Romans 5:6-8", "2 Corinthians 5:17-21"]
+    },
+    actions: {
+      challenge: [
+        ["Read honestly", "Read John 3:1-18 and write the sentence that feels most alive, confusing, or confronting."],
+        ["Name the need", "Write one honest sentence beginning with: I need Jesus to..."],
+        ["Ask for light", "Pray: Lord Jesus, show me what is true and help me respond honestly."]
+      ],
+      reward: [
+        ["Gospel clarity", "Name what the passage says God gives, what the Son does, and what believing receives."],
+        ["Honest response", "Choose the most honest response: I believe, I want to believe, I have questions, or I am resisting."],
+        ["New birth longing", "Write what you want Jesus to make new."]
+      ],
+      connect: [
+        ["Ask a believer", "Ask a follower of Jesus to read John 3 with you and help you understand the gospel."],
+        ["Request prayer", "Message someone: I am on a Gold Vein Gospel Adventure. Will you pray with me and help me take the next step?"],
+        ["Bring questions", "Write your top question and share it with a mature believer, pastor, or trusted friend."]
+      ]
+    },
+    outdoor: {
+      title: "Light Walk",
+      from: "Where you are sitting",
+      to: "A doorway, window, sidewalk, or quiet outside place",
+      prompt: "As you move toward light, ask Jesus to bring what is hidden into truth, mercy, and life."
+    },
+    checkpoints: [
+      ["Look", "Read John 3:1-18 and look toward Jesus Christ, not merely your own effort."],
+      ["Name", "Write your honest response to the gospel invitation."],
+      ["Connect", "Invite a follower of Jesus to pray, answer questions, and walk with you."],
+      ["Respond", "Take the next faithful step toward repentance, faith, baptism, church, or follow-up."]
+    ]
+  },
+  maturity: {
+    title: "Mature Disciple Adventure",
+    summary: "Move from being stuck or passive into practiced faith, love, endurance, and disciple-making.",
+    awareness: "Formation, habits, obedience, witness",
+    scripture: "2 Peter 1:3-11",
+    challenge: "Practice what has been given.",
+    challengeCopy: "Choose one virtue Peter names and practice it today in a visible, embodied way.",
+    reward: "Fruitful assurance.",
+    rewardCopy: "Maturity is not performance for approval. It is participation in the life and power Christ has given.",
+    map: {
+      passage: "2 Peter 1:3-11",
+      history: "Peter writes to believers to strengthen them against corruption, false teaching, forgetfulness, and fruitless faith.",
+      context: "The passage begins with what God has already granted, then calls believers to diligent practice that confirms calling and choosing.",
+      inner: "Notice passivity, discouragement, double-mindedness, hidden habits, fear of effort, and the desire for maturity without practice.",
+      power: "Christ's divine power grants what is needed for life and godliness. Practiced faith becomes fruitful, stable, and ready to make disciples.",
+      crossReferences: ["John 15:1-8", "Galatians 5:22-25", "Hebrews 5:12-14", "Matthew 28:18-20"]
+    },
+    actions: {
+      challenge: [
+        ["Practice one virtue", "Choose faith, moral excellence, knowledge, self-control, perseverance, godliness, brotherly kindness, or love and practice it today."],
+        ["Interrupt one habit", "Name one stuck pattern and take one concrete step of obedience away from it."],
+        ["Teach what you received", "Share one truth from 2 Peter 1:3-11 with someone who could use encouragement."]
+      ],
+      reward: [
+        ["Fruit noticed", "Name one small fruit that appeared through obedience."],
+        ["Assurance strengthened", "Write how practicing these things helps you not stumble."],
+        ["Power remembered", "Record what Christ has already granted, not just what you still lack."]
+      ],
+      connect: [
+        ["Invite accountability", "Ask a mature believer to check in with you about the practice you chose."],
+        ["Disciple someone", "Invite someone younger in faith to read the passage and practice one step with you."],
+        ["Report fruit", "Tell a trusted person what you practiced, what was hard, and what fruit appeared."]
+      ]
+    },
+    outdoor: {
+      title: "Practice Walk",
+      from: "The place where you feel stuck",
+      to: "A nearby path, hallway, porch, or outside place",
+      prompt: "Walk as a physical sign that maturity moves. Ask which practice needs to become embodied today."
+    },
+    checkpoints: [
+      ["Receive", "Name what Christ has granted for life and godliness."],
+      ["Practice", "Choose one virtue and do something concrete with it."],
+      ["Connect", "Invite accountability, prayer, counsel, or a disciple-making conversation."],
+      ["Give", "Carry what you practiced outward by encouraging, teaching, serving, or following up."]
+    ]
+  },
   home: {
     title: "Home Adventure",
     summary: "Welcome Christ into the ordinary room and let peace become embodied obedience.",
@@ -851,21 +945,28 @@ const getActiveWebNodes = () => {
       key: "challenge",
       label: "Challenge",
       detail: Number.isInteger(unlocks.challenge) ? "Chosen" : "Choose",
-      state: evidenceSaved ? "complete" : activeMissionTab === "challenge" ? "active" : "available",
+      state: activeMissionTab === "challenge" ? "active" : evidenceSaved ? "complete" : "available",
+      action: "tab"
+    },
+    {
+      key: "reward",
+      label: "Reward",
+      detail: Number.isInteger(unlocks.reward) ? "Named" : "Name",
+      state: activeMissionTab === "reward" ? "active" : Number.isInteger(unlocks.reward) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "connect",
       label: "Connect",
       detail: Number.isInteger(unlocks.connect) ? "Chosen" : "Invite",
-      state: Number.isInteger(unlocks.connect) ? "complete" : activeMissionTab === "connect" ? "active" : "available",
+      state: activeMissionTab === "connect" ? "active" : Number.isInteger(unlocks.connect) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "treasure",
       label: "Treasure",
       detail: treasures.length ? "Given" : "Give",
-      state: treasures.length ? "complete" : activeMissionTab === "treasure" ? "active" : "available",
+      state: activeMissionTab === "treasure" ? "active" : treasures.length ? "complete" : "available",
       action: "tab"
     },
     {
@@ -886,6 +987,24 @@ const renderActiveWeb = () => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
   const movement = getContextMovement(activeContextKey);
   const nodes = getActiveWebNodes();
+  const webPoints = {
+    map: [50, 20],
+    challenge: [76, 35],
+    reward: [76, 65],
+    treasure: [50, 80],
+    connect: [24, 65],
+    journal: [24, 35]
+  };
+  const linkMarkup = nodes
+    .map(
+      (node) => {
+        const [x, y] = webPoints[node.key] || [50, 50];
+        return `
+          <path class="web-link" data-web-line-to="${escapeHtml(node.key)}" data-web-action="${escapeHtml(node.action)}" data-state="${escapeHtml(node.state)}" d="M50 50 L${x} ${y}" />
+        `;
+      }
+    )
+    .join("");
   const nodeMarkup = nodes
     .map(
       (node) => `
@@ -905,10 +1024,11 @@ const renderActiveWeb = () => {
       </div>
       <p>Follow the gold vein. Each node opens the next place to move.</p>
     </div>
-    <div class="active-web-map">
-      <div class="web-line horizontal"></div>
-      <div class="web-line left-branch"></div>
-      <div class="web-line right-branch"></div>
+    <div class="active-web-map" data-active-node="${escapeHtml(activeMissionTab)}">
+      <svg class="active-web-lines" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <polygon class="web-ring" points="50,20 76,35 76,65 50,80 24,65 24,35"></polygon>
+        ${linkMarkup}
+      </svg>
       <div class="web-core" data-state="${hasCurrentEvidence(activeContextKey) ? "revealed" : "active"}">
         <span>Now</span>
         <strong>${escapeHtml(activeContextProgress + 1)}</strong>
@@ -2414,21 +2534,23 @@ missionTabButtons.forEach((button) => {
     localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
     renderMissionPanel();
     renderActiveWeb();
+    missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
 activeWeb?.addEventListener("click", (event) => {
-  const node = event.target.closest("[data-web-node]");
+  const node = event.target.closest("[data-web-node], [data-web-line-to]");
 
   if (!node) {
     return;
   }
 
-  const key = node.dataset.webNode || "map";
+  const key = node.dataset.webNode || node.dataset.webLineTo || "map";
   const action = node.dataset.webAction || "tab";
 
   if (action === "journal") {
     window.location.hash = "field-notes";
+    document.querySelector("#field-notes")?.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
 
@@ -2436,7 +2558,9 @@ activeWeb?.addEventListener("click", (event) => {
   localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
   renderMissionPanel();
   renderActiveWeb();
-  setContextStatus(`${node.querySelector("span")?.textContent || "Node"} opened on the active web.`, "success");
+  missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const openedNode = activeWeb.querySelector(`[data-web-node="${CSS.escape(key)}"] span`);
+  setContextStatus(`${openedNode?.textContent || "Node"} opened on the active web.`, "success");
 });
 
 missionPanel?.addEventListener("click", (event) => {
@@ -2446,6 +2570,7 @@ missionPanel?.addEventListener("click", (event) => {
     const index = Number(unlockButton.dataset.actionIndex || 0);
     setContextUnlock(activeContextKey, type, index);
     renderMissionPanel();
+    renderActiveWeb();
     setContextStatus(`${type[0].toUpperCase()}${type.slice(1)} unlocked for this trail.`, "success");
     return;
   }
@@ -2468,6 +2593,7 @@ missionPanel?.addEventListener("click", (event) => {
       note
     });
     renderMissionPanel();
+    renderActiveWeb();
     setContextStatus("Treasure saved to this adventure context.", "success");
     return;
   }
@@ -2483,6 +2609,7 @@ missionPanel?.addEventListener("click", (event) => {
 
     saveCurrentEvidence(activeContextKey, note);
     renderContextAdventure();
+    renderActiveWeb();
     setContextStatus("Evidence saved. The checkpoint is now revealed.", "success");
   }
 });
