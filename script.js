@@ -45,6 +45,7 @@ const contextRewardCopy = document.querySelector("[data-context-reward-copy]");
 const contextStatus = document.querySelector("[data-context-status]");
 const completeContextCheckpointButton = document.querySelector("[data-complete-context-checkpoint]");
 const resetContextAdventureButton = document.querySelector("[data-reset-context-adventure]");
+const generateContextMovementButton = document.querySelector("[data-generate-context-movement]");
 const missionTabButtons = document.querySelectorAll("[data-mission-tab]");
 const missionPanel = document.querySelector("[data-mission-panel]");
 const redeemButton = document.querySelector("[data-redeem-code-button]");
@@ -553,6 +554,7 @@ const loadBackendAdventures = async () => {
 const getContextProgressKey = (contextKey) => `gold-vein-context-${contextKey}-progress`;
 const getContextUnlockKey = (contextKey) => `gold-vein-context-${contextKey}-unlocks`;
 const getContextTreasureKey = (contextKey) => `gold-vein-context-${contextKey}-treasures`;
+const getContextMovementKey = (contextKey) => `gold-vein-context-${contextKey}-movement`;
 
 const getContextUnlocks = (contextKey) => {
   try {
@@ -586,6 +588,50 @@ const saveContextTreasure = (contextKey, treasure) => {
   localStorage.setItem(getContextTreasureKey(contextKey), JSON.stringify(treasures.slice(0, 8)));
 };
 
+const getContextMovement = (contextKey) => Number(localStorage.getItem(getContextMovementKey(contextKey)) || "0");
+
+const getSelectedActionTitle = (adventure, unlocks, type, fallback) => {
+  const index = unlocks[type];
+  return Number.isInteger(index) && adventure.actions?.[type]?.[index]
+    ? adventure.actions[type][index][0]
+    : fallback;
+};
+
+const getAdaptiveCheckpoints = (contextKey) => {
+  const adventure = contextAdventures[contextKey] || contextAdventures.home;
+  const movement = getContextMovement(contextKey);
+
+  if (!movement) {
+    return adventure.checkpoints;
+  }
+
+  const unlocks = getContextUnlocks(contextKey);
+  const treasures = getContextTreasures(contextKey);
+  const challenge = getSelectedActionTitle(adventure, unlocks, "challenge", adventure.challenge);
+  const reward = getSelectedActionTitle(adventure, unlocks, "reward", adventure.reward);
+  const connect = getSelectedActionTitle(adventure, unlocks, "connect", "Invite someone into the trail");
+  const treasure = treasures[0]?.type || "a tangible act of love";
+
+  return [
+    [
+      "Remember",
+      `Return to ${adventure.map.passage}. What has Christ already revealed in this trail?`
+    ],
+    [
+      "Practice",
+      `Take the next layer of "${challenge}" with greater attention, humility, and obedience.`
+    ],
+    [
+      "Connect",
+      `Bring someone into "${connect}" so the trail does not stay private.`
+    ],
+    [
+      "Give",
+      `Carry "${reward}" outward through ${treasure.toLowerCase()} or another concrete sign of grace.`
+    ]
+  ];
+};
+
 const setContextStatus = (message, state = "") => {
   if (!contextStatus) {
     return;
@@ -597,9 +643,11 @@ const setContextStatus = (message, state = "") => {
 
 const renderContextAdventure = () => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const checkpoints = getAdaptiveCheckpoints(activeContextKey);
+  const movement = getContextMovement(activeContextKey);
   activeContextProgress = Math.min(
     Math.max(activeContextProgress, 0),
-    adventure.checkpoints.length
+    checkpoints.length
   );
 
   contextOptionButtons.forEach((button) => {
@@ -607,7 +655,7 @@ const renderContextAdventure = () => {
   });
 
   if (contextTitle) {
-    contextTitle.textContent = adventure.title;
+    contextTitle.textContent = movement ? `${adventure.title} · Movement ${movement + 1}` : adventure.title;
   }
   if (contextSummary) {
     contextSummary.textContent = adventure.summary;
@@ -619,10 +667,10 @@ const renderContextAdventure = () => {
     contextScripture.textContent = adventure.scripture;
   }
   if (contextProgress) {
-    const isComplete = activeContextProgress >= adventure.checkpoints.length;
+    const isComplete = activeContextProgress >= checkpoints.length;
     contextProgress.textContent = isComplete
-      ? "Adventure open · current trail complete"
-      : `Checkpoint ${activeContextProgress + 1} of ${adventure.checkpoints.length}`;
+      ? `Movement ${movement + 1} complete · adventure open`
+      : `Checkpoint ${activeContextProgress + 1} of ${checkpoints.length}`;
   }
   if (contextChallenge) {
     contextChallenge.textContent = adventure.challenge;
@@ -637,16 +685,17 @@ const renderContextAdventure = () => {
     contextRewardCopy.textContent = adventure.rewardCopy;
   }
   if (contextCheckpoints) {
-    contextCheckpoints.innerHTML = adventure.checkpoints
+    const visibleCheckpoints = checkpoints.filter((_, index) => index <= activeContextProgress);
+    contextCheckpoints.innerHTML = visibleCheckpoints
       .map(([label, copy], index) => {
         const state =
           index < activeContextProgress
             ? "complete"
-            : index === activeContextProgress
+            : index === activeContextProgress && activeContextProgress < checkpoints.length
               ? "active"
-              : "locked";
+              : "complete";
         const stateLabel =
-          state === "complete" ? "Complete" : state === "active" ? "Now" : "Locked";
+          state === "complete" ? "Complete" : "Now";
 
         return `
           <article class="checkpoint-card" data-state="${state}">
@@ -656,7 +705,22 @@ const renderContextAdventure = () => {
           </article>
         `;
       })
-      .join("");
+      .join("") +
+      (activeContextProgress >= checkpoints.length
+        ? `
+          <article class="checkpoint-card next-movement-card" data-state="active">
+            <span>Next Movement</span>
+            <h3>The trail is still alive.</h3>
+            <p>Gold Vein can generate the next movement from what you unlocked, saved, and carried on this trail.</p>
+          </article>
+        `
+        : "");
+  }
+  if (completeContextCheckpointButton) {
+    completeContextCheckpointButton.hidden = activeContextProgress >= checkpoints.length;
+  }
+  if (generateContextMovementButton) {
+    generateContextMovementButton.hidden = activeContextProgress < checkpoints.length;
   }
   renderMissionPanel();
 };
@@ -2163,10 +2227,10 @@ missionPanel?.addEventListener("click", (event) => {
 });
 
 completeContextCheckpointButton?.addEventListener("click", () => {
-  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const checkpoints = getAdaptiveCheckpoints(activeContextKey);
 
-  if (activeContextProgress >= adventure.checkpoints.length) {
-    setContextStatus("This trail is complete, but the adventure remains open. Choose another context or keep walking this one.", "success");
+  if (activeContextProgress >= checkpoints.length) {
+    setContextStatus("This movement is complete. Generate the next movement when you are ready.", "success");
     return;
   }
 
@@ -2174,19 +2238,31 @@ completeContextCheckpointButton?.addEventListener("click", () => {
   localStorage.setItem(getContextProgressKey(activeContextKey), String(activeContextProgress));
   renderContextAdventure();
 
-  if (activeContextProgress >= adventure.checkpoints.length) {
-    setContextStatus("Trail complete. The adventure remains open for new challenges, rewards, and connection.", "success");
+  if (activeContextProgress >= checkpoints.length) {
+    setContextStatus("Movement complete. Gold Vein can now generate the next movement from this trail.", "success");
   } else {
-    const [nextLabel] = adventure.checkpoints[activeContextProgress];
+    const [nextLabel] = checkpoints[activeContextProgress];
     setContextStatus(`Checkpoint saved. Next: ${nextLabel}.`, "success");
   }
+});
+
+generateContextMovementButton?.addEventListener("click", () => {
+  const nextMovement = getContextMovement(activeContextKey) + 1;
+  localStorage.setItem(getContextMovementKey(activeContextKey), String(nextMovement));
+  activeContextProgress = 0;
+  localStorage.setItem(getContextProgressKey(activeContextKey), "0");
+  activeMissionTab = "map";
+  localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
+  renderContextAdventure();
+  setContextStatus(`Movement ${nextMovement + 1} generated from what you carried on this trail.`, "success");
 });
 
 resetContextAdventureButton?.addEventListener("click", () => {
   activeContextProgress = 0;
   localStorage.setItem(getContextProgressKey(activeContextKey), "0");
+  localStorage.setItem(getContextMovementKey(activeContextKey), "0");
   renderContextAdventure();
-  setContextStatus("This context trail has been reset.", "success");
+  setContextStatus("This context adventure has been reset to the first movement.", "success");
 });
 
 searchButton?.addEventListener("click", () => {
