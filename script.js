@@ -68,6 +68,9 @@ const giftTypeInputs = document.querySelectorAll("[data-gift-type]");
 const witnessNoteInput = document.querySelector("[data-witness-note]");
 const witnessConfirmButton = document.querySelector("[data-witness-confirm]");
 const witnessStatus = document.querySelector("[data-witness-status]");
+const installPrompt = document.querySelector("[data-install-prompt]");
+const installAppButton = document.querySelector("[data-install-app]");
+const dismissInstallButton = document.querySelector("[data-dismiss-install]");
 const resetGlobalTrailButton = document.querySelector("[data-reset-global-trail]");
 const globalStepButtons = document.querySelectorAll("[data-complete-global-step]");
 const globalSteps = document.querySelectorAll("[data-global-step]");
@@ -535,6 +538,47 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js").catch(() => {});
   });
 }
+
+let deferredInstallPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  if (localStorage.getItem("gold-vein-install-dismissed") === "true") {
+    return;
+  }
+
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (installPrompt) {
+    installPrompt.hidden = false;
+  }
+});
+
+installAppButton?.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) {
+    return;
+  }
+
+  installPrompt.hidden = true;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+});
+
+dismissInstallButton?.addEventListener("click", () => {
+  localStorage.setItem("gold-vein-install-dismissed", "true");
+  deferredInstallPrompt = null;
+  if (installPrompt) {
+    installPrompt.hidden = true;
+  }
+});
+
+window.addEventListener("appinstalled", () => {
+  localStorage.setItem("gold-vein-install-dismissed", "true");
+  deferredInstallPrompt = null;
+  if (installPrompt) {
+    installPrompt.hidden = true;
+  }
+});
 
 const setStatus = (button, message) => {
   const status = button.parentElement.querySelector(".form-status");

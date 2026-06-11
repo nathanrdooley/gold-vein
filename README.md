@@ -13,6 +13,8 @@ This first version is a static PWA-style website with multiple prototype adventu
 - Interactive adventure app prototype with locked and unlocked instructions
 - Compartmental app-page navigation from the home screen
 - Installable PWA metadata for phone testing
+- Automatic install prompt on browsers that support `beforeinstallprompt`
+- New medallion-style Gold Vein icon PNGs for app installs and shortcuts
 - Partner Location Trail: Gold Vein No. 1
 - Global Nearby Trail: The Nearby Neighbor
 - Home Trail: The Table and the Room
@@ -76,7 +78,7 @@ On iPhone, open the URL in Safari, tap Share, then choose **Add to Home Screen**
 
 - `index.html` - page structure and content
 - `styles.css` - responsive visual design
-- `script.js` - app unlock flow, print, field notes, and testimony interactions
+- `script.js` - app unlock flow, install prompt, print, field notes, and testimony interactions
 - `manifest.json` - installable app metadata
 - `service-worker.js` - app shell caching
 - `PILOT_PLAN.md` - project brief and V1 pilot plan
