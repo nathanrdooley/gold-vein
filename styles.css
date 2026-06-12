@@ -1100,7 +1100,9 @@ h3 {
 
 .evidence-panel,
 .outdoor-prompt,
-.active-note-box {
+.active-note-box,
+.challenge-progress,
+.challenge-activation {
   background: rgba(15, 20, 23, 0.44);
   border: 1px solid rgba(245, 199, 95, 0.22);
   border-radius: 8px;
@@ -1111,7 +1113,9 @@ h3 {
 
 .evidence-panel span,
 .outdoor-prompt span,
-.active-note-box span {
+.active-note-box span,
+.challenge-progress span,
+.challenge-activation span {
   color: var(--gold);
   font-size: 0.7rem;
   font-weight: 900;
@@ -1121,13 +1125,28 @@ h3 {
 .evidence-panel p,
 .outdoor-prompt p,
 .active-note-box p,
-.active-note-box small {
+.active-note-box small,
+.challenge-progress p,
+.challenge-activation p {
   color: var(--muted);
   margin: 0;
 }
 
-.active-note-box h3 {
+.active-note-box h3,
+.challenge-progress h3,
+.challenge-activation h3 {
   margin: 0;
+}
+
+.challenge-progress[data-state="complete"],
+.challenge-activation[data-state="complete"],
+.outdoor-prompt[data-state="complete"] {
+  border-color: rgba(132, 214, 161, 0.58);
+  box-shadow: 0 0 18px rgba(132, 214, 161, 0.12);
+}
+
+.challenge-option-grid::before {
+  background: linear-gradient(180deg, rgba(132, 214, 161, 0.08), rgba(245, 199, 95, 0.74), rgba(132, 214, 161, 0.08));
 }
 
 .muted-evidence {

@@ -834,6 +834,7 @@ const getContextUnlockKey = (contextKey) => `gold-vein-context-${contextKey}-unl
 const getContextTreasureKey = (contextKey) => `gold-vein-context-${contextKey}-treasures`;
 const getContextMovementKey = (contextKey) => `gold-vein-context-${contextKey}-movement`;
 const getContextEvidenceKey = (contextKey) => `gold-vein-context-${contextKey}-evidence`;
+const getContextChallengeKey = (contextKey) => `gold-vein-context-${contextKey}-challenge-actions`;
 
 const getContextUnlocks = (contextKey) => {
   try {
@@ -848,6 +849,26 @@ const setContextUnlock = (contextKey, type, index) => {
   unlocks[type] = index;
   localStorage.setItem(getContextUnlockKey(contextKey), JSON.stringify(unlocks));
 };
+
+const getChallengeActions = (contextKey) => {
+  try {
+    return JSON.parse(localStorage.getItem(getContextChallengeKey(contextKey)) || "{}");
+  } catch {
+    return {};
+  }
+};
+
+const setChallengeAction = (contextKey, key, value = true) => {
+  const actions = getChallengeActions(contextKey);
+  actions[key] = value;
+  localStorage.setItem(getContextChallengeKey(contextKey), JSON.stringify(actions));
+  return actions;
+};
+
+const getCompletedChallengeCount = (contextKey) =>
+  Object.values(getChallengeActions(contextKey)).filter(Boolean).length;
+
+const hasChallengeGateOpen = (contextKey) => getCompletedChallengeCount(contextKey) >= 2;
 
 const getContextTreasures = (contextKey) => {
   try {
@@ -1147,6 +1168,7 @@ const getActiveWebNodes = () => {
   const treasures = getContextTreasures(activeContextKey);
   const journalEntries = getContextJournalEntries(activeContextKey);
   const evidenceSaved = hasCurrentEvidence(activeContextKey);
+  const challengeCount = getCompletedChallengeCount(activeContextKey);
 
   return [
     {
@@ -1159,8 +1181,8 @@ const getActiveWebNodes = () => {
     {
       key: "challenge",
       label: "Challenge",
-      detail: Number.isInteger(unlocks.challenge) ? "Chosen" : "Choose",
-      state: activeMissionTab === "challenge" && activeAdventureView === "path" ? "active" : evidenceSaved ? "complete" : "available",
+      detail: challengeCount ? `${Math.min(challengeCount, 2)}/2 built` : "Choose",
+      state: activeMissionTab === "challenge" && activeAdventureView === "path" ? "active" : hasChallengeGateOpen(activeContextKey) ? "complete" : "available",
       action: "tab"
     },
     {
@@ -1278,6 +1300,61 @@ const renderActionOptions = (type) => {
   const selectedIndex = Number.isInteger(unlocks[type]) ? unlocks[type] : -1;
   const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : null;
   const evidence = getContextEvidence(activeContextKey)[getCurrentEvidenceId(activeContextKey)];
+
+  if (type === "challenge") {
+    const challengeActions = getChallengeActions(activeContextKey);
+    const completedCount = getCompletedChallengeCount(activeContextKey);
+    const gateOpen = completedCount >= 2;
+
+    return `
+      <div class="challenge-progress" data-state="${gateOpen ? "complete" : "active"}">
+        <span>Challenge Gate</span>
+        <h3>${completedCount} of 2 challenge activations complete</h3>
+        <p>Complete at least two challenge activations. The goal is not to collect tasks, but to build something on Christ that will remain when tested.</p>
+      </div>
+      <div class="mission-option-grid challenge-option-grid">
+        ${options
+          .map(([title, copy], index) => {
+            const key = `challenge-${index}`;
+            const isComplete = Boolean(challengeActions[key]);
+            return `
+              <article class="challenge-activation" data-state="${isComplete ? "complete" : "ready"}">
+                <span>${isComplete ? "Completed" : "Activation"} · Challenge</span>
+                <h3>${escapeHtml(title)}</h3>
+                <p>${escapeHtml(copy)}</p>
+                <button class="button ${isComplete ? "secondary" : "primary"}" type="button" data-complete-challenge-action="${escapeHtml(key)}" ${isComplete ? "disabled" : ""}>
+                  ${isComplete ? "Built into the trail" : "Complete This Challenge"}
+                </button>
+              </article>
+            `;
+          })
+          .join("")}
+      </div>
+      ${
+        gateOpen
+          ? `
+            <div class="evidence-panel">
+              <span>Checkpoint Evidence</span>
+              <h3>What was built that will not burn?</h3>
+              <p>Name the obedience, repentance, repair, love, or Spirit-fruit that became visible through the challenges.</p>
+              <label>
+                Evidence from the challenge
+                <textarea data-evidence-note rows="3" placeholder="What did the Spirit expose, correct, strengthen, or build?">${escapeHtml(evidence?.note || "")}</textarea>
+              </label>
+              <button class="button primary" type="button" data-save-context-evidence>
+                Save Evidence and Reveal Checkpoint
+              </button>
+            </div>
+          `
+          : `
+            <div class="evidence-panel muted-evidence">
+              <span>Still Building</span>
+              <p>Complete one more challenge activation before checkpoint evidence opens.</p>
+            </div>
+          `
+      }
+    `;
+  }
 
   return `
     <div class="mission-option-grid">
@@ -1539,16 +1616,22 @@ const renderMissionPanel = () => {
   }
 
   if (activeMissionTab === "challenge") {
+    const challengeActions = getChallengeActions(activeContextKey);
+    const outdoorComplete = Boolean(challengeActions.outdoor);
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
         <span>Challenge Options</span>
         <h3>Choose a step to unlock.</h3>
-        <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}.</p>
-        <div class="outdoor-prompt">
-          <span>Outdoor Movement</span>
+        <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}. Complete at least two activations before revealing the checkpoint.</p>
+        <div class="outdoor-prompt" data-state="${outdoorComplete ? "complete" : "locked"}">
+          <span>${outdoorComplete ? "Outdoor Movement Complete" : "Optional Unlock"} · Outdoor Movement</span>
           <strong>${escapeHtml(adventure.outdoor.title)}</strong>
-          <p><b>Point A:</b> ${escapeHtml(adventure.outdoor.from)}<br><b>Point B:</b> ${escapeHtml(adventure.outdoor.to)}<br>${escapeHtml(adventure.outdoor.prompt)}</p>
+          <p>This is an optional walk or simple outdoor activity. If you choose it, move from <b>${escapeHtml(adventure.outdoor.from)}</b> to <b>${escapeHtml(adventure.outdoor.to)}</b>. Go slowly enough to notice your body, your thoughts, your surroundings, and the Lord's invitation.</p>
+          <p>${escapeHtml(adventure.outdoor.prompt)}</p>
+          <button class="button ${outdoorComplete ? "secondary" : "primary"}" type="button" data-complete-challenge-action="outdoor" ${outdoorComplete ? "disabled" : ""}>
+            ${outdoorComplete ? "Outdoor Movement Added" : "Unlock Outdoor Movement"}
+          </button>
         </div>
         ${renderActionOptions("challenge")}
         ${renderActiveNoteBox("Challenge", "What did you choose, practice, resist, or notice as you moved into the challenge?")}
@@ -3197,6 +3280,22 @@ missionPanel?.addEventListener("click", async (event) => {
     return;
   }
 
+  const challengeActionButton = event.target.closest("[data-complete-challenge-action]");
+  if (challengeActionButton) {
+    const key = challengeActionButton.dataset.completeChallengeAction || "challenge-0";
+    setChallengeAction(activeContextKey, key, true);
+    renderMissionPanel();
+    renderActiveWeb();
+    const count = getCompletedChallengeCount(activeContextKey);
+    setContextStatus(
+      count >= 2
+        ? "Two challenge activations are complete. Checkpoint evidence is now open."
+        : "Challenge activation complete. Complete one more activation to open checkpoint evidence.",
+      "success"
+    );
+    return;
+  }
+
   const unlockButton = event.target.closest("[data-action-unlock]");
   if (unlockButton) {
     const type = unlockButton.dataset.actionUnlock;
@@ -3278,6 +3377,7 @@ generateContextMovementButton?.addEventListener("click", () => {
   activeContextProgress = 0;
   localStorage.setItem(getContextProgressKey(activeContextKey), "0");
   localStorage.removeItem(getContextUnlockKey(activeContextKey));
+  localStorage.removeItem(getContextChallengeKey(activeContextKey));
   activeMissionTab = "map";
   localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
   renderContextAdventure();
@@ -3288,6 +3388,7 @@ resetContextAdventureButton?.addEventListener("click", () => {
   activeContextProgress = 0;
   localStorage.setItem(getContextProgressKey(activeContextKey), "0");
   localStorage.setItem(getContextMovementKey(activeContextKey), "0");
+  localStorage.removeItem(getContextChallengeKey(activeContextKey));
   renderContextAdventure();
   setContextStatus("This context adventure has been reset to the first movement.", "success");
 });
