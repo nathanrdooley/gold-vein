@@ -206,36 +206,37 @@ const redemptionPasses = {
 const contextAdventures = {
   gospel: {
     title: "Gospel Adventure",
-    summary: "Look to Jesus Christ, bring honest questions into the light, and take the next step toward faith.",
-    awareness: "Longing, questions, conviction, hope",
+    summary: "Move from honest condition to the saving power of the gospel, received by grace through faith in Jesus Christ.",
+    awareness: "Curiosity, conviction, shame, resistance, hunger, faith",
     scripture: "John 3:1-18",
     challenge: "Look to Christ.",
-    challengeCopy: "Read the gospel invitation slowly and name what you honestly see, want, resist, or need.",
+    challengeCopy: "Read the gospel invitation slowly, name your condition honestly, and respond to grace by faith.",
     reward: "Christ revealed.",
-    rewardCopy: "The treasure is not a better self-image. The treasure is Jesus Christ given for sinners.",
+    rewardCopy: "The treasure is not a better self-image. The treasure is Jesus Christ given for sinners, received by grace through faith.",
     map: {
       passage: "John 3:1-18",
       history: "Nicodemus, a respected religious teacher, comes to Jesus at night with questions about who He is and what God is doing.",
       context: "Jesus tells him that entrance into the kingdom requires new birth from above, then points to the Son of Man lifted up so whoever believes may have eternal life.",
-      inner: "Notice curiosity, fear, shame, control, resistance, desire, and the ache to be made new rather than merely improved.",
-      power: "The gospel reveals God's love in the giving of His Son. The invitation is to look to Christ, believe, and receive life.",
-      crossReferences: ["Numbers 21:4-9", "Ezekiel 36:25-27", "Romans 5:6-8", "2 Corinthians 5:17-21"]
+      inner: "Notice curiosity, conviction, shame, control, resistance, hunger, and the ache to be made new rather than merely improved.",
+      power: "The power of the gospel is not accessed by self-rescue. Grace opens the way; faith receives Christ, His mercy, His new birth, and His life.",
+      crossReferences: ["Ephesians 2:1-10", "Romans 5:6-11", "2 Corinthians 5:17-21", "Revelation 21:21"]
     },
     actions: {
       challenge: [
-        ["Read honestly", "Read John 3:1-18 and write the sentence that feels most alive, confusing, or confronting."],
-        ["Name the need", "Write one honest sentence beginning with: I need Jesus to..."],
-        ["Ask for light", "Pray: Lord Jesus, show me what is true and help me respond honestly."]
+        ["Name your condition", "Choose the most honest word for where you are: curious, convicted, ashamed, resistant, hungry, or ready to believe. Write why."],
+        ["Look to Christ", "Read John 3:14-18 and write what Christ has done, what grace gives, and what faith receives."],
+        ["Respond by faith", "Pray or write an honest response: Lord Jesus, I cannot save myself. I look to You for mercy, new birth, and life."]
       ],
       reward: [
-        ["Gospel clarity", "Name what the passage says God gives, what the Son does, and what believing receives."],
-        ["Honest response", "Choose the most honest response: I believe, I want to believe, I have questions, or I am resisting."],
-        ["New birth longing", "Write what you want Jesus to make new."]
+        ["Grace received", "Name where grace met you before you could fix yourself."],
+        ["Faith awakened", "Write the honest response that is forming: I believe, I want to believe, help my unbelief, or I am still resisting."],
+        ["New birth witness", "Name any evidence of new desire, conviction, peace, courage, repentance, or love for Christ."]
       ],
       connect: [
         ["Ask a believer", "Ask a follower of Jesus to read John 3 with you and help you understand the gospel."],
         ["Request prayer", "Message someone: I am on a Gold Vein Gospel Adventure. Will you pray with me and help me take the next step?"],
-        ["Bring questions", "Write your top question and share it with a mature believer, pastor, or trusted friend."]
+        ["Bring questions", "Write your top question and share it with a mature believer, pastor, or trusted friend."],
+        ["Name your response", "If you are trusting Christ, tell a trusted believer: I am responding to the gospel and need help walking forward."]
       ]
     },
     outdoor: {
@@ -245,10 +246,10 @@ const contextAdventures = {
       prompt: "As you move toward light, ask Jesus to bring what is hidden into truth, mercy, and life."
     },
     checkpoints: [
-      ["Look", "Read John 3:1-18 and look toward Jesus Christ, not merely your own effort."],
-      ["Name", "Write your honest response to the gospel invitation."],
-      ["Connect", "Invite a follower of Jesus to pray, answer questions, and walk with you."],
-      ["Respond", "Take the next faithful step toward repentance, faith, baptism, church, or follow-up."]
+      ["Condition", "Name where you honestly are before God without hiding or performing."],
+      ["Grace", "Look to Jesus Christ and receive the gospel as grace, not self-repair."],
+      ["Faith", "Write or speak your honest response to Christ: belief, desire, questions, or resistance."],
+      ["Witness", "Invite a trusted believer into prayer, follow-up, church, baptism, or continued discipleship."]
     ]
   },
   maturity: {
@@ -541,6 +542,16 @@ const scriptureTextLibrary = {
     text: "Jesus answered him, \"Most certainly, I tell you, unless one is born anew, he can't see God's Kingdom.\" ... \"As Moses lifted up the serpent in the wilderness, even so must the Son of Man be lifted up, that whoever believes in him should not perish, but have eternal life.\" ... \"For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.\"",
     feedback: "The gospel does not begin with self-repair. It begins with new birth, looking to Christ, and receiving life from God."
   },
+  "Ephesians 2:1-10": {
+    title: "Ephesians 2:1-10",
+    text: "You were dead in trespasses and sins ... but God, being rich in mercy ... made us alive together with Christ. By grace you have been saved through faith, and that not of yourselves; it is the gift of God ... created in Christ Jesus for good works.",
+    feedback: "Grace is the doorway and faith is the receiving. Good works come after mercy makes the dead alive; they do not purchase life."
+  },
+  "Romans 5:6-11": {
+    title: "Romans 5:6-11",
+    text: "While we were still weak, at the right time Christ died for the ungodly ... God commends his own love toward us, in that while we were yet sinners, Christ died for us ... we also rejoice in God through our Lord Jesus Christ.",
+    feedback: "The gospel reaches people while they are weak, ungodly, and unable to rescue themselves. Peace with God is received through Christ."
+  },
   "2 Peter 1:3-11": {
     title: "2 Peter 1:3-11",
     text: "His divine power has granted to us all things that pertain to life and godliness ... For this very cause, adding on your part all diligence, in your faith supply moral excellence ... for if you do these things, you will never stumble. For thus you will be richly supplied with the entrance into the eternal Kingdom of our Lord and Savior, Jesus Christ.",
@@ -585,6 +596,11 @@ const scriptureTextLibrary = {
     title: "Galatians 5:16-25",
     text: "Walk by the Spirit, and you won't fulfill the lust of the flesh ... the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faith, gentleness, and self-control.",
     feedback: "The Spirit's activity becomes visible as sinful reaction is brought into the light and new fruit begins to appear."
+  },
+  "Revelation 21:21": {
+    title: "Revelation 21:21",
+    text: "The twelve gates were twelve pearls ... The street of the city was pure gold, like transparent glass.",
+    feedback: "Gold Vein is aiming toward this final vision: a path made pure by God's glory, transparent before Him, and full of the life of the Lamb."
   }
 };
 
@@ -1698,17 +1714,49 @@ const renderScriptureReview = (map) => {
   `;
 };
 
+const renderGospelVisionPanel = () => {
+  if (activeContextKey !== "gospel") {
+    return "";
+  }
+
+  return `
+    <section class="gospel-vision-panel">
+      <span>Final Vision · Revelation 21:21</span>
+      <h3>The path ends in transparent gold.</h3>
+      <p>Gold Vein begins with grace meeting a person in a real condition, but its horizon is the city of God: a street of pure gold, clear as glass, where the Lamb is the light. Every honest gospel response is a small trail marker toward that kingdom.</p>
+    </section>
+  `;
+};
+
+const getSoulCarePrompts = () =>
+  activeContextKey === "gospel"
+    ? [
+        ["curious", "I am curious, but not sure"],
+        ["convicted", "I feel convicted and exposed"],
+        ["ashamed", "I feel ashamed or unworthy"],
+        ["resistant", "I feel resistant"],
+        ["hungry", "I want to believe or change"],
+        ["ready", "I am ready to trust Christ"]
+      ]
+    : [
+        ["convicted", "I feel convicted and exposed"],
+        ["defensive", "I feel defensive or resistant"],
+        ["ashamed", "I feel ashamed or unworthy"],
+        ["hungry", "I feel hungry for change"],
+        ["stuck", "I feel stuck in a pattern"],
+        ["peace", "I sense peace and courage"]
+      ];
+
 const renderSoulCarePrompts = () => `
   <details class="soul-care-panel" open>
-    <summary>Soul-Care Check</summary>
-    <p>Choose what feels most honest. This is not a diagnosis; it is a guided checkpoint for bringing the soul into the light of Scripture.</p>
+    <summary>${activeContextKey === "gospel" ? "Gospel Condition Check" : "Soul-Care Check"}</summary>
+    <p>${activeContextKey === "gospel" ? "Choose where you honestly are before God. This is not pressure; it is a way to bring your condition into the light where grace can meet faith." : "Choose what feels most honest. This is not a diagnosis; it is a guided checkpoint for bringing the soul into the light of Scripture."}</p>
     <div class="soul-care-grid">
-      <button type="button" data-soul-prompt="convicted">I feel convicted and exposed</button>
-      <button type="button" data-soul-prompt="defensive">I feel defensive or resistant</button>
-      <button type="button" data-soul-prompt="ashamed">I feel ashamed or unworthy</button>
-      <button type="button" data-soul-prompt="hungry">I feel hungry for change</button>
-      <button type="button" data-soul-prompt="stuck">I feel stuck in a pattern</button>
-      <button type="button" data-soul-prompt="peace">I sense peace and courage</button>
+      ${getSoulCarePrompts()
+        .map(
+          ([key, label]) => `<button type="button" data-soul-prompt="${escapeHtml(key)}">${escapeHtml(label)}</button>`
+        )
+        .join("")}
     </div>
     <div class="soul-care-feedback" data-soul-feedback>
       Select a condition to receive biblical feedback for the next faithful step.
@@ -1740,14 +1788,20 @@ const renderNextNodeGuide = (nextNode = "challenge") => {
 };
 
 const soulCareFeedback = {
+  curious:
+    "Curiosity can be a mercy. Come like Nicodemus: bring the questions into the presence of Jesus and ask what is true, not merely what is familiar.",
   convicted:
     "Conviction can be mercy when it moves you toward Christ instead of hiding. Bring the exposed place to Jesus, name it honestly, and ask what repentance should look like in one concrete step.",
   defensive:
     "Defensiveness often protects a place the Spirit wants to heal. Slow down, breathe, and ask: What am I afraid will happen if I tell the truth?",
+  resistant:
+    "Resistance does not surprise Jesus. Name it plainly. Ask whether you are protecting control, fear, shame, or unbelief, then look again at Christ lifted up for sinners.",
   ashamed:
     "Shame says you should hide. The gospel says Christ is the foundation, and what is brought into His light can be cleansed, rebuilt, and strengthened.",
   hungry:
     "Hunger for change can be evidence of grace already stirring. Choose one practice that agrees with the Spirit: confession, prayer, counsel, restitution, or obedience.",
+  ready:
+    "If you are ready to trust Christ, respond honestly: confess your need, look to Jesus for mercy and life, and tell a trusted believer so you do not walk alone.",
   stuck:
     "A stuck pattern needs more than willpower. Look for the loop: trigger, desire, reaction, aftermath. Invite Scripture, a companion, and one embodied interruption into the loop.",
   peace:
@@ -1876,6 +1930,7 @@ const renderMissionPanel = () => {
             <p>${escapeHtml(map.power)}</p>
           </details>
         </div>
+        ${renderGospelVisionPanel()}
         ${renderScriptureReview(map)}
         ${renderSoulCarePrompts()}
         ${renderActiveNoteBox("Map", `What is ${map.passage} revealing while this adventure is open?`)}
