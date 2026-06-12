@@ -889,21 +889,25 @@ h3 {
 }
 
 .mission-tabs {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
 }
 
 .mission-tabs button {
   background: rgba(15, 20, 23, 0.54);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 999px;
   color: var(--muted);
   cursor: pointer;
-  font-size: 0.78rem;
+  flex: 0 0 auto;
+  font-size: 0.72rem;
   font-weight: 900;
-  min-height: 42px;
-  padding: 9px;
+  min-height: 34px;
+  min-width: 68px;
+  padding: 7px 10px;
 }
 
 .mission-tabs button.active {
@@ -1247,6 +1251,25 @@ h3 {
   font-weight: 900;
   min-height: 52px;
   padding: 12px;
+}
+
+.companion-grid button {
+  min-height: 64px;
+}
+
+.companion-grid button span {
+  color: var(--gold);
+  display: block;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+}
+
+.companion-grid button strong {
+  color: var(--ink);
+  display: block;
+  font-size: 1.35rem;
+  line-height: 1;
+  margin-top: 4px;
 }
 
 .companion-grid button.selected,

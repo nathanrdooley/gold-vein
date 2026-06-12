@@ -1299,6 +1299,12 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
 const getChallengeRewardFeedback = (title) =>
   `This activation is evidence of formation, not performance. If it was done in faith, repentance, love, truth, or obedience, it is the kind of work that agrees with Christ as the foundation. Receive the encouragement, name the fruit, and let it become something stronger than a passing impulse.`;
 
+const getNextMissionTab = (currentTab) => {
+  const order = ["map", "challenge", "reward", "connect", "treasure", "signal", "vein"];
+  const currentIndex = order.indexOf(currentTab);
+  return order[Math.min(currentIndex + 1, order.length - 1)] || "reward";
+};
+
 const renderActionOptions = (type) => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
   const options = adventure.actions?.[type] || [];
@@ -1595,6 +1601,8 @@ const addCompanionMessage = async ({ contact, message, type = "message" }) => {
   } catch {}
 };
 
+const getCompanionLabel = (contact) => contact?.slice(0, 1).toUpperCase() || "C";
+
 const renderCompanionMessages = () => {
   const messages = getCompanionMessages();
 
@@ -1603,7 +1611,7 @@ const renderCompanionMessages = () => {
         .map(
           (message) => `
             <article>
-              <span>${escapeHtml(message.contact)} · ${escapeHtml(message.type)}</span>
+              <span>Companion ${escapeHtml(getCompanionLabel(message.contact))} · ${escapeHtml(message.type)}</span>
               <p>${escapeHtml(message.message)}</p>
             </article>
           `
@@ -1749,11 +1757,20 @@ const renderMissionPanel = () => {
         ${renderMissionReturnControls()}
         <span>Companion Signal</span>
         <h3>Let someone know you are on the trail.</h3>
-        <p>Send a lightweight signal, poke, or comment to a companion. This prototype saves locally and posts to the messages API when the backend is available.</p>
+        <p>Send a lightweight signal, poke, or comment to a trusted companion. Contacts are shown discreetly in the trail interface.</p>
         <div class="companion-grid">
-          <button class="${activeCompanionContact === "Glen" ? "selected" : ""}" type="button" data-companion-contact="Glen">Glen</button>
-          <button class="${activeCompanionContact === "Dallas" ? "selected" : ""}" type="button" data-companion-contact="Dallas">Dallas</button>
-          <button class="${activeCompanionContact === "Nathan" ? "selected" : ""}" type="button" data-companion-contact="Nathan">Nathan</button>
+          <button class="${activeCompanionContact === "Glen" ? "selected" : ""}" type="button" data-companion-contact="Glen" aria-label="Select companion G">
+            <span>Companion</span>
+            <strong>G</strong>
+          </button>
+          <button class="${activeCompanionContact === "Dallas" ? "selected" : ""}" type="button" data-companion-contact="Dallas" aria-label="Select companion D">
+            <span>Companion</span>
+            <strong>D</strong>
+          </button>
+          <button class="${activeCompanionContact === "Nathan" ? "selected" : ""}" type="button" data-companion-contact="Nathan" aria-label="Select companion N">
+            <span>Companion</span>
+            <strong>N</strong>
+          </button>
         </div>
         <label>
           Message or comment
@@ -3290,7 +3307,7 @@ missionPanel?.addEventListener("click", async (event) => {
     activeCompanionContact = companionButton.dataset.companionContact || "Glen";
     localStorage.setItem("gold-vein-active-companion", activeCompanionContact);
     renderMissionPanel();
-    setContextStatus(`${activeCompanionContact} selected as your companion signal.`, "success");
+    setContextStatus(`Companion ${getCompanionLabel(activeCompanionContact)} selected.`, "success");
     return;
   }
 
@@ -3314,7 +3331,7 @@ missionPanel?.addEventListener("click", async (event) => {
       messageInput.value = "";
     }
     renderMissionPanel();
-    setContextStatus(`${isPoke ? "Poked" : "Messaged"} ${activeCompanionContact}.`, "success");
+    setContextStatus(`${isPoke ? "Poked" : "Messaged"} Companion ${getCompanionLabel(activeCompanionContact)}.`, "success");
     return;
   }
 
@@ -3456,6 +3473,7 @@ missionPanel?.addEventListener("click", async (event) => {
   const saveEvidenceButton = event.target.closest("[data-save-context-evidence]");
   if (saveEvidenceButton) {
     const note = missionPanel.querySelector("[data-evidence-note]")?.value?.trim() || "";
+    const checkpoints = getAdaptiveCheckpoints(activeContextKey);
 
     if (!note) {
       setContextStatus("Write evidence from the action before revealing the checkpoint.", "error");
@@ -3463,9 +3481,25 @@ missionPanel?.addEventListener("click", async (event) => {
     }
 
     saveCurrentEvidence(activeContextKey, note);
+    if (activeContextProgress < checkpoints.length) {
+      activeContextProgress += 1;
+      localStorage.setItem(getContextProgressKey(activeContextKey), String(activeContextProgress));
+    }
+    activeMissionTab = getNextMissionTab(activeMissionTab);
+    localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
     renderContextAdventure();
     renderActiveWeb();
-    setContextStatus("Evidence saved. The checkpoint is now revealed.", "success");
+    setActiveAdventureView(activeContextProgress >= checkpoints.length ? "path" : "path");
+    setContextStatus(
+      activeContextProgress >= checkpoints.length
+        ? "Evidence saved. This movement is complete."
+        : `Evidence saved. Next node opened: ${activeMissionTab}.`,
+      "success"
+    );
+    window.requestAnimationFrame(() => {
+      missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return;
   }
 });
 
