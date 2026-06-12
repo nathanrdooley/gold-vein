@@ -1244,6 +1244,54 @@ h3 {
   color: var(--ink);
 }
 
+.formation-direction-card {
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.16), rgba(132, 214, 161, 0.08)),
+    rgba(15, 20, 23, 0.5);
+  border: 1px solid rgba(245, 199, 95, 0.38);
+  border-radius: 8px;
+  box-shadow: 0 0 24px rgba(245, 199, 95, 0.12);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.formation-direction-card > span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.formation-direction-card h3,
+.formation-direction-card p {
+  margin: 0;
+}
+
+.formation-direction-card p {
+  color: var(--muted);
+}
+
+.formation-direction-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.formation-direction-grid article {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+}
+
+.formation-direction-grid strong {
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+
 .muted-evidence {
   border-color: var(--line);
 }
@@ -2969,6 +3017,10 @@ select:focus {
 
   .mission-tabs {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .formation-direction-grid {
+    grid-template-columns: 1fr;
   }
 
   .amount-grid {

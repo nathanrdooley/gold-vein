@@ -836,6 +836,7 @@ const getContextMovementKey = (contextKey) => `gold-vein-context-${contextKey}-m
 const getContextEvidenceKey = (contextKey) => `gold-vein-context-${contextKey}-evidence`;
 const getContextChallengeKey = (contextKey) => `gold-vein-context-${contextKey}-challenge-actions`;
 const getContextRewardKey = (contextKey) => `gold-vein-context-${contextKey}-rewards`;
+const getContextDirectionKey = (contextKey) => `gold-vein-context-${contextKey}-formation-direction`;
 
 const getContextUnlocks = (contextKey) => {
   try {
@@ -887,6 +888,24 @@ const setReceivedReward = (contextKey, key, value) => {
   rewards[key] = value;
   localStorage.setItem(getContextRewardKey(contextKey), JSON.stringify(rewards));
   return rewards;
+};
+
+const getFormationDirection = (contextKey) => {
+  try {
+    return JSON.parse(localStorage.getItem(getContextDirectionKey(contextKey)) || "null");
+  } catch {
+    return null;
+  }
+};
+
+const setFormationDirection = (contextKey, value) => {
+  localStorage.setItem(
+    getContextDirectionKey(contextKey),
+    JSON.stringify({
+      savedAt: new Date().toISOString(),
+      ...value
+    })
+  );
 };
 
 const getContextTreasures = (contextKey) => {
@@ -1325,6 +1344,105 @@ const getNextMissionTab = (currentTab) => {
   return order[Math.min(currentIndex + 1, order.length - 1)] || "reward";
 };
 
+const getFormationDirectionCopy = (direction) => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const movement = getContextMovement(activeContextKey) + 1;
+  const checkpoints = getAdaptiveCheckpoints(activeContextKey);
+  const completedIndex = Number.isInteger(direction?.completedIndex)
+    ? direction.completedIndex
+    : Math.max(activeContextProgress - 1, 0);
+  const [checkpointLabel] = checkpoints[completedIndex] || checkpoints[activeContextProgress] || ["Checkpoint"];
+  const rewardTitle = direction?.rewardTitle || adventure.reward || "Reward";
+  const source = direction?.source || "checkpoint";
+
+  if (activeContextKey === "gospel") {
+    return {
+      eyebrow: source === "reward" ? "Reward Received" : "Checkpoint Direction",
+      title: source === "reward" ? "Grace is being named." : `${checkpointLabel} has been witnessed.`,
+      where:
+        source === "reward"
+          ? `You are at Movement ${movement} with the gospel open before you. ${rewardTitle} has been received as trail fruit, not as proof earned by effort.`
+          : `You have saved evidence for ${checkpointLabel}. The trail is asking whether your response is moving from hearing about Christ toward trusting Christ.`,
+      changed:
+        "If your honest response is repentance and faith in Jesus Christ, name that as receiving the saving power of the gospel: born again by grace through faith, not self-improvement. Gold Vein can witness that direction, while Christ Himself is the foundation and assurance.",
+      next:
+        "Tell a trusted believer, pastor, or companion what you believe happened. Then keep moving into connection, prayer, baptismal/church follow-up, and a life that begins to bear Spirit fruit.",
+      stage: "Gospel response"
+    };
+  }
+
+  if (activeContextKey === "maturity") {
+    const stage =
+      activeContextProgress <= 1
+        ? "Receiving practice"
+        : activeContextProgress === 2
+          ? "Healthy disciple"
+          : "Disciple maker";
+    return {
+      eyebrow: source === "reward" ? "Reward Received" : "Checkpoint Direction",
+      title: source === "reward" ? "Fruit is becoming visible." : `${checkpointLabel} has been built into the trail.`,
+      where:
+        source === "reward"
+          ? `You are at Movement ${movement} receiving ${rewardTitle} as formation fruit.`
+          : `You have completed a checkpoint in the maturity trail. The path is moving from immature reaction toward trained faithfulness.`,
+      changed:
+        "This is the maturity arc: an immature disciple receives correction and practice, a healthy disciple walks by the Spirit with steadier obedience, and a disciple maker begins helping others follow Christ too.",
+      next:
+        "Move toward the next node with one concrete practice: record what changed, invite accountability, and look for someone you can encourage with what Christ is forming in you.",
+      stage
+    };
+  }
+
+  return {
+    eyebrow: source === "reward" ? "Reward Received" : "Checkpoint Direction",
+    title: source === "reward" ? "Formation fruit has been received." : `${checkpointLabel} has been witnessed.`,
+    where:
+      source === "reward"
+        ? `You are at Movement ${movement} in the ${adventure.title}. ${rewardTitle} has been received without ranking it above any other grace.`
+        : `You have saved checkpoint evidence in the ${adventure.title}. The trail now has a witness of what was practiced, repaired, resisted, or received.`,
+    changed:
+      "The change may be conviction, confession, steadier attention, repair, courage, love, patience, or a clearer refusal of the old reaction. Name what agrees with the Spirit and let it become repeatable.",
+    next:
+      "Move to the next node, carry the evidence with you, and let the next action make the hidden formation visible in real life.",
+    stage: adventure.title
+  };
+};
+
+const renderFormationDirection = () => {
+  const direction = getFormationDirection(activeContextKey);
+
+  if (!direction) {
+    return "";
+  }
+
+  const copy = getFormationDirectionCopy(direction);
+  const nextTab = direction.nextTab || getNextMissionTab(activeMissionTab);
+
+  return `
+    <section class="formation-direction-card" data-source="${escapeHtml(direction.source || "checkpoint")}">
+      <span>${escapeHtml(copy.eyebrow)} · ${escapeHtml(copy.stage)}</span>
+      <h3>${escapeHtml(copy.title)}</h3>
+      <div class="formation-direction-grid">
+        <article>
+          <strong>Where you are</strong>
+          <p>${escapeHtml(copy.where)}</p>
+        </article>
+        <article>
+          <strong>How you have changed</strong>
+          <p>${escapeHtml(copy.changed)}</p>
+        </article>
+        <article>
+          <strong>Where you are going</strong>
+          <p>${escapeHtml(copy.next)}</p>
+        </article>
+      </div>
+      <button class="button primary" type="button" data-open-direction-next="${escapeHtml(nextTab)}">
+        Open ${escapeHtml(nextTab)} Node
+      </button>
+    </section>
+  `;
+};
+
 const renderRewardOptions = () => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
   const rewards = adventure.actions?.reward || [];
@@ -1687,6 +1805,7 @@ const renderMissionPanel = () => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
   const map = adventure.map;
   const treasures = getContextTreasures(activeContextKey);
+  const directionPanel = renderFormationDirection();
 
   missionTabButtons.forEach((button) => {
     button.classList.toggle("active", button.dataset.missionTab === activeMissionTab);
@@ -1696,6 +1815,7 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="scripture-map-card">
         ${renderMissionReturnControls()}
+        ${directionPanel}
         <span>Scripture Map</span>
         <h3>${escapeHtml(map.passage)}</h3>
         <div class="map-grid">
@@ -1735,6 +1855,7 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
+        ${directionPanel}
         <span>Challenge Options</span>
         <h3>Choose a step to unlock.</h3>
         <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}. Complete at least two activations before revealing the checkpoint.</p>
@@ -1786,6 +1907,7 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
+        ${directionPanel}
         <span>Reward Reflections</span>
         <h3>Name the treasure uncovered.</h3>
         <p>Rewards are not trophies or competing choices. Receive whatever fruit is true, and let each one become a sign of grace noticed and carried outward.</p>
@@ -1800,6 +1922,7 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
+        ${directionPanel}
         <span>Connection Options</span>
         <h3>Bring someone onto the trail.</h3>
         <p>Invite prayer, encouragement, counsel, service, or witness so the adventure does not stay private.</p>
@@ -1814,6 +1937,7 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
+        ${directionPanel}
         <span>Companion Signal</span>
         <h3>Let someone know you are on the trail.</h3>
         <p>Send a lightweight signal, poke, or comment to a trusted companion. Contacts are shown discreetly in the trail interface.</p>
@@ -1852,6 +1976,7 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="mission-card vein-interface">
         ${renderMissionReturnControls()}
+        ${directionPanel}
         <span>Vein Interface</span>
         <h3>A deeper layer of the trail.</h3>
         <p>This is a prototype doorway for the future Gold Vein dimension: shared presence, living trail maps, companion signals, testimony threads, and Spirit-led next moves.</p>
@@ -1879,6 +2004,7 @@ const renderMissionPanel = () => {
   missionPanel.innerHTML = `
     <article class="mission-card">
       ${renderMissionReturnControls()}
+      ${directionPanel}
       <span>Treasure Options</span>
       <h3>Give a real-world treasure.</h3>
       <p>Choose a tangible act that fits the person and the trail: a financial gift, note, prayer, service, meal, resource, or follow-up.</p>
@@ -3325,6 +3451,13 @@ missionPanel?.addEventListener("click", async (event) => {
     return;
   }
 
+  const directionNextButton = event.target.closest("[data-open-direction-next]");
+  if (directionNextButton) {
+    openMissionPath(directionNextButton.dataset.openDirectionNext || getNextMissionTab(activeMissionTab));
+    setContextStatus("Next trail node opened from the formation direction.", "success");
+    return;
+  }
+
   const activeNoteButton = event.target.closest("[data-save-active-note]");
   if (activeNoteButton) {
     const noteBox = activeNoteButton.closest("[data-note-stage]");
@@ -3437,6 +3570,7 @@ missionPanel?.addEventListener("click", async (event) => {
     const card = challengeActionButton.closest(".challenge-activation, .outdoor-prompt");
     const acknowledged = Boolean(card?.querySelector(`[data-challenge-scripture-ack="${CSS.escape(key)}"]`)?.checked);
     const note = card?.querySelector(`[data-challenge-note="${CSS.escape(key)}"]`)?.value?.trim() || "";
+    const title = card?.querySelector("h3, strong")?.textContent?.trim() || "Challenge activation";
 
     if (!acknowledged) {
       setContextStatus("Read and acknowledge the Scripture before completing this activation.", "error");
@@ -3449,6 +3583,7 @@ missionPanel?.addEventListener("click", async (event) => {
     }
 
     setChallengeAction(activeContextKey, key, {
+      title,
       note,
       rewardReceived: false,
       completedAt: new Date().toISOString()
@@ -3482,6 +3617,11 @@ missionPanel?.addEventListener("click", async (event) => {
       ...current,
       rewardReceived: true,
       receivedAt: new Date().toISOString()
+    });
+    setFormationDirection(activeContextKey, {
+      source: "reward",
+      rewardTitle: current.title || "Challenge reward",
+      nextTab: getCompletedChallengeCount(activeContextKey) >= 2 ? "reward" : "challenge"
     });
     renderMissionPanel();
     renderActiveWeb();
@@ -3519,6 +3659,11 @@ missionPanel?.addEventListener("click", async (event) => {
       title,
       note,
       receivedAt: now.toISOString()
+    });
+    setFormationDirection(activeContextKey, {
+      source: "reward",
+      rewardTitle: title,
+      nextTab: getNextMissionTab("reward")
     });
 
     void saveJournalEntry({
@@ -3573,12 +3718,19 @@ missionPanel?.addEventListener("click", async (event) => {
       return;
     }
 
+    const completedIndex = activeContextProgress;
+    const nextTab = getNextMissionTab(activeMissionTab);
     saveCurrentEvidence(activeContextKey, note);
+    setFormationDirection(activeContextKey, {
+      source: "checkpoint",
+      completedIndex,
+      nextTab
+    });
     if (activeContextProgress < checkpoints.length) {
       activeContextProgress += 1;
       localStorage.setItem(getContextProgressKey(activeContextKey), String(activeContextProgress));
     }
-    activeMissionTab = getNextMissionTab(activeMissionTab);
+    activeMissionTab = nextTab;
     localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
     renderContextAdventure();
     renderActiveWeb();
@@ -3609,8 +3761,14 @@ completeContextCheckpointButton?.addEventListener("click", () => {
     return;
   }
 
+  const completedIndex = activeContextProgress;
   activeContextProgress += 1;
   localStorage.setItem(getContextProgressKey(activeContextKey), String(activeContextProgress));
+  setFormationDirection(activeContextKey, {
+    source: "checkpoint",
+    completedIndex,
+    nextTab: getNextMissionTab(activeMissionTab)
+  });
   renderContextAdventure();
 
   if (activeContextProgress >= checkpoints.length) {
@@ -3629,6 +3787,7 @@ generateContextMovementButton?.addEventListener("click", () => {
   localStorage.removeItem(getContextUnlockKey(activeContextKey));
   localStorage.removeItem(getContextChallengeKey(activeContextKey));
   localStorage.removeItem(getContextRewardKey(activeContextKey));
+  localStorage.removeItem(getContextDirectionKey(activeContextKey));
   activeMissionTab = "map";
   localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
   renderContextAdventure();
@@ -3641,6 +3800,7 @@ resetContextAdventureButton?.addEventListener("click", () => {
   localStorage.setItem(getContextMovementKey(activeContextKey), "0");
   localStorage.removeItem(getContextChallengeKey(activeContextKey));
   localStorage.removeItem(getContextRewardKey(activeContextKey));
+  localStorage.removeItem(getContextDirectionKey(activeContextKey));
   renderContextAdventure();
   setContextStatus("This context adventure has been reset to the first movement.", "success");
 });
