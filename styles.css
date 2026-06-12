@@ -1145,6 +1145,49 @@ h3 {
   box-shadow: 0 0 18px rgba(132, 214, 161, 0.12);
 }
 
+.challenge-activation[data-state="reward"],
+.outdoor-prompt[data-state="reward"] {
+  border-color: rgba(245, 199, 95, 0.62);
+  box-shadow: 0 0 22px rgba(245, 199, 95, 0.18);
+}
+
+.challenge-scripture,
+.challenge-reward-prompt {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.challenge-scripture summary {
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.challenge-scripture p {
+  margin-top: 8px;
+}
+
+.challenge-acknowledgement {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.challenge-acknowledgement input {
+  min-width: 18px;
+  width: auto;
+}
+
+.challenge-reward-prompt {
+  border-color: rgba(245, 199, 95, 0.36);
+}
+
+.challenge-reward-prompt h3 {
+  margin: 0;
+}
+
 .challenge-option-grid::before {
   background: linear-gradient(180deg, rgba(132, 214, 161, 0.08), rgba(245, 199, 95, 0.74), rgba(132, 214, 161, 0.08));
 }

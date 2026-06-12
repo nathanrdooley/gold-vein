@@ -865,8 +865,11 @@ const setChallengeAction = (contextKey, key, value = true) => {
   return actions;
 };
 
+const isChallengeActionReceived = (action) =>
+  action === true || action?.rewardReceived === true;
+
 const getCompletedChallengeCount = (contextKey) =>
-  Object.values(getChallengeActions(contextKey)).filter(Boolean).length;
+  Object.values(getChallengeActions(contextKey)).filter(isChallengeActionReceived).length;
 
 const hasChallengeGateOpen = (contextKey) => getCompletedChallengeCount(contextKey) >= 2;
 
@@ -1293,6 +1296,9 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
   });
 };
 
+const getChallengeRewardFeedback = (title) =>
+  `This activation is evidence of formation, not performance. If it was done in faith, repentance, love, truth, or obedience, it is the kind of work that agrees with Christ as the foundation. Receive the encouragement, name the fruit, and let it become something stronger than a passing impulse.`;
+
 const renderActionOptions = (type) => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
   const options = adventure.actions?.[type] || [];
@@ -1305,6 +1311,53 @@ const renderActionOptions = (type) => {
     const challengeActions = getChallengeActions(activeContextKey);
     const completedCount = getCompletedChallengeCount(activeContextKey);
     const gateOpen = completedCount >= 2;
+    const scripture = getScriptureText(adventure.map.passage);
+
+    const renderChallengeActivation = ({ key, title, copy, source = "Challenge" }) => {
+      const action = challengeActions[key];
+      const isAwaitingReward = action && !isChallengeActionReceived(action);
+      const isComplete = isChallengeActionReceived(action);
+      const note = typeof action === "object" ? action.note || "" : "";
+
+      return `
+        <article class="challenge-activation" data-state="${isComplete ? "complete" : isAwaitingReward ? "reward" : "ready"}">
+          <span>${isComplete ? "Received" : isAwaitingReward ? "Reward Ready" : "Activation"} · ${escapeHtml(source)}</span>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(copy)}</p>
+          <details class="challenge-scripture">
+            <summary>Read Scripture before completing</summary>
+            <p><strong>${escapeHtml(scripture.title)}:</strong> ${escapeHtml(scripture.text)}</p>
+            <p>${escapeHtml(scripture.feedback)}</p>
+          </details>
+          <label class="challenge-acknowledgement">
+            <input type="checkbox" data-challenge-scripture-ack="${escapeHtml(key)}" ${isAwaitingReward || isComplete ? "checked" : ""} ${isComplete ? "disabled" : ""}>
+            I read and acknowledged the Scripture for this activation.
+          </label>
+          <label>
+            Activation note
+            <textarea data-challenge-note="${escapeHtml(key)}" rows="3" placeholder="What did you do, notice, resist, confess, repair, or practice?" ${isComplete ? "disabled" : ""}>${escapeHtml(note)}</textarea>
+          </label>
+          ${
+            isAwaitingReward
+              ? `
+                <div class="challenge-reward-prompt">
+                  <span>Reward Feedback</span>
+                  <h3>Receive what was built.</h3>
+                  <p>${escapeHtml(getChallengeRewardFeedback(title))}</p>
+                  <button class="button primary" type="button" data-receive-challenge-reward="${escapeHtml(key)}">
+                    Accept and Receive
+                  </button>
+                </div>
+              `
+              : `
+                <button class="button ${isComplete ? "secondary" : "primary"}" type="button" data-complete-challenge-action="${escapeHtml(key)}" ${isComplete ? "disabled" : ""}>
+                  ${isComplete ? "Built into the trail" : "Complete This Challenge"}
+                </button>
+              `
+          }
+        </article>
+      `;
+    };
 
     return `
       <div class="challenge-progress" data-state="${gateOpen ? "complete" : "active"}">
@@ -1316,17 +1369,7 @@ const renderActionOptions = (type) => {
         ${options
           .map(([title, copy], index) => {
             const key = `challenge-${index}`;
-            const isComplete = Boolean(challengeActions[key]);
-            return `
-              <article class="challenge-activation" data-state="${isComplete ? "complete" : "ready"}">
-                <span>${isComplete ? "Completed" : "Activation"} · Challenge</span>
-                <h3>${escapeHtml(title)}</h3>
-                <p>${escapeHtml(copy)}</p>
-                <button class="button ${isComplete ? "secondary" : "primary"}" type="button" data-complete-challenge-action="${escapeHtml(key)}" ${isComplete ? "disabled" : ""}>
-                  ${isComplete ? "Built into the trail" : "Complete This Challenge"}
-                </button>
-              </article>
-            `;
+            return renderChallengeActivation({ key, title, copy });
           })
           .join("")}
       </div>
@@ -1617,21 +1660,53 @@ const renderMissionPanel = () => {
 
   if (activeMissionTab === "challenge") {
     const challengeActions = getChallengeActions(activeContextKey);
-    const outdoorComplete = Boolean(challengeActions.outdoor);
+    const outdoorAction = challengeActions.outdoor;
+    const outdoorAwaitingReward = outdoorAction && !isChallengeActionReceived(outdoorAction);
+    const outdoorComplete = isChallengeActionReceived(outdoorAction);
+    const outdoorNote = typeof outdoorAction === "object" ? outdoorAction.note || "" : "";
+    const scripture = getScriptureText(adventure.map.passage);
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
         <span>Challenge Options</span>
         <h3>Choose a step to unlock.</h3>
         <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}. Complete at least two activations before revealing the checkpoint.</p>
-        <div class="outdoor-prompt" data-state="${outdoorComplete ? "complete" : "locked"}">
-          <span>${outdoorComplete ? "Outdoor Movement Complete" : "Optional Unlock"} · Outdoor Movement</span>
+        <div class="outdoor-prompt" data-state="${outdoorComplete ? "complete" : outdoorAwaitingReward ? "reward" : "locked"}">
+          <span>${outdoorComplete ? "Outdoor Movement Received" : outdoorAwaitingReward ? "Reward Ready" : "Optional Unlock"} · Outdoor Movement</span>
           <strong>${escapeHtml(adventure.outdoor.title)}</strong>
           <p>This is an optional walk or simple outdoor activity. If you choose it, move from <b>${escapeHtml(adventure.outdoor.from)}</b> to <b>${escapeHtml(adventure.outdoor.to)}</b>. Go slowly enough to notice your body, your thoughts, your surroundings, and the Lord's invitation.</p>
           <p>${escapeHtml(adventure.outdoor.prompt)}</p>
-          <button class="button ${outdoorComplete ? "secondary" : "primary"}" type="button" data-complete-challenge-action="outdoor" ${outdoorComplete ? "disabled" : ""}>
-            ${outdoorComplete ? "Outdoor Movement Added" : "Unlock Outdoor Movement"}
-          </button>
+          <details class="challenge-scripture">
+            <summary>Read Scripture before completing</summary>
+            <p><strong>${escapeHtml(scripture.title)}:</strong> ${escapeHtml(scripture.text)}</p>
+            <p>${escapeHtml(scripture.feedback)}</p>
+          </details>
+          <label class="challenge-acknowledgement">
+            <input type="checkbox" data-challenge-scripture-ack="outdoor" ${outdoorAwaitingReward || outdoorComplete ? "checked" : ""} ${outdoorComplete ? "disabled" : ""}>
+            I read and acknowledged the Scripture for this outdoor movement.
+          </label>
+          <label>
+            Outdoor note
+            <textarea data-challenge-note="outdoor" rows="3" placeholder="What did you notice as you walked or moved outside?" ${outdoorComplete ? "disabled" : ""}>${escapeHtml(outdoorNote)}</textarea>
+          </label>
+          ${
+            outdoorAwaitingReward
+              ? `
+                <div class="challenge-reward-prompt">
+                  <span>Reward Feedback</span>
+                  <h3>Receive what was built.</h3>
+                  <p>${escapeHtml(getChallengeRewardFeedback(adventure.outdoor.title))}</p>
+                  <button class="button primary" type="button" data-receive-challenge-reward="outdoor">
+                    Accept and Receive
+                  </button>
+                </div>
+              `
+              : `
+                <button class="button ${outdoorComplete ? "secondary" : "primary"}" type="button" data-complete-challenge-action="outdoor" ${outdoorComplete ? "disabled" : ""}>
+                  ${outdoorComplete ? "Outdoor Movement Built" : "Complete Outdoor Movement"}
+                </button>
+              `
+          }
         </div>
         ${renderActionOptions("challenge")}
         ${renderActiveNoteBox("Challenge", "What did you choose, practice, resist, or notice as you moved into the challenge?")}
@@ -3283,14 +3358,62 @@ missionPanel?.addEventListener("click", async (event) => {
   const challengeActionButton = event.target.closest("[data-complete-challenge-action]");
   if (challengeActionButton) {
     const key = challengeActionButton.dataset.completeChallengeAction || "challenge-0";
-    setChallengeAction(activeContextKey, key, true);
+    const card = challengeActionButton.closest(".challenge-activation, .outdoor-prompt");
+    const acknowledged = Boolean(card?.querySelector(`[data-challenge-scripture-ack="${CSS.escape(key)}"]`)?.checked);
+    const note = card?.querySelector(`[data-challenge-note="${CSS.escape(key)}"]`)?.value?.trim() || "";
+
+    if (!acknowledged) {
+      setContextStatus("Read and acknowledge the Scripture before completing this activation.", "error");
+      return;
+    }
+
+    if (!note) {
+      setContextStatus("Write a note before completing this activation.", "error");
+      return;
+    }
+
+    setChallengeAction(activeContextKey, key, {
+      note,
+      rewardReceived: false,
+      completedAt: new Date().toISOString()
+    });
+    const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+    const now = new Date();
+    void saveJournalEntry({
+      id: Date.now(),
+      savedAt: now.toISOString(),
+      trail: adventure.title,
+      date: now.toISOString().slice(0, 10),
+      time: now.toTimeString().slice(0, 5),
+      weather: cleanWeatherValue(journalWeatherInput?.value || ""),
+      place: key === "outdoor" ? adventure.outdoor?.title || "Outdoor Movement" : "Challenge Activation",
+      scripture: adventure.map?.passage || adventure.scripture,
+      treasure: note,
+      nextStep: "Receive challenge reward feedback"
+    });
+    renderMissionPanel();
+    renderActiveWeb();
+    setContextStatus("Activation completed. Receive the reward feedback to build it into the trail.", "success");
+    return;
+  }
+
+  const receiveRewardButton = event.target.closest("[data-receive-challenge-reward]");
+  if (receiveRewardButton) {
+    const key = receiveRewardButton.dataset.receiveChallengeReward || "challenge-0";
+    const actions = getChallengeActions(activeContextKey);
+    const current = actions[key] && typeof actions[key] === "object" ? actions[key] : {};
+    setChallengeAction(activeContextKey, key, {
+      ...current,
+      rewardReceived: true,
+      receivedAt: new Date().toISOString()
+    });
     renderMissionPanel();
     renderActiveWeb();
     const count = getCompletedChallengeCount(activeContextKey);
     setContextStatus(
       count >= 2
         ? "Two challenge activations are complete. Checkpoint evidence is now open."
-        : "Challenge activation complete. Complete one more activation to open checkpoint evidence.",
+        : "Reward received. Complete one more activation to open checkpoint evidence.",
       "success"
     );
     return;
