@@ -142,10 +142,10 @@ h1 {
 
 .hero-adventure-chooser {
   display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
   margin-top: 16px;
-  max-width: 820px;
+  max-width: 980px;
 }
 
 .hero-adventure-chooser[hidden] {
@@ -159,15 +159,15 @@ h1 {
   border-radius: var(--radius);
   color: var(--ink);
   display: grid;
-  min-height: 76px;
-  padding: 12px;
+  min-height: 92px;
+  padding: 14px;
   text-align: left;
 }
 
 .hero-adventure-chooser span,
 .context-grid span {
   color: var(--gold);
-  font-size: 0.66rem;
+  font-size: 0.76rem;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1.25;
@@ -485,9 +485,9 @@ h3 {
 
 .context-grid {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .context-grid button {
@@ -1093,13 +1093,20 @@ h3 {
 }
 
 .mission-option-grid::before {
-  background: linear-gradient(180deg, rgba(245, 199, 95, 0.12), rgba(245, 199, 95, 0.82), rgba(245, 199, 95, 0.12));
-  bottom: 18px;
+  animation: optionThreadDrift 4s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(245, 199, 95, 0.62), rgba(132, 214, 161, 0.24), transparent);
+  background-size: 180% 100%;
+  bottom: auto;
   content: "";
-  left: 20px;
+  height: 1px;
+  left: 10%;
+  opacity: 0.72;
   position: absolute;
-  top: 18px;
-  width: 2px;
+  right: 10%;
+  top: 50%;
+  transform: rotate(-3deg);
+  transform-origin: center;
+  width: auto;
 }
 
 .evidence-panel,
@@ -1193,7 +1200,14 @@ h3 {
 }
 
 .challenge-option-grid::before {
-  background: linear-gradient(180deg, rgba(132, 214, 161, 0.08), rgba(245, 199, 95, 0.74), rgba(132, 214, 161, 0.08));
+  background: linear-gradient(90deg, transparent, rgba(132, 214, 161, 0.28), rgba(245, 199, 95, 0.64), transparent);
+  background-size: 180% 100%;
+}
+
+@keyframes optionThreadDrift {
+  to {
+    background-position: -180% 0;
+  }
 }
 
 .reward-receive-grid {
@@ -1350,22 +1364,31 @@ h3 {
 }
 
 .companion-grid button {
-  min-height: 64px;
+  min-height: 82px;
 }
 
 .companion-grid button span {
   color: var(--gold);
   display: block;
-  font-size: 0.64rem;
+  font-size: 0.66rem;
+  font-weight: 900;
   text-transform: uppercase;
 }
 
 .companion-grid button strong {
   color: var(--ink);
   display: block;
-  font-size: 1.35rem;
+  font-size: 1rem;
   line-height: 1;
   margin-top: 4px;
+}
+
+.companion-grid button small {
+  color: var(--muted);
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  margin-top: 6px;
 }
 
 .companion-grid button.selected,

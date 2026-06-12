@@ -1796,7 +1796,26 @@ const addCompanionMessage = async ({ contact, message, type = "message" }) => {
   } catch {}
 };
 
-const getCompanionLabel = (contact) => contact?.slice(0, 1).toUpperCase() || "C";
+const companionProfiles = {
+  Glen: {
+    name: "Glen",
+    label: "Trusted Contact"
+  },
+  Dallas: {
+    name: "Dallas",
+    label: "Trusted Contact"
+  },
+  Nathan: {
+    name: "Nathan",
+    label: "Trusted Contact"
+  }
+};
+
+const getCompanionProfile = (contact) =>
+  companionProfiles[contact] || {
+    name: contact || "Contact",
+    label: "Trusted Contact"
+  };
 
 const renderCompanionMessages = () => {
   const messages = getCompanionMessages();
@@ -1804,12 +1823,15 @@ const renderCompanionMessages = () => {
   return messages.length
     ? messages
         .map(
-          (message) => `
+          (message) => {
+            const profile = getCompanionProfile(message.contact);
+            return `
             <article>
-              <span>Companion ${escapeHtml(getCompanionLabel(message.contact))} · ${escapeHtml(message.type)}</span>
+              <span>${escapeHtml(profile.label)} · ${escapeHtml(profile.name)} · ${escapeHtml(message.type)}</span>
               <p>${escapeHtml(message.message)}</p>
             </article>
-          `
+          `;
+          }
         )
         .join("")
     : '<p class="empty-journal">No companion signals yet.</p>';
@@ -1960,17 +1982,20 @@ const renderMissionPanel = () => {
         <h3>Let someone know you are on the trail.</h3>
         <p>Send a lightweight signal, poke, or comment to a trusted companion. Contacts are shown discreetly in the trail interface.</p>
         <div class="companion-grid">
-          <button class="${activeCompanionContact === "Glen" ? "selected" : ""}" type="button" data-companion-contact="Glen" aria-label="Select companion G">
-            <span>Companion</span>
-            <strong>G</strong>
+          <button class="${activeCompanionContact === "Glen" ? "selected" : ""}" type="button" data-companion-contact="Glen" aria-label="Select Glen">
+            <span>Trusted Contact</span>
+            <strong>Glen</strong>
+            <small>Message or poke</small>
           </button>
-          <button class="${activeCompanionContact === "Dallas" ? "selected" : ""}" type="button" data-companion-contact="Dallas" aria-label="Select companion D">
-            <span>Companion</span>
-            <strong>D</strong>
+          <button class="${activeCompanionContact === "Dallas" ? "selected" : ""}" type="button" data-companion-contact="Dallas" aria-label="Select Dallas">
+            <span>Trusted Contact</span>
+            <strong>Dallas</strong>
+            <small>Message or poke</small>
           </button>
-          <button class="${activeCompanionContact === "Nathan" ? "selected" : ""}" type="button" data-companion-contact="Nathan" aria-label="Select companion N">
-            <span>Companion</span>
-            <strong>N</strong>
+          <button class="${activeCompanionContact === "Nathan" ? "selected" : ""}" type="button" data-companion-contact="Nathan" aria-label="Select Nathan">
+            <span>Trusted Contact</span>
+            <strong>Nathan</strong>
+            <small>Message or poke</small>
           </button>
         </div>
         <label>
@@ -3574,7 +3599,8 @@ missionPanel?.addEventListener("click", async (event) => {
     activeCompanionContact = companionButton.dataset.companionContact || "Glen";
     localStorage.setItem("gold-vein-active-companion", activeCompanionContact);
     renderMissionPanel();
-    setContextStatus(`Companion ${getCompanionLabel(activeCompanionContact)} selected.`, "success");
+    const profile = getCompanionProfile(activeCompanionContact);
+    setContextStatus(`${profile.label} selected: ${profile.name}.`, "success");
     return;
   }
 
@@ -3598,7 +3624,8 @@ missionPanel?.addEventListener("click", async (event) => {
       messageInput.value = "";
     }
     renderMissionPanel();
-    setContextStatus(`${isPoke ? "Poked" : "Messaged"} Companion ${getCompanionLabel(activeCompanionContact)}.`, "success");
+    const profile = getCompanionProfile(activeCompanionContact);
+    setContextStatus(`${isPoke ? "Poked" : "Messaged"} ${profile.name}.`, "success");
     return;
   }
 
