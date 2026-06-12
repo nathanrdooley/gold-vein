@@ -637,7 +637,7 @@ h3 {
 .web-core span,
 .active-web-map button span {
   color: var(--gold);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -659,18 +659,18 @@ h3 {
   color: var(--ink);
   cursor: pointer;
   display: grid;
-  gap: 6px;
-  min-height: 98px;
-  padding: 10px;
+  gap: 4px;
+  min-height: 84px;
+  padding: 8px;
   text-align: center;
   transform: translate(-50%, -50%);
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-  width: min(31%, 164px);
+  width: min(26%, 136px);
 }
 
 .active-web-map button strong {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3105,9 +3105,9 @@ select:focus {
   }
 
   .active-web-map button {
-    min-height: 82px;
+    min-height: 74px;
     padding: 8px;
-    width: min(36%, 132px);
+    width: min(32%, 112px);
   }
 
   .active-web-map button strong {
@@ -3228,8 +3228,8 @@ select:focus {
   }
 
   .active-web-map button {
-    min-height: 74px;
-    width: min(38%, 116px);
+    min-height: 68px;
+    width: min(34%, 104px);
   }
 
   .active-web-map button span {

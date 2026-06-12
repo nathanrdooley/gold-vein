@@ -1219,35 +1219,35 @@ const getActiveWebNodes = () => {
     },
     {
       key: "challenge",
-      label: "Challenge",
+      label: "Build",
       detail: challengeCount ? `${Math.min(challengeCount, 2)}/2 built` : "Choose",
       state: activeMissionTab === "challenge" && activeAdventureView === "path" ? "active" : hasChallengeGateOpen(activeContextKey) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "reward",
-      label: "Reward",
+      label: "Fruit",
       detail: rewardCount ? `${rewardCount} received` : "Receive",
       state: activeMissionTab === "reward" && activeAdventureView === "path" ? "active" : rewardCount ? "complete" : "available",
       action: "tab"
     },
     {
       key: "connect",
-      label: "Connect",
+      label: "Link",
       detail: Number.isInteger(unlocks.connect) ? "Chosen" : "Invite",
       state: activeMissionTab === "connect" && activeAdventureView === "path" ? "active" : Number.isInteger(unlocks.connect) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "treasure",
-      label: "Treasure",
+      label: "Gift",
       detail: treasures.length ? "Given" : "Give",
       state: activeMissionTab === "treasure" && activeAdventureView === "path" ? "active" : treasures.length ? "complete" : "available",
       action: "tab"
     },
     {
       key: "journal",
-      label: "Journal",
+      label: "Notes",
       detail: journalEntries.length ? `${journalEntries.length} saved` : "Record",
       state: journalEntries.length ? "complete" : "available",
       action: "journal"
@@ -1718,12 +1718,12 @@ const renderSoulCarePrompts = () => `
 
 const renderNextNodeGuide = (nextNode = "challenge") => {
   const labels = {
-    challenge: ["Challenge", "Choose a step to practice in real life."],
-    reward: ["Reward", "Name the treasure that was uncovered."],
-    connect: ["Connect", "Invite someone into prayer, counsel, witness, or follow-up."],
-    treasure: ["Treasure", "Give something concrete as a sign of grace."],
-    signal: ["Signal", "Let a companion know you are on the trail."],
-    journal: ["Journal", "Record what happened while it is still warm."]
+    challenge: ["Build", "Choose a step to practice in real life."],
+    reward: ["Fruit", "Name the treasure that was uncovered."],
+    connect: ["Link", "Invite someone into prayer, counsel, witness, or follow-up."],
+    treasure: ["Gift", "Give something concrete as a sign of grace."],
+    signal: ["Ping", "Let a companion know you are on the trail."],
+    journal: ["Notes", "Record what happened while it is still warm."]
   };
   const [label, copy] = labels[nextNode] || labels.challenge;
 
