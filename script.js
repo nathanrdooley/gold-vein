@@ -1214,7 +1214,7 @@ const getActiveWebNodes = () => {
       key: "map",
       label: "Map",
       detail: adventure.map.passage,
-      state: activeMissionTab === "map" && activeAdventureView === "path" ? "active" : "recommended",
+      state: activeMissionTab === "map" && activeAdventureView === "path" ? "active" : "available",
       action: "tab"
     },
     {
