@@ -946,6 +946,33 @@ h3 {
   animation: panelRise 360ms ease both;
 }
 
+.trail-step-guide {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.trail-step-guide span {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 6px 9px;
+}
+
+.trail-step-guide span[data-state="current"] {
+  background: rgba(245, 199, 95, 0.16);
+  border-color: rgba(245, 199, 95, 0.54);
+  color: var(--gold);
+}
+
+.trail-step-guide span[data-state="passed"] {
+  border-color: rgba(132, 214, 161, 0.34);
+  color: rgba(184, 218, 195, 0.9);
+}
+
 .mission-card > span,
 .scripture-map-card > span {
   color: var(--gold);
@@ -1123,6 +1150,37 @@ h3 {
 
 .next-node-guide p {
   color: var(--muted);
+}
+
+.trail-support-prompt {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid rgba(132, 214, 161, 0.24);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.trail-support-prompt span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.trail-support-prompt h3,
+.trail-support-prompt p {
+  margin: 0;
+}
+
+.trail-support-prompt p {
+  color: var(--muted);
+}
+
+.trail-support-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .reference-strip,
@@ -2873,6 +2931,20 @@ dd {
   display: flex;
   gap: 14px;
   justify-content: space-between;
+}
+
+.journal-group-heading {
+  cursor: pointer;
+  list-style: none;
+}
+
+.journal-group-heading::-webkit-details-marker {
+  display: none;
+}
+
+.journal-trail-group[open] .journal-group-heading {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
 }
 
 .journal-group-heading strong,

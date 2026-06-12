@@ -1258,28 +1258,28 @@ const getActiveWebNodes = () => {
     },
     {
       key: "challenge",
-      label: "Build",
+      label: "Practice",
       detail: challengeCount ? `${Math.min(challengeCount, 2)}/2 built` : "Choose",
       state: activeMissionTab === "challenge" && activeAdventureView === "path" ? "active" : hasChallengeGateOpen(activeContextKey) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "reward",
-      label: "Fruit",
+      label: "Receive",
       detail: rewardCount ? `${rewardCount} received` : "Receive",
       state: activeMissionTab === "reward" && activeAdventureView === "path" ? "active" : rewardCount ? "complete" : "available",
       action: "tab"
     },
     {
       key: "connect",
-      label: "Link",
+      label: "Connect",
       detail: Number.isInteger(unlocks.connect) ? "Chosen" : "Invite",
       state: activeMissionTab === "connect" && activeAdventureView === "path" ? "active" : Number.isInteger(unlocks.connect) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "treasure",
-      label: "Gift",
+      label: "Give",
       detail: treasures.length ? "Given" : "Give",
       state: activeMissionTab === "treasure" && activeAdventureView === "path" ? "active" : treasures.length ? "complete" : "available",
       action: "tab"
@@ -1386,11 +1386,11 @@ const getNextMissionTab = (currentTab) => {
 const getMissionTabLabel = (tab) =>
   ({
     map: "Map",
-    challenge: "Build",
-    reward: "Fruit",
-    connect: "Link",
-    treasure: "Gift",
-    signal: "Ping",
+    challenge: "Practice",
+    reward: "Receive",
+    connect: "Connect",
+    treasure: "Give",
+    signal: "Signal",
     vein: "Vein",
     journal: "Journal Web"
   })[tab] || "Next";
@@ -1690,6 +1690,22 @@ const renderMissionReturnControls = () => `
   </div>
 `;
 
+const renderTrailStepGuide = () => {
+  const order = ["map", "challenge", "reward", "connect", "treasure", "signal", "vein", "journal"];
+  const currentIndex = Math.max(order.indexOf(activeMissionTab), 0);
+
+  return `
+    <nav class="trail-step-guide" aria-label="Trail order">
+      ${order
+        .map((step, index) => {
+          const state = index < currentIndex ? "passed" : index === currentIndex ? "current" : "next";
+          return `<span data-state="${state}">${escapeHtml(getMissionTabLabel(step))}</span>`;
+        })
+        .join("")}
+    </nav>
+  `;
+};
+
 const renderActiveNoteBox = (stage, prompt) => {
   const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
 
@@ -1814,12 +1830,13 @@ const renderSoulCarePrompts = () => `
 
 const renderNextNodeGuide = (nextNode = "challenge") => {
   const labels = {
-    challenge: ["Build", "Choose a step to practice in real life."],
-    reward: ["Fruit", "Name the treasure that was uncovered."],
-    connect: ["Link", "Invite someone into prayer, counsel, witness, or follow-up."],
-    treasure: ["Gift", "Give something concrete as a sign of grace."],
-    signal: ["Ping", "Let a companion know you are on the trail."],
-    journal: ["Notes", "Record what happened while it is still warm."]
+    challenge: ["Practice", "Choose two real actions to work through before the checkpoint opens."],
+    reward: ["Receive", "Receive and name the grace, fruit, courage, correction, or clarity that appeared."],
+    connect: ["Connect", "Invite someone into prayer, counsel, witness, or follow-up."],
+    treasure: ["Give", "Offer something concrete as a sign of grace: prayer, note, service, gift, or support."],
+    signal: ["Signal", "Let a trusted contact know you are on the trail."],
+    vein: ["Vein", "Open the deeper interface and imagine the next layer of the trail."],
+    journal: ["Journal Web", "Enter the journal space where the evidence web and saved notes live."]
   };
   const [label, copy] = labels[nextNode] || labels.challenge;
 
@@ -1834,6 +1851,18 @@ const renderNextNodeGuide = (nextNode = "challenge") => {
     </div>
   `;
 };
+
+const renderTrailSupportPrompt = () => `
+  <aside class="trail-support-prompt">
+    <span>Keep the Trail Open</span>
+    <h3>Support a future traveler.</h3>
+    <p>The gospel is not for sale. Support can prepare encouragement notes, tangible gifts, mystery paths, hosted trails, and tools that help people keep walking.</p>
+    <div class="trail-support-actions">
+      <a class="button secondary" href="#support">Support Trail</a>
+      <a class="button secondary" href="https://account.venmo.com/u/Nathan_R_Dooley" target="_blank" rel="noreferrer">Venmo</a>
+    </div>
+  </aside>
+`;
 
 const soulCareFeedback = {
   curious:
@@ -1970,6 +1999,7 @@ const renderMissionPanel = () => {
       <article class="scripture-map-card">
         ${renderMissionReturnControls()}
         ${directionPanel}
+        ${renderTrailStepGuide()}
         <span>Scripture Map</span>
         <h3>${escapeHtml(map.passage)}</h3>
         <div class="map-grid">
@@ -1995,6 +2025,7 @@ const renderMissionPanel = () => {
         ${renderSoulCarePrompts()}
         ${renderActiveNoteBox("Map", `What is ${map.passage} revealing while this adventure is open?`)}
         ${renderNextNodeGuide("challenge")}
+        ${renderTrailSupportPrompt()}
       </article>
     `;
     return;
@@ -2011,6 +2042,7 @@ const renderMissionPanel = () => {
       <article class="mission-card">
         ${renderMissionReturnControls()}
         ${directionPanel}
+        ${renderTrailStepGuide()}
         <span>Challenge Options</span>
         <h3>Choose a step to unlock.</h3>
         <p>Each challenge draws the ${escapeHtml(adventure.title)} back to ${escapeHtml(map.passage)}. Complete at least two activations before revealing the checkpoint.</p>
@@ -2063,10 +2095,13 @@ const renderMissionPanel = () => {
       <article class="mission-card">
         ${renderMissionReturnControls()}
         ${directionPanel}
+        ${renderTrailStepGuide()}
         <span>Reward Reflections</span>
         <h3>Name the treasure uncovered.</h3>
         <p>Rewards are not trophies or competing choices. Receive whatever fruit is true, and let each one become a sign of grace noticed and carried outward.</p>
         ${renderRewardOptions()}
+        ${renderNextNodeGuide("connect")}
+        ${renderTrailSupportPrompt()}
         ${renderActiveNoteBox("Reward", "What grace, fruit, courage, clarity, or conviction became visible?")}
       </article>
     `;
@@ -2078,10 +2113,12 @@ const renderMissionPanel = () => {
       <article class="mission-card">
         ${renderMissionReturnControls()}
         ${directionPanel}
+        ${renderTrailStepGuide()}
         <span>Connection Options</span>
         <h3>Bring someone onto the trail.</h3>
         <p>Invite prayer, encouragement, counsel, service, or witness so the adventure does not stay private.</p>
         ${renderActionOptions("connect")}
+        ${renderNextNodeGuide("treasure")}
         ${renderActiveNoteBox("Connect", "Who did you contact, what happened, and what follow-up matters?")}
       </article>
     `;
@@ -2093,6 +2130,7 @@ const renderMissionPanel = () => {
       <article class="mission-card">
         ${renderMissionReturnControls()}
         ${directionPanel}
+        ${renderTrailStepGuide()}
         <span>Companion Signal</span>
         <h3>Let someone know you are on the trail.</h3>
         <p>Send a lightweight signal, poke, or comment to a trusted companion. Contacts are shown discreetly in the trail interface.</p>
@@ -2124,6 +2162,7 @@ const renderMissionPanel = () => {
         <div class="companion-log" data-companion-log>
           ${renderCompanionMessages()}
         </div>
+        ${renderNextNodeGuide("vein")}
         ${renderActiveNoteBox("Signal", "What happened through companionship, messages, prayer, or invitation?")}
       </article>
     `;
@@ -2135,6 +2174,7 @@ const renderMissionPanel = () => {
       <article class="mission-card vein-interface">
         ${renderMissionReturnControls()}
         ${directionPanel}
+        ${renderTrailStepGuide()}
         <span>Vein Interface</span>
         <h3>A deeper layer of the trail.</h3>
         <p>This is a prototype doorway for the future Gold Vein dimension: shared presence, living trail maps, companion signals, testimony threads, and Spirit-led next moves.</p>
@@ -2153,6 +2193,8 @@ const renderMissionPanel = () => {
           <button type="button" data-vein-mode="testify">Open testimony stream</button>
         </div>
         <p class="form-status" data-vein-status aria-live="polite">Choose a mode to sketch what this layer could become.</p>
+        ${renderNextNodeGuide("journal")}
+        ${renderTrailSupportPrompt()}
         ${renderActiveNoteBox("Vein", "What should this deeper web interface become as Gold Vein evolves?")}
       </article>
     `;
@@ -2163,6 +2205,7 @@ const renderMissionPanel = () => {
     <article class="mission-card">
       ${renderMissionReturnControls()}
       ${directionPanel}
+      ${renderTrailStepGuide()}
       <span>Treasure Options</span>
       <h3>Give a real-world treasure.</h3>
       <p>Choose a tangible act that fits the person and the trail: a financial gift, note, prayer, service, meal, resource, or follow-up.</p>
@@ -2177,6 +2220,8 @@ const renderMissionPanel = () => {
         <textarea data-treasure-note rows="3" placeholder="Who are you blessing, and what treasure are you giving?"></textarea>
       </label>
       <button class="button primary" type="button" data-save-context-treasure>Save Treasure</button>
+      ${renderNextNodeGuide("signal")}
+      ${renderTrailSupportPrompt()}
       <div class="treasure-log">
         ${
           treasures.length
@@ -2367,14 +2412,14 @@ const renderJournalEntries = () => {
     ${trailGroups
       .map(
         ([trail, trailEntries]) => `
-          <section class="journal-trail-group">
-            <div class="journal-group-heading">
+          <details class="journal-trail-group">
+            <summary class="journal-group-heading">
               <div>
-                <span>Adventure Record</span>
+                <span>Journal Vault</span>
                 <h3>${escapeHtml(trail)}</h3>
               </div>
-              <strong>${trailEntries.length} ${trailEntries.length === 1 ? "entry" : "entries"}</strong>
-            </div>
+              <strong>Open ${trailEntries.length} ${trailEntries.length === 1 ? "entry" : "entries"}</strong>
+            </summary>
             <div class="journal-entry-stack">
               ${trailEntries
                 .map(
@@ -2402,7 +2447,7 @@ const renderJournalEntries = () => {
                 )
                 .join("")}
             </div>
-          </section>
+          </details>
         `
       )
       .join("")}
@@ -3488,7 +3533,7 @@ saveSupportPledgeButton?.addEventListener("click", () => {
   const data = Object.fromEntries(new FormData(form).entries());
   const amount = Number(data.amount);
 
-  if (!amount || amount < 1) {
+  if (!amount || amount < 0.25) {
     if (supportStatus) {
       supportStatus.textContent = "Choose or enter a support amount before saving a support note.";
     }
@@ -3499,7 +3544,7 @@ saveSupportPledgeButton?.addEventListener("click", () => {
     id: Date.now(),
     savedAt: new Date().toISOString(),
     supportType: data.supportType?.trim() || "Give Freely",
-    amount: amount.toFixed(0),
+    amount: amount < 1 ? amount.toFixed(2) : amount.toFixed(0),
     purpose: data.purpose?.trim() || "",
     note: data.note?.trim() || ""
   };
@@ -3776,7 +3821,14 @@ missionPanel?.addEventListener("click", async (event) => {
 
   const nextNodeButton = event.target.closest("[data-open-next-node]");
   if (nextNodeButton) {
-    openMissionPath(nextNodeButton.dataset.openNextNode || "challenge");
+    const nextNode = nextNodeButton.dataset.openNextNode || "challenge";
+    if (nextNode === "journal") {
+      localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+      window.location.hash = "field-notes";
+      setContextStatus("Journal Web opened from the trail.", "success");
+      return;
+    }
+    openMissionPath(nextNode);
     setContextStatus("Next node opened from the map.", "success");
     return;
   }

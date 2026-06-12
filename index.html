@@ -211,11 +211,11 @@
             <div class="mission-hub" aria-label="Interactive adventure actions" data-mission-hub>
               <div class="mission-tabs" role="tablist" aria-label="Adventure tools">
                 <button class="active" type="button" data-mission-tab="map">Map</button>
-                <button type="button" data-mission-tab="challenge">Build</button>
-                <button type="button" data-mission-tab="reward">Fruit</button>
-                <button type="button" data-mission-tab="connect">Link</button>
-                <button type="button" data-mission-tab="treasure">Gift</button>
-                <button type="button" data-mission-tab="signal">Ping</button>
+                <button type="button" data-mission-tab="challenge">Practice</button>
+                <button type="button" data-mission-tab="reward">Receive</button>
+                <button type="button" data-mission-tab="connect">Connect</button>
+                <button type="button" data-mission-tab="treasure">Give</button>
+                <button type="button" data-mission-tab="signal">Signal</button>
                 <button type="button" data-mission-tab="vein">Vein</button>
               </div>
 
@@ -2160,12 +2160,24 @@
             </article>
             <article>
               <span>03</span>
+              <h3>Encouragement Notes</h3>
+              <p>Prepare small notes of spiritual nourishment along the trail: Scripture, prayer, courage, or a simple word that helps someone keep walking.</p>
+              <button class="button secondary wide" type="button" data-support-option="Encouragement Notes">Choose</button>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Mystery Path</h3>
+              <p>Help create surprise trail turns that send someone toward a prepared place, prompt, gift, contact, or gospel-centered next step.</p>
+              <button class="button secondary wide" type="button" data-support-option="Mystery Path">Choose</button>
+            </article>
+            <article>
+              <span>05</span>
               <h3>Creator Tools</h3>
               <p>Support the tools needed for QR redemption, private groups, testimony collection, follow-up, and hosted adventures.</p>
               <button class="button secondary wide" type="button" data-support-option="Creator Tools">Choose</button>
             </article>
             <article>
-              <span>04</span>
+              <span>06</span>
               <h3>Give Freely</h3>
               <p>Give toward the ongoing work of Gold Vein so more people can look to Christ, follow the trail, and receive the treasure.</p>
               <button class="button secondary wide" type="button" data-support-option="Give Freely">Choose</button>
@@ -2181,10 +2193,11 @@
                 </label>
                 <label>
                   Amount
-                  <input type="number" name="amount" data-support-amount min="1" step="1" placeholder="25">
+                  <input type="number" name="amount" data-support-amount min="0.25" step="0.25" placeholder="25">
                 </label>
               </div>
               <div class="amount-grid" aria-label="Suggested support amounts">
+                <button type="button" data-support-amount-option="0.25">$0.25</button>
                 <button type="button" data-support-amount-option="5">$5</button>
                 <button type="button" data-support-amount-option="10">$10</button>
                 <button type="button" data-support-amount-option="25">$25</button>
