@@ -1831,7 +1831,7 @@ const getHashParts = () => {
   return { pageId, detail };
 };
 
-const showActivePage = () => {
+const showActivePage = ({ shouldScroll = true } = {}) => {
   const { pageId, detail } = getHashParts();
   const activePage = pageId ? document.getElementById(pageId) : null;
 
@@ -1849,7 +1849,7 @@ const showActivePage = () => {
     prefillJournalFromActiveAdventure();
   }
 
-  if (activePage) {
+  if (activePage && shouldScroll) {
     window.requestAnimationFrame(() => {
       activePage.scrollIntoView({ block: "start" });
     });
@@ -2904,8 +2904,15 @@ heroAdventureToggle?.addEventListener("click", () => {
 });
 
 contextOptionButtons.forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
     const contextKey = button.dataset.contextOption || "home";
+
+    if (getHashParts().pageId !== "now-adventure") {
+      history.pushState(null, "", "#now-adventure");
+      showActivePage({ shouldScroll: false });
+    }
+
     selectContextAdventure(contextKey, `${contextAdventures[contextKey]?.title || "Adventure"} opened.`);
   });
 });
