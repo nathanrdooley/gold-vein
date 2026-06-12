@@ -19,6 +19,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -92,6 +96,11 @@ h3,
 
 .nav-links a:hover {
   color: var(--ink);
+}
+
+body[data-adventure-focus="web"] .nav-links,
+body[data-adventure-focus="path"] .nav-links {
+  display: none;
 }
 
 .hero-content {
@@ -503,6 +512,7 @@ h3 {
   gap: 16px;
   margin-bottom: 22px;
   padding: 18px;
+  animation: panelRise 420ms ease both;
 }
 
 .active-web-header {
@@ -605,6 +615,7 @@ h3 {
   text-align: center;
   top: 50%;
   transform: translate(-50%, -50%);
+  animation: corePulse 2.6s ease-in-out infinite;
 }
 
 .web-core span,
@@ -637,6 +648,7 @@ h3 {
   padding: 10px;
   text-align: center;
   transform: translate(-50%, -50%);
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
   width: min(31%, 164px);
 }
 
@@ -653,6 +665,7 @@ h3 {
   border-color: rgba(245, 199, 95, 0.72);
   box-shadow: 0 0 18px rgba(245, 199, 95, 0.22);
   transform: translate(-50%, -50%) scale(1.04);
+  animation: nodeGlow 2.2s ease-in-out infinite;
 }
 
 .active-web-map button[data-state="complete"] {
@@ -693,6 +706,40 @@ h3 {
 @keyframes goldLinkFlow {
   to {
     stroke-dashoffset: -26;
+  }
+}
+
+@keyframes panelRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes corePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(245, 199, 95, 0.22);
+  }
+
+  50% {
+    box-shadow: 0 0 38px rgba(245, 199, 95, 0.44);
+  }
+}
+
+@keyframes nodeGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 14px rgba(245, 199, 95, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 28px rgba(245, 199, 95, 0.36);
   }
 }
 
@@ -846,6 +893,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 18px;
+  animation: panelRise 360ms ease both;
 }
 
 .mission-card > span,
@@ -876,7 +924,8 @@ h3 {
   padding: 12px;
 }
 
-.map-grid summary {
+.map-grid summary,
+.scripture-review summary {
   color: var(--ink);
   cursor: pointer;
   font-weight: 900;
@@ -884,6 +933,31 @@ h3 {
 
 .map-grid p {
   margin-top: 10px;
+}
+
+.scripture-review {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.scripture-review-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scripture-review-list details {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.scripture-review-list p {
+  color: var(--muted);
+  margin: 8px 0 0;
 }
 
 .reference-strip,
@@ -2668,6 +2742,17 @@ select:focus {
 
   .trail-loop span {
     margin-bottom: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }
 

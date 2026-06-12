@@ -53,6 +53,7 @@ const resetContextAdventureButton = document.querySelector("[data-reset-context-
 const generateContextMovementButton = document.querySelector("[data-generate-context-movement]");
 const activeWeb = document.querySelector("[data-active-web]");
 const adaptiveAdventure = document.querySelector("[data-adaptive-adventure]");
+const adventureStatePanel = document.querySelector(".adventure-state-panel");
 const missionTabButtons = document.querySelectorAll("[data-mission-tab]");
 const missionHub = document.querySelector("[data-mission-hub]");
 const missionPanel = document.querySelector("[data-mission-panel]");
@@ -884,11 +885,14 @@ const updateAdventureFocus = () => {
   const isChoosing = activeAdventureView === "choose";
   const isPathFocused = activeAdventureView === "path";
   const isWebFocused = activeAdventureView === "web";
+  const checkpoints = getAdaptiveCheckpoints(activeContextKey);
+  const isMovementComplete = activeContextProgress >= checkpoints.length;
+  const isCheckpointReady = hasCurrentEvidence(activeContextKey) || isMovementComplete;
 
   document.body.dataset.adventureFocus = activeAdventureView;
 
   if (adventureIntro) {
-    adventureIntro.hidden = isPathFocused;
+    adventureIntro.hidden = !isChoosing;
   }
   if (contextGrid) {
     contextGrid.hidden = !isChoosing;
@@ -897,13 +901,20 @@ const updateAdventureFocus = () => {
     adventureReturnBar.hidden = isChoosing;
   }
   if (activeWeb) {
-    activeWeb.hidden = isChoosing || isPathFocused;
+    activeWeb.hidden = !isWebFocused;
   }
   if (adaptiveAdventure) {
+    adaptiveAdventure.hidden = !isPathFocused;
     adaptiveAdventure.dataset.focusMode = activeAdventureView;
   }
+  if (adventureStatePanel) {
+    adventureStatePanel.hidden = !isPathFocused || !isCheckpointReady;
+  }
+  if (contextCheckpoints) {
+    contextCheckpoints.hidden = !isPathFocused || !isCheckpointReady;
+  }
   if (missionHub) {
-    missionHub.hidden = isChoosing;
+    missionHub.hidden = !isPathFocused;
   }
   if (returnToWebButton) {
     returnToWebButton.hidden = isChoosing || isWebFocused;
@@ -1221,6 +1232,30 @@ const renderMissionReturnControls = () => `
   </div>
 `;
 
+const renderScriptureReview = (references = []) => {
+  if (!references.length) {
+    return "";
+  }
+
+  return `
+    <details class="scripture-review" open>
+      <summary>Added Scriptures to Review</summary>
+      <div class="scripture-review-list">
+        ${references
+          .map(
+            (reference) => `
+              <details>
+                <summary>${escapeHtml(reference)}</summary>
+                <p>Open this passage and ask: What does this add to the trail? What does it reveal about Christ, obedience, grace, or the next faithful step?</p>
+              </details>
+            `
+          )
+          .join("")}
+      </div>
+    </details>
+  `;
+};
+
 const renderMissionPanel = () => {
   if (!missionPanel) {
     return;
@@ -1258,9 +1293,7 @@ const renderMissionPanel = () => {
             <p>${escapeHtml(map.power)}</p>
           </details>
         </div>
-        <div class="reference-strip">
-          ${map.crossReferences.map((reference) => `<span>${escapeHtml(reference)}</span>`).join("")}
-        </div>
+        ${renderScriptureReview(map.crossReferences)}
       </article>
     `;
     return;
