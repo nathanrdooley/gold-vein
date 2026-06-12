@@ -1153,35 +1153,35 @@ const getActiveWebNodes = () => {
       key: "map",
       label: "Map",
       detail: adventure.map.passage,
-      state: activeMissionTab === "map" ? "active" : "available",
+      state: activeMissionTab === "map" && activeAdventureView === "path" ? "active" : "recommended",
       action: "tab"
     },
     {
       key: "challenge",
       label: "Challenge",
       detail: Number.isInteger(unlocks.challenge) ? "Chosen" : "Choose",
-      state: activeMissionTab === "challenge" ? "active" : evidenceSaved ? "complete" : "available",
+      state: activeMissionTab === "challenge" && activeAdventureView === "path" ? "active" : evidenceSaved ? "complete" : "available",
       action: "tab"
     },
     {
       key: "reward",
       label: "Reward",
       detail: Number.isInteger(unlocks.reward) ? "Named" : "Name",
-      state: activeMissionTab === "reward" ? "active" : Number.isInteger(unlocks.reward) ? "complete" : "available",
+      state: activeMissionTab === "reward" && activeAdventureView === "path" ? "active" : Number.isInteger(unlocks.reward) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "connect",
       label: "Connect",
       detail: Number.isInteger(unlocks.connect) ? "Chosen" : "Invite",
-      state: activeMissionTab === "connect" ? "active" : Number.isInteger(unlocks.connect) ? "complete" : "available",
+      state: activeMissionTab === "connect" && activeAdventureView === "path" ? "active" : Number.isInteger(unlocks.connect) ? "complete" : "available",
       action: "tab"
     },
     {
       key: "treasure",
       label: "Treasure",
       detail: treasures.length ? "Given" : "Give",
-      state: activeMissionTab === "treasure" ? "active" : treasures.length ? "complete" : "available",
+      state: activeMissionTab === "treasure" && activeAdventureView === "path" ? "active" : treasures.length ? "complete" : "available",
       action: "tab"
     },
     {
@@ -1395,6 +1395,29 @@ const renderSoulCarePrompts = () => `
   </details>
 `;
 
+const renderNextNodeGuide = (nextNode = "challenge") => {
+  const labels = {
+    challenge: ["Challenge", "Choose a step to practice in real life."],
+    reward: ["Reward", "Name the treasure that was uncovered."],
+    connect: ["Connect", "Invite someone into prayer, counsel, witness, or follow-up."],
+    treasure: ["Treasure", "Give something concrete as a sign of grace."],
+    signal: ["Signal", "Let a companion know you are on the trail."],
+    journal: ["Journal", "Record what happened while it is still warm."]
+  };
+  const [label, copy] = labels[nextNode] || labels.challenge;
+
+  return `
+    <div class="next-node-guide">
+      <span>Next Node</span>
+      <h3>${escapeHtml(label)}</h3>
+      <p>${escapeHtml(copy)}</p>
+      <button class="button primary" type="button" data-open-next-node="${escapeHtml(nextNode)}">
+        Open ${escapeHtml(label)}
+      </button>
+    </div>
+  `;
+};
+
 const soulCareFeedback = {
   convicted:
     "Conviction can be mercy when it moves you toward Christ instead of hiding. Bring the exposed place to Jesus, name it honestly, and ask what repentance should look like in one concrete step.",
@@ -1509,6 +1532,7 @@ const renderMissionPanel = () => {
         ${renderScriptureReview(map)}
         ${renderSoulCarePrompts()}
         ${renderActiveNoteBox("Map", `What is ${map.passage} revealing while this adventure is open?`)}
+        ${renderNextNodeGuide("challenge")}
       </article>
     `;
     return;
@@ -3163,6 +3187,13 @@ missionPanel?.addEventListener("click", async (event) => {
       feedback.textContent = soulCareFeedback[prompt] || soulCareFeedback.convicted;
     }
     setContextStatus("Soul-care feedback opened. Save what is true as an active note if it needs to be carried forward.", "success");
+    return;
+  }
+
+  const nextNodeButton = event.target.closest("[data-open-next-node]");
+  if (nextNodeButton) {
+    openMissionPath(nextNodeButton.dataset.openNextNode || "challenge");
+    setContextStatus("Next node opened from the map.", "success");
     return;
   }
 

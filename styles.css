@@ -510,7 +510,8 @@ h3 {
   box-shadow: var(--shadow);
   display: grid;
   gap: 16px;
-  margin-bottom: 22px;
+  margin: 0 auto 22px;
+  max-width: 980px;
   padding: 18px;
   animation: panelRise 420ms ease both;
 }
@@ -572,12 +573,27 @@ h3 {
 
 .web-link {
   cursor: pointer;
-  opacity: 0.62;
+  opacity: 0.86;
   pointer-events: stroke;
   stroke: rgba(245, 199, 95, 0.78);
-  stroke-dasharray: 4 6;
+  stroke-dasharray: 7 7;
   stroke-linecap: round;
   stroke-width: 0.72;
+}
+
+.web-link[data-state="available"] {
+  animation: goldLinkFlow 3.4s linear infinite;
+  opacity: 0.84;
+  stroke: rgba(245, 199, 95, 0.72);
+}
+
+.web-link[data-state="recommended"] {
+  animation: goldLinkFlow 1.7s linear infinite;
+  filter: drop-shadow(0 0 7px rgba(245, 199, 95, 0.78));
+  opacity: 1;
+  stroke: var(--gold);
+  stroke-dasharray: 10 5;
+  stroke-width: 1.1;
 }
 
 .web-link[data-state="active"] {
@@ -668,6 +684,12 @@ h3 {
   animation: nodeGlow 2.2s ease-in-out infinite;
 }
 
+.active-web-map button[data-state="recommended"] {
+  background: rgba(245, 199, 95, 0.14);
+  border-color: rgba(245, 199, 95, 0.62);
+  box-shadow: 0 0 22px rgba(245, 199, 95, 0.2);
+}
+
 .active-web-map button[data-state="complete"] {
   border-color: rgba(132, 214, 161, 0.64);
   box-shadow: 0 0 18px rgba(132, 214, 161, 0.14);
@@ -747,6 +769,16 @@ h3 {
   display: grid;
   gap: 18px;
   grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.1fr) minmax(260px, 0.8fr);
+}
+
+.adaptive-adventure[data-focus-mode="path"] {
+  display: block;
+  margin: 0 auto;
+  max-width: 980px;
+}
+
+.adaptive-adventure[data-focus-mode="path"] .mission-hub {
+  width: 100%;
 }
 
 .adventure-state-panel,
@@ -859,7 +891,7 @@ h3 {
 .mission-tabs {
   display: grid;
   gap: 8px;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
 }
 
 .mission-tabs button {
@@ -915,6 +947,7 @@ h3 {
 .map-grid {
   display: grid;
   gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .map-grid details {
@@ -1001,6 +1034,35 @@ h3 {
   color: var(--ink);
   margin-top: 12px;
   padding: 12px;
+}
+
+.next-node-guide {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(245, 199, 95, 0.14), rgba(132, 214, 161, 0.08)),
+    rgba(15, 20, 23, 0.5);
+  border: 1px solid rgba(245, 199, 95, 0.34);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.1fr) auto;
+  padding: 14px;
+}
+
+.next-node-guide span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.next-node-guide h3,
+.next-node-guide p {
+  margin: 0;
+}
+
+.next-node-guide p {
+  color: var(--muted);
 }
 
 .reference-strip,
@@ -2853,7 +2915,9 @@ select:focus {
   .companion-grid,
   .companion-actions,
   .vein-choice-grid,
-  .soul-care-grid {
+  .soul-care-grid,
+  .map-grid,
+  .next-node-guide {
     grid-template-columns: 1fr;
   }
 
