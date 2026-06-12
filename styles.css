@@ -142,10 +142,10 @@ h1 {
 
 .hero-adventure-chooser {
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  margin-top: 18px;
-  max-width: 920px;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  margin-top: 16px;
+  max-width: 820px;
 }
 
 .hero-adventure-chooser[hidden] {
@@ -159,17 +159,17 @@ h1 {
   border-radius: var(--radius);
   color: var(--ink);
   display: grid;
-  min-height: 96px;
-  padding: 14px;
+  min-height: 76px;
+  padding: 12px;
   text-align: left;
 }
 
 .hero-adventure-chooser span,
 .context-grid span {
   color: var(--gold);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   line-height: 1.25;
   text-transform: uppercase;
 }
@@ -485,9 +485,9 @@ h3 {
 
 .context-grid {
   display: grid;
-  gap: 12px;
+  gap: 8px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .context-grid button {
