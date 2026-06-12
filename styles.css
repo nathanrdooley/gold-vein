@@ -1196,6 +1196,54 @@ h3 {
   background: linear-gradient(180deg, rgba(132, 214, 161, 0.08), rgba(245, 199, 95, 0.74), rgba(132, 214, 161, 0.08));
 }
 
+.reward-receive-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.reward-receive-card {
+  background: rgba(15, 20, 23, 0.44);
+  border: 1px solid rgba(245, 199, 95, 0.22);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.reward-receive-card[data-state="received"] {
+  border-color: rgba(132, 214, 161, 0.58);
+  box-shadow: 0 0 18px rgba(132, 214, 161, 0.12);
+}
+
+.reward-receive-card span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.reward-receive-card h3,
+.reward-receive-card p {
+  margin: 0;
+}
+
+.reward-receive-card p {
+  color: var(--muted);
+}
+
+.reward-feedback {
+  background: rgba(245, 199, 95, 0.1);
+  border: 1px solid rgba(245, 199, 95, 0.24);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.reward-feedback strong {
+  color: var(--ink);
+}
+
 .muted-evidence {
   border-color: var(--line);
 }

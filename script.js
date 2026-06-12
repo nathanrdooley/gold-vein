@@ -835,6 +835,7 @@ const getContextTreasureKey = (contextKey) => `gold-vein-context-${contextKey}-t
 const getContextMovementKey = (contextKey) => `gold-vein-context-${contextKey}-movement`;
 const getContextEvidenceKey = (contextKey) => `gold-vein-context-${contextKey}-evidence`;
 const getContextChallengeKey = (contextKey) => `gold-vein-context-${contextKey}-challenge-actions`;
+const getContextRewardKey = (contextKey) => `gold-vein-context-${contextKey}-rewards`;
 
 const getContextUnlocks = (contextKey) => {
   try {
@@ -872,6 +873,21 @@ const getCompletedChallengeCount = (contextKey) =>
   Object.values(getChallengeActions(contextKey)).filter(isChallengeActionReceived).length;
 
 const hasChallengeGateOpen = (contextKey) => getCompletedChallengeCount(contextKey) >= 2;
+
+const getReceivedRewards = (contextKey) => {
+  try {
+    return JSON.parse(localStorage.getItem(getContextRewardKey(contextKey)) || "{}");
+  } catch {
+    return {};
+  }
+};
+
+const setReceivedReward = (contextKey, key, value) => {
+  const rewards = getReceivedRewards(contextKey);
+  rewards[key] = value;
+  localStorage.setItem(getContextRewardKey(contextKey), JSON.stringify(rewards));
+  return rewards;
+};
 
 const getContextTreasures = (contextKey) => {
   try {
@@ -1172,6 +1188,7 @@ const getActiveWebNodes = () => {
   const journalEntries = getContextJournalEntries(activeContextKey);
   const evidenceSaved = hasCurrentEvidence(activeContextKey);
   const challengeCount = getCompletedChallengeCount(activeContextKey);
+  const rewardCount = Object.keys(getReceivedRewards(activeContextKey)).length;
 
   return [
     {
@@ -1191,8 +1208,8 @@ const getActiveWebNodes = () => {
     {
       key: "reward",
       label: "Reward",
-      detail: Number.isInteger(unlocks.reward) ? "Named" : "Name",
-      state: activeMissionTab === "reward" && activeAdventureView === "path" ? "active" : Number.isInteger(unlocks.reward) ? "complete" : "available",
+      detail: rewardCount ? `${rewardCount} received` : "Receive",
+      state: activeMissionTab === "reward" && activeAdventureView === "path" ? "active" : rewardCount ? "complete" : "available",
       action: "tab"
     },
     {
@@ -1299,10 +1316,52 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
 const getChallengeRewardFeedback = (title) =>
   `This activation is evidence of formation, not performance. If it was done in faith, repentance, love, truth, or obedience, it is the kind of work that agrees with Christ as the foundation. Receive the encouragement, name the fruit, and let it become something stronger than a passing impulse.`;
 
+const getRewardFeedback = (title) =>
+  `${title} is not a competing prize. Receive it as one possible sign of grace from the trail. Let it name what the Spirit may be forming, strengthening, correcting, or making visible.`;
+
 const getNextMissionTab = (currentTab) => {
   const order = ["map", "challenge", "reward", "connect", "treasure", "signal", "vein"];
   const currentIndex = order.indexOf(currentTab);
   return order[Math.min(currentIndex + 1, order.length - 1)] || "reward";
+};
+
+const renderRewardOptions = () => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const rewards = adventure.actions?.reward || [];
+  const receivedRewards = getReceivedRewards(activeContextKey);
+
+  return `
+    <div class="reward-receive-grid">
+      ${rewards
+        .map(([title, copy], index) => {
+          const key = `reward-${index}`;
+          const received = receivedRewards[key];
+          return `
+            <article class="reward-receive-card" data-state="${received ? "received" : "open"}">
+              <span>${received ? "Received" : "Available Fruit"}</span>
+              <h3>${escapeHtml(title)}</h3>
+              <p>${escapeHtml(copy)}</p>
+              <div class="reward-feedback">
+                <strong>Feedback</strong>
+                <p>${escapeHtml(getRewardFeedback(title))}</p>
+              </div>
+              <label>
+                Reflection
+                <textarea data-reward-note="${escapeHtml(key)}" rows="3" placeholder="Where did you notice this fruit, grace, correction, or courage?" ${received ? "disabled" : ""}>${escapeHtml(received?.note || "")}</textarea>
+              </label>
+              <button class="button ${received ? "secondary" : "primary"}" type="button" data-receive-reward="${escapeHtml(key)}" ${received ? "disabled" : ""}>
+                ${received ? "Received" : "Receive This"}
+              </button>
+            </article>
+          `;
+        })
+        .join("")}
+    </div>
+    <div class="evidence-panel muted-evidence">
+      <span>Reward Posture</span>
+      <p>Receive any fruit that is true. You do not need to choose one over another; the trail may reveal several kinds of grace at once.</p>
+    </div>
+  `;
 };
 
 const renderActionOptions = (type) => {
@@ -1727,10 +1786,10 @@ const renderMissionPanel = () => {
     missionPanel.innerHTML = `
       <article class="mission-card">
         ${renderMissionReturnControls()}
-        <span>Reward Options</span>
+        <span>Reward Reflections</span>
         <h3>Name the treasure uncovered.</h3>
-        <p>Rewards are not trophies. They are signs of grace received, noticed, and carried outward.</p>
-        ${renderActionOptions("reward")}
+        <p>Rewards are not trophies or competing choices. Receive whatever fruit is true, and let each one become a sign of grace noticed and carried outward.</p>
+        ${renderRewardOptions()}
         ${renderActiveNoteBox("Reward", "What grace, fruit, courage, clarity, or conviction became visible?")}
       </article>
     `;
@@ -3447,6 +3506,40 @@ missionPanel?.addEventListener("click", async (event) => {
     return;
   }
 
+  const rewardButton = event.target.closest("[data-receive-reward]");
+  if (rewardButton) {
+    const key = rewardButton.dataset.receiveReward || "reward-0";
+    const card = rewardButton.closest(".reward-receive-card");
+    const note = card?.querySelector(`[data-reward-note="${CSS.escape(key)}"]`)?.value?.trim() || "";
+    const title = card?.querySelector("h3")?.textContent?.trim() || "Reward";
+    const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+    const now = new Date();
+
+    setReceivedReward(activeContextKey, key, {
+      title,
+      note,
+      receivedAt: now.toISOString()
+    });
+
+    void saveJournalEntry({
+      id: Date.now(),
+      savedAt: now.toISOString(),
+      trail: adventure.title,
+      date: now.toISOString().slice(0, 10),
+      time: now.toTimeString().slice(0, 5),
+      weather: cleanWeatherValue(journalWeatherInput?.value || ""),
+      place: "Reward Reflection",
+      scripture: adventure.map?.passage || adventure.scripture,
+      treasure: note || title,
+      nextStep: `Received reward: ${title}`
+    });
+
+    renderMissionPanel();
+    renderActiveWeb();
+    setContextStatus(`${title} received as trail fruit. You can receive another reward if it is also true.`, "success");
+    return;
+  }
+
   const treasureButton = event.target.closest("[data-treasure-type]");
   if (treasureButton) {
     activeTreasureType = treasureButton.dataset.treasureType || "Financial gift";
@@ -3535,6 +3628,7 @@ generateContextMovementButton?.addEventListener("click", () => {
   localStorage.setItem(getContextProgressKey(activeContextKey), "0");
   localStorage.removeItem(getContextUnlockKey(activeContextKey));
   localStorage.removeItem(getContextChallengeKey(activeContextKey));
+  localStorage.removeItem(getContextRewardKey(activeContextKey));
   activeMissionTab = "map";
   localStorage.setItem("gold-vein-active-mission-tab", activeMissionTab);
   renderContextAdventure();
@@ -3546,6 +3640,7 @@ resetContextAdventureButton?.addEventListener("click", () => {
   localStorage.setItem(getContextProgressKey(activeContextKey), "0");
   localStorage.setItem(getContextMovementKey(activeContextKey), "0");
   localStorage.removeItem(getContextChallengeKey(activeContextKey));
+  localStorage.removeItem(getContextRewardKey(activeContextKey));
   renderContextAdventure();
   setContextStatus("This context adventure has been reset to the first movement.", "success");
 });
