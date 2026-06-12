@@ -535,6 +535,66 @@ const contextAdventures = {
   }
 };
 
+const scriptureTextLibrary = {
+  "John 3:1-18": {
+    title: "John 3:1-18",
+    text: "Jesus answered him, \"Most certainly, I tell you, unless one is born anew, he can't see God's Kingdom.\" ... \"As Moses lifted up the serpent in the wilderness, even so must the Son of Man be lifted up, that whoever believes in him should not perish, but have eternal life.\" ... \"For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.\"",
+    feedback: "The gospel does not begin with self-repair. It begins with new birth, looking to Christ, and receiving life from God."
+  },
+  "2 Peter 1:3-11": {
+    title: "2 Peter 1:3-11",
+    text: "His divine power has granted to us all things that pertain to life and godliness ... For this very cause, adding on your part all diligence, in your faith supply moral excellence ... for if you do these things, you will never stumble. For thus you will be richly supplied with the entrance into the eternal Kingdom of our Lord and Savior, Jesus Christ.",
+    feedback: "Maturity is evidence of grace at work. Practice does not replace Christ's power; it participates in what Christ has already granted."
+  },
+  "Luke 10:38-42": {
+    title: "Luke 10:38-42",
+    text: "Martha was distracted with much serving ... The Lord answered her, \"Martha, Martha, you are anxious and troubled about many things, but one thing is needed. Mary has chosen the good part, which will not be taken away from her.\"",
+    feedback: "Anxiety often pulls the soul into proving and performing. Jesus restores attention before action."
+  },
+  "Colossians 3:23-24": {
+    title: "Colossians 3:23-24",
+    text: "And whatever you do, work heartily, as for the Lord, and not for men, knowing that from the Lord you will receive the reward of the inheritance; for you serve the Lord Christ.",
+    feedback: "Hidden faithfulness matters. Work becomes worship when it is offered before Christ instead of performed for approval."
+  },
+  "Nehemiah 2:17-18": {
+    title: "Nehemiah 2:17-18",
+    text: "\"You see the bad situation that we are in, how Jerusalem lies waste ... Come, let's build up the wall of Jerusalem.\" ... They said, \"Let's rise up and build.\" So they strengthened their hands for the good work.",
+    feedback: "Calling often begins with honest assessment, shared courage, and strengthened hands."
+  },
+  "Luke 24:13-35": {
+    title: "Luke 24:13-35",
+    text: "Jesus himself came near, and went with them ... Beginning from Moses and from all the prophets, he explained to them in all the Scriptures the things concerning himself ... They said to one another, \"Weren't our hearts burning within us, while he spoke to us along the way?\"",
+    feedback: "The road can become revelation. Confusion is not the end when Christ draws near and opens the Scriptures."
+  },
+  "Matthew 5:23-24": {
+    title: "Matthew 5:23-24",
+    text: "\"If therefore you are offering your gift at the altar, and there remember that your brother has anything against you, leave your gift there before the altar, and go your way. First be reconciled to your brother, and then come and offer your gift.\"",
+    feedback: "The Spirit does not separate worship from repair. Humility, truth, and reconciliation become evidence of kingdom life."
+  },
+  "1 Corinthians 3:10-15": {
+    title: "1 Corinthians 3:10-15",
+    text: "No one can lay any other foundation than that which has been laid, which is Jesus Christ ... each man's work will be revealed. For the Day will declare it, because it is revealed in fire; and the fire itself will test what sort of work each man's work is.",
+    feedback: "Christ is the foundation. The testing fire does not destroy what is truly built by the Spirit; it reveals what lasts."
+  },
+  "1 Peter 1:6-9": {
+    title: "1 Peter 1:6-9",
+    text: "You have been grieved in various trials, that the proof of your faith, which is more precious than gold that perishes even though it is tested by fire, may be found to result in praise, glory, and honor at the revelation of Jesus Christ.",
+    feedback: "Testing can expose pain and weakness, but in Christ it can also prove faith more precious than gold."
+  },
+  "Galatians 5:16-25": {
+    title: "Galatians 5:16-25",
+    text: "Walk by the Spirit, and you won't fulfill the lust of the flesh ... the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faith, gentleness, and self-control.",
+    feedback: "The Spirit's activity becomes visible as sinful reaction is brought into the light and new fruit begins to appear."
+  }
+};
+
+const getScriptureText = (reference) =>
+  scriptureTextLibrary[reference] || {
+    title: reference,
+    text: "Open this passage and read it slowly. Let the text itself test, comfort, correct, and guide the next faithful step.",
+    feedback: "This passage is connected to the trail as a supporting witness. Ask how it confirms, corrects, or deepens the main map."
+  };
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js").catch(() => {});
@@ -1206,6 +1266,9 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
   setActiveAdventureView("web");
   renderContextAdventure();
   setContextStatus(message, "success");
+  window.requestAnimationFrame(() => {
+    activeWeb?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 };
 
 const renderActionOptions = (type) => {
@@ -1285,28 +1348,66 @@ const renderActiveNoteBox = (stage, prompt) => {
   `;
 };
 
-const renderScriptureReview = (references = []) => {
-  if (!references.length) {
+const renderScriptureReview = (map) => {
+  const references = [map.passage, ...(map.crossReferences || []), "1 Corinthians 3:10-15", "1 Peter 1:6-9", "Galatians 5:16-25"];
+  const uniqueReferences = [...new Set(references)];
+
+  if (!uniqueReferences.length) {
     return "";
   }
 
   return `
     <details class="scripture-review" open>
-      <summary>Added Scriptures to Review</summary>
+      <summary>Scriptures to Review</summary>
       <div class="scripture-review-list">
-        ${references
-          .map(
-            (reference) => `
+        ${uniqueReferences
+          .map((reference) => {
+            const passage = getScriptureText(reference);
+            return `
               <details>
-                <summary>${escapeHtml(reference)}</summary>
-                <p>Open this passage and ask: What does this add to the trail? What does it reveal about Christ, obedience, grace, or the next faithful step?</p>
+                <summary>${escapeHtml(passage.title)}</summary>
+                <p><strong>Text:</strong> ${escapeHtml(passage.text)}</p>
+                <p><strong>Feedback:</strong> ${escapeHtml(passage.feedback)}</p>
               </details>
-            `
-          )
+            `;
+          })
           .join("")}
       </div>
     </details>
   `;
+};
+
+const renderSoulCarePrompts = () => `
+  <details class="soul-care-panel" open>
+    <summary>Soul-Care Check</summary>
+    <p>Choose what feels most honest. This is not a diagnosis; it is a guided checkpoint for bringing the soul into the light of Scripture.</p>
+    <div class="soul-care-grid">
+      <button type="button" data-soul-prompt="convicted">I feel convicted and exposed</button>
+      <button type="button" data-soul-prompt="defensive">I feel defensive or resistant</button>
+      <button type="button" data-soul-prompt="ashamed">I feel ashamed or unworthy</button>
+      <button type="button" data-soul-prompt="hungry">I feel hungry for change</button>
+      <button type="button" data-soul-prompt="stuck">I feel stuck in a pattern</button>
+      <button type="button" data-soul-prompt="peace">I sense peace and courage</button>
+    </div>
+    <div class="soul-care-feedback" data-soul-feedback>
+      Select a condition to receive biblical feedback for the next faithful step.
+    </div>
+  </details>
+`;
+
+const soulCareFeedback = {
+  convicted:
+    "Conviction can be mercy when it moves you toward Christ instead of hiding. Bring the exposed place to Jesus, name it honestly, and ask what repentance should look like in one concrete step.",
+  defensive:
+    "Defensiveness often protects a place the Spirit wants to heal. Slow down, breathe, and ask: What am I afraid will happen if I tell the truth?",
+  ashamed:
+    "Shame says you should hide. The gospel says Christ is the foundation, and what is brought into His light can be cleansed, rebuilt, and strengthened.",
+  hungry:
+    "Hunger for change can be evidence of grace already stirring. Choose one practice that agrees with the Spirit: confession, prayer, counsel, restitution, or obedience.",
+  stuck:
+    "A stuck pattern needs more than willpower. Look for the loop: trigger, desire, reaction, aftermath. Invite Scripture, a companion, and one embodied interruption into the loop.",
+  peace:
+    "Peace and courage may be fruit of the Spirit's activity. Do not rush past it. Let it become witness: encouragement, repair, generosity, or faithful follow-through."
 };
 
 const getCompanionMessages = () => {
@@ -1405,7 +1506,8 @@ const renderMissionPanel = () => {
             <p>${escapeHtml(map.power)}</p>
           </details>
         </div>
-        ${renderScriptureReview(map.crossReferences)}
+        ${renderScriptureReview(map)}
+        ${renderSoulCarePrompts()}
         ${renderActiveNoteBox("Map", `What is ${map.passage} revealing while this adventure is open?`)}
       </article>
     `;
@@ -3047,6 +3149,20 @@ missionPanel?.addEventListener("click", async (event) => {
             : "Testimony mode: this could become a living stream of treasure found across trails.";
     }
     setContextStatus("Vein interface idea selected.", "success");
+    return;
+  }
+
+  const soulPromptButton = event.target.closest("[data-soul-prompt]");
+  if (soulPromptButton) {
+    const prompt = soulPromptButton.dataset.soulPrompt || "convicted";
+    const feedback = missionPanel.querySelector("[data-soul-feedback]");
+    missionPanel.querySelectorAll("[data-soul-prompt]").forEach((button) => {
+      button.classList.toggle("selected", button === soulPromptButton);
+    });
+    if (feedback) {
+      feedback.textContent = soulCareFeedback[prompt] || soulCareFeedback.convicted;
+    }
+    setContextStatus("Soul-care feedback opened. Save what is true as an active note if it needs to be carried forward.", "success");
     return;
   }
 
