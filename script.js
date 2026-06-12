@@ -160,6 +160,7 @@ let activeContextProgress = Number(localStorage.getItem(`gold-vein-context-${act
 let activeMissionTab = localStorage.getItem("gold-vein-active-mission-tab") || "map";
 let activeAdventureView = localStorage.getItem("gold-vein-active-adventure-view") || "choose";
 let activeTreasureType = "Financial gift";
+let activeCompanionContact = localStorage.getItem("gold-vein-active-companion") || "Glen";
 
 const watermarkLocation = {
   latitude: 32.9231644,
@@ -616,6 +617,44 @@ const setJournalEntries = (entries) => {
   localStorage.setItem("gold-vein-journal-entries", JSON.stringify(entries));
 };
 
+const postFieldNote = async (entry) => {
+  try {
+    const response = await fetch("/api/field-notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        trail_title: normalizeTrailName(entry.trail),
+        place: entry.place,
+        weather: entry.weather,
+        scripture: entry.scripture,
+        treasure: entry.treasure,
+        next_step: entry.nextStep,
+        note_date: entry.date,
+        note_time: entry.time
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Field note API unavailable");
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const saveJournalEntry = async (entry) => {
+  const entries = getJournalEntries();
+  entries.unshift(entry);
+  setJournalEntries(entries);
+  renderJournalEntries();
+  return postFieldNote(entry);
+};
+
 const getAdventureDrafts = () => {
   try {
     return JSON.parse(localStorage.getItem("gold-vein-adventure-drafts") || "[]");
@@ -802,8 +841,7 @@ const saveCurrentEvidence = (contextKey, note) => {
   localStorage.setItem(getContextEvidenceKey(contextKey), JSON.stringify(evidence));
 
   const now = new Date();
-  const entries = getJournalEntries();
-  entries.unshift({
+  void saveJournalEntry({
     id: Date.now(),
     savedAt: now.toISOString(),
     trail: `${adventure.title}${movement ? ` · Movement ${movement + 1}` : ""}`,
@@ -815,8 +853,6 @@ const saveCurrentEvidence = (contextKey, note) => {
     treasure: note,
     nextStep: `Checkpoint evidence: ${checkpointLabel}`
   });
-  setJournalEntries(entries);
-  renderJournalEntries();
 };
 
 const getContextJournalEntries = (contextKey) => {
@@ -1170,7 +1206,6 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
   setActiveAdventureView("web");
   renderContextAdventure();
   setContextStatus(message, "success");
-  activeWeb?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
 const renderActionOptions = (type) => {
@@ -1232,6 +1267,24 @@ const renderMissionReturnControls = () => `
   </div>
 `;
 
+const renderActiveNoteBox = (stage, prompt) => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+
+  return `
+    <div class="active-note-box" data-note-stage="${escapeHtml(stage)}">
+      <span>Active Notes · ${escapeHtml(stage)}</span>
+      <h3>Write while the trail is open.</h3>
+      <p>${escapeHtml(prompt)}</p>
+      <textarea data-active-note rows="3" placeholder="Write a live note, observation, prayer, evidence, question, or follow-up."></textarea>
+      <button class="button primary" type="button" data-save-active-note>
+        Save to Journal
+      </button>
+      <small>This saves to your local Adventure History and submits to the field-notes database when available.</small>
+      <input type="hidden" data-active-note-trail value="${escapeHtml(adventure.title)}">
+    </div>
+  `;
+};
+
 const renderScriptureReview = (references = []) => {
   if (!references.length) {
     return "";
@@ -1254,6 +1307,65 @@ const renderScriptureReview = (references = []) => {
       </div>
     </details>
   `;
+};
+
+const getCompanionMessages = () => {
+  try {
+    return JSON.parse(localStorage.getItem(`gold-vein-companion-messages-${activeContextKey}`) || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const setCompanionMessages = (messages) => {
+  localStorage.setItem(`gold-vein-companion-messages-${activeContextKey}`, JSON.stringify(messages.slice(0, 24)));
+};
+
+const addCompanionMessage = async ({ contact, message, type = "message" }) => {
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+  const entry = {
+    id: Date.now(),
+    contact,
+    message,
+    type,
+    displayName: "You",
+    savedAt: new Date().toISOString()
+  };
+  const messages = getCompanionMessages();
+  messages.unshift(entry);
+  setCompanionMessages(messages);
+
+  try {
+    await fetch("/api/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        journey_group_id: `local-${activeContextKey}`,
+        display_name: "Traveler",
+        message: `${type === "poke" ? "Poked" : "Messaged"} ${contact} on ${adventure.title}: ${message}`
+      })
+    });
+  } catch {}
+};
+
+const renderCompanionMessages = () => {
+  const messages = getCompanionMessages();
+
+  return messages.length
+    ? messages
+        .map(
+          (message) => `
+            <article>
+              <span>${escapeHtml(message.contact)} · ${escapeHtml(message.type)}</span>
+              <p>${escapeHtml(message.message)}</p>
+            </article>
+          `
+        )
+        .join("")
+    : '<p class="empty-journal">No companion signals yet.</p>';
 };
 
 const renderMissionPanel = () => {
@@ -1294,6 +1406,7 @@ const renderMissionPanel = () => {
           </details>
         </div>
         ${renderScriptureReview(map.crossReferences)}
+        ${renderActiveNoteBox("Map", `What is ${map.passage} revealing while this adventure is open?`)}
       </article>
     `;
     return;
@@ -1312,6 +1425,7 @@ const renderMissionPanel = () => {
           <p><b>Point A:</b> ${escapeHtml(adventure.outdoor.from)}<br><b>Point B:</b> ${escapeHtml(adventure.outdoor.to)}<br>${escapeHtml(adventure.outdoor.prompt)}</p>
         </div>
         ${renderActionOptions("challenge")}
+        ${renderActiveNoteBox("Challenge", "What did you choose, practice, resist, or notice as you moved into the challenge?")}
       </article>
     `;
     return;
@@ -1325,6 +1439,7 @@ const renderMissionPanel = () => {
         <h3>Name the treasure uncovered.</h3>
         <p>Rewards are not trophies. They are signs of grace received, noticed, and carried outward.</p>
         ${renderActionOptions("reward")}
+        ${renderActiveNoteBox("Reward", "What grace, fruit, courage, clarity, or conviction became visible?")}
       </article>
     `;
     return;
@@ -1338,6 +1453,64 @@ const renderMissionPanel = () => {
         <h3>Bring someone onto the trail.</h3>
         <p>Invite prayer, encouragement, counsel, service, or witness so the adventure does not stay private.</p>
         ${renderActionOptions("connect")}
+        ${renderActiveNoteBox("Connect", "Who did you contact, what happened, and what follow-up matters?")}
+      </article>
+    `;
+    return;
+  }
+
+  if (activeMissionTab === "signal") {
+    missionPanel.innerHTML = `
+      <article class="mission-card">
+        ${renderMissionReturnControls()}
+        <span>Companion Signal</span>
+        <h3>Let someone know you are on the trail.</h3>
+        <p>Send a lightweight signal, poke, or comment to a companion. This prototype saves locally and posts to the messages API when the backend is available.</p>
+        <div class="companion-grid">
+          <button class="${activeCompanionContact === "Glen" ? "selected" : ""}" type="button" data-companion-contact="Glen">Glen</button>
+          <button class="${activeCompanionContact === "Dallas" ? "selected" : ""}" type="button" data-companion-contact="Dallas">Dallas</button>
+          <button class="${activeCompanionContact === "Nathan" ? "selected" : ""}" type="button" data-companion-contact="Nathan">Nathan</button>
+        </div>
+        <label>
+          Message or comment
+          <textarea data-companion-message rows="3" placeholder="I'm on the trail. Pray with me, join me, or watch for what opens."></textarea>
+        </label>
+        <div class="companion-actions">
+          <button class="button primary" type="button" data-send-companion-message>Send Message</button>
+          <button class="button secondary" type="button" data-poke-companion>Poke</button>
+        </div>
+        <div class="companion-log" data-companion-log>
+          ${renderCompanionMessages()}
+        </div>
+        ${renderActiveNoteBox("Signal", "What happened through companionship, messages, prayer, or invitation?")}
+      </article>
+    `;
+    return;
+  }
+
+  if (activeMissionTab === "vein") {
+    missionPanel.innerHTML = `
+      <article class="mission-card vein-interface">
+        ${renderMissionReturnControls()}
+        <span>Vein Interface</span>
+        <h3>A deeper layer of the trail.</h3>
+        <p>This is a prototype doorway for the future Gold Vein dimension: shared presence, living trail maps, companion signals, testimony threads, and Spirit-led next moves.</p>
+        <div class="vein-orbit" aria-hidden="true">
+          <span>Word</span>
+          <span>People</span>
+          <span>Place</span>
+          <strong>Vein</strong>
+          <span>Gift</span>
+          <span>Witness</span>
+          <span>Next</span>
+        </div>
+        <div class="vein-choice-grid">
+          <button type="button" data-vein-mode="listen">Listen for the next thread</button>
+          <button type="button" data-vein-mode="gather">Gather companions</button>
+          <button type="button" data-vein-mode="testify">Open testimony stream</button>
+        </div>
+        <p class="form-status" data-vein-status aria-live="polite">Choose a mode to sketch what this layer could become.</p>
+        ${renderActiveNoteBox("Vein", "What should this deeper web interface become as Gold Vein evolves?")}
       </article>
     `;
     return;
@@ -1376,6 +1549,7 @@ const renderMissionPanel = () => {
             : '<p class="empty-journal">No treasures saved on this context yet.</p>'
         }
       </div>
+      ${renderActiveNoteBox("Treasure", "What was given, received, sponsored, prepared, or carried forward?")}
     </article>
   `;
 };
@@ -2519,7 +2693,7 @@ const renderConversionTrail = () => {
   }
 };
 
-notesButton?.addEventListener("click", () => {
+notesButton?.addEventListener("click", async () => {
   const form = notesButton.closest("form");
   const data = new FormData(form);
   const entry = {
@@ -2528,13 +2702,15 @@ notesButton?.addEventListener("click", () => {
     ...Object.fromEntries(data.entries())
   };
   entry.weather = cleanWeatherValue(entry.weather);
-  const entries = getJournalEntries();
-  entries.unshift(entry);
-  setJournalEntries(entries);
-  renderJournalEntries();
+  const storedRemotely = await saveJournalEntry(entry);
   form.reset();
   setJournalDateTimeDefaults();
-  setStatus(notesButton, "Journal entry saved in this browser.");
+  setStatus(
+    notesButton,
+    storedRemotely
+      ? "Journal entry saved in this browser and database."
+      : "Journal entry saved in this browser. Database sync will work when the backend is available."
+  );
   window.setTimeout(returnFromJournal, 450);
 });
 
@@ -2742,7 +2918,6 @@ missionTabButtons.forEach((button) => {
 
 returnToAdventuresButton?.addEventListener("click", () => {
   setActiveAdventureView("choose");
-  contextGrid?.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 returnToWebButton?.addEventListener("click", returnToActiveWeb);
@@ -2769,7 +2944,7 @@ activeWeb?.addEventListener("click", (event) => {
   setContextStatus(`${openedNode?.textContent || "Node"} opened on the active web.`, "success");
 });
 
-missionPanel?.addEventListener("click", (event) => {
+missionPanel?.addEventListener("click", async (event) => {
   const returnButton = event.target.closest("[data-return-to-web]");
   if (returnButton) {
     returnToActiveWeb();
@@ -2780,6 +2955,91 @@ missionPanel?.addEventListener("click", (event) => {
   if (journalButton) {
     localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
     window.location.hash = "field-notes";
+    return;
+  }
+
+  const activeNoteButton = event.target.closest("[data-save-active-note]");
+  if (activeNoteButton) {
+    const noteBox = activeNoteButton.closest("[data-note-stage]");
+    const note = noteBox?.querySelector("[data-active-note]")?.value?.trim() || "";
+    const stage = noteBox?.dataset.noteStage || "Adventure";
+    const adventure = contextAdventures[activeContextKey] || contextAdventures.home;
+    const now = new Date();
+
+    if (!note) {
+      setContextStatus("Write a note before saving it to the journal.", "error");
+      return;
+    }
+
+    const storedRemotely = await saveJournalEntry({
+      id: Date.now(),
+      savedAt: now.toISOString(),
+      trail: adventure.title,
+      date: now.toISOString().slice(0, 10),
+      time: now.toTimeString().slice(0, 5),
+      weather: cleanWeatherValue(journalWeatherInput?.value || ""),
+      place: `${stage} · ${adventure.outdoor?.title || adventure.title}`,
+      scripture: adventure.map?.passage || adventure.scripture,
+      treasure: note,
+      nextStep: `Active ${stage.toLowerCase()} note`
+    });
+
+    noteBox.querySelector("[data-active-note]").value = "";
+    setContextStatus(
+      storedRemotely
+        ? "Note saved to the journal and database."
+        : "Note saved locally. It will stay in Adventure History until the database is available.",
+      storedRemotely ? "success" : "quiet"
+    );
+    return;
+  }
+
+  const companionButton = event.target.closest("[data-companion-contact]");
+  if (companionButton) {
+    activeCompanionContact = companionButton.dataset.companionContact || "Glen";
+    localStorage.setItem("gold-vein-active-companion", activeCompanionContact);
+    renderMissionPanel();
+    setContextStatus(`${activeCompanionContact} selected as your companion signal.`, "success");
+    return;
+  }
+
+  const companionMessageButton = event.target.closest("[data-send-companion-message], [data-poke-companion]");
+  if (companionMessageButton) {
+    const isPoke = Boolean(companionMessageButton.closest("[data-poke-companion]"));
+    const messageInput = missionPanel.querySelector("[data-companion-message]");
+    const message =
+      messageInput?.value?.trim() ||
+      (isPoke
+        ? "I am on the trail. This is a Gold Vein poke."
+        : "I am on the trail and wanted you to know.");
+
+    await addCompanionMessage({
+      contact: activeCompanionContact,
+      message,
+      type: isPoke ? "poke" : "message"
+    });
+
+    if (messageInput) {
+      messageInput.value = "";
+    }
+    renderMissionPanel();
+    setContextStatus(`${isPoke ? "Poked" : "Messaged"} ${activeCompanionContact}.`, "success");
+    return;
+  }
+
+  const veinModeButton = event.target.closest("[data-vein-mode]");
+  if (veinModeButton) {
+    const status = missionPanel.querySelector("[data-vein-status]");
+    const mode = veinModeButton.dataset.veinMode || "listen";
+    if (status) {
+      status.textContent =
+        mode === "listen"
+          ? "Listening mode: future trails could surface Scripture, companion signals, and next moves as one living web."
+          : mode === "gather"
+            ? "Gather mode: this could become a shared room where companions join, respond, pray, and witness."
+            : "Testimony mode: this could become a living stream of treasure found across trails.";
+    }
+    setContextStatus("Vein interface idea selected.", "success");
     return;
   }
 
