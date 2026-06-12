@@ -254,36 +254,39 @@ const contextAdventures = {
   },
   maturity: {
     title: "Mature Disciple Adventure",
-    summary: "Move from being stuck or passive into practiced faith, love, endurance, and disciple-making.",
-    awareness: "Formation, habits, obedience, witness",
+    summary: "Move from immature or stalled discipleship into healthy practice, Spirit-formed fruit, and disciple-making witness.",
+    awareness: "Immaturity, practice, fruit, endurance, multiplication",
     scripture: "2 Peter 1:3-11",
     challenge: "Practice what has been given.",
-    challengeCopy: "Choose one virtue Peter names and practice it today in a visible, embodied way.",
+    challengeCopy: "Receive Christ's power, choose one practice, and make maturity visible in embodied obedience.",
     reward: "Fruitful assurance.",
-    rewardCopy: "Maturity is not performance for approval. It is participation in the life and power Christ has given.",
+    rewardCopy: "Maturity is not performance for approval. It is the visible fruit of Christ's power becoming practiced, stable, and shareable.",
     map: {
       passage: "2 Peter 1:3-11",
       history: "Peter writes to believers to strengthen them against corruption, false teaching, forgetfulness, and fruitless faith.",
       context: "The passage begins with what God has already granted, then calls believers to diligent practice that confirms calling and choosing.",
-      inner: "Notice passivity, discouragement, double-mindedness, hidden habits, fear of effort, and the desire for maturity without practice.",
-      power: "Christ's divine power grants what is needed for life and godliness. Practiced faith becomes fruitful, stable, and ready to make disciples.",
-      crossReferences: ["John 15:1-8", "Galatians 5:22-25", "Hebrews 5:12-14", "Matthew 28:18-20"]
+      inner: "Notice passivity, immaturity, discouragement, double-mindedness, hidden habits, fear of effort, and the desire for maturity without practice.",
+      power: "Christ's divine power grants what is needed for life and godliness. Practiced faith becomes fruitful, stable, and able to strengthen others.",
+      crossReferences: ["John 15:1-8", "Galatians 5:22-25", "Hebrews 5:12-14", "Matthew 28:18-20", "2 Timothy 2:1-2"]
     },
     actions: {
       challenge: [
+        ["Receive power", "Write what 2 Peter 1 says Christ has already granted before you try to practice anything."],
         ["Practice one virtue", "Choose faith, moral excellence, knowledge, self-control, perseverance, godliness, brotherly kindness, or love and practice it today."],
-        ["Interrupt one habit", "Name one stuck pattern and take one concrete step of obedience away from it."],
-        ["Teach what you received", "Share one truth from 2 Peter 1:3-11 with someone who could use encouragement."]
+        ["Interrupt immaturity", "Name one immature pattern and take one concrete step of obedience away from it."],
+        ["Multiply what you received", "Share one truth, practice, or encouragement with someone who could become stronger in Christ."]
       ],
       reward: [
         ["Fruit noticed", "Name one small fruit that appeared through obedience."],
-        ["Assurance strengthened", "Write how practicing these things helps you not stumble."],
-        ["Power remembered", "Record what Christ has already granted, not just what you still lack."]
+        ["Stability strengthened", "Write how practicing these things helps you not stumble."],
+        ["Power remembered", "Record what Christ has already granted, not just what you still lack."],
+        ["Disciple-maker spark", "Name one person who could be strengthened by what Christ formed in you."]
       ],
       connect: [
         ["Invite accountability", "Ask a mature believer to check in with you about the practice you chose."],
         ["Disciple someone", "Invite someone younger in faith to read the passage and practice one step with you."],
-        ["Report fruit", "Tell a trusted person what you practiced, what was hard, and what fruit appeared."]
+        ["Report fruit", "Tell a trusted person what you practiced, what was hard, and what fruit appeared."],
+        ["Open a practice loop", "Set one follow-up time to repeat the practice, review fruit, and encourage someone else."]
       ]
     },
     outdoor: {
@@ -293,10 +296,10 @@ const contextAdventures = {
       prompt: "Walk as a physical sign that maturity moves. Ask which practice needs to become embodied today."
     },
     checkpoints: [
-      ["Receive", "Name what Christ has granted for life and godliness."],
+      ["Power", "Name what Christ has granted for life and godliness before you act."],
       ["Practice", "Choose one virtue and do something concrete with it."],
-      ["Connect", "Invite accountability, prayer, counsel, or a disciple-making conversation."],
-      ["Give", "Carry what you practiced outward by encouraging, teaching, serving, or following up."]
+      ["Fruit", "Name the Spirit-formed evidence that appeared through practiced obedience."],
+      ["Multiply", "Carry what you practiced outward by encouraging, teaching, serving, or following up."]
     ]
   },
   home: {
@@ -556,6 +559,26 @@ const scriptureTextLibrary = {
     title: "2 Peter 1:3-11",
     text: "His divine power has granted to us all things that pertain to life and godliness ... For this very cause, adding on your part all diligence, in your faith supply moral excellence ... for if you do these things, you will never stumble. For thus you will be richly supplied with the entrance into the eternal Kingdom of our Lord and Savior, Jesus Christ.",
     feedback: "Maturity is evidence of grace at work. Practice does not replace Christ's power; it participates in what Christ has already granted."
+  },
+  "John 15:1-8": {
+    title: "John 15:1-8",
+    text: "I am the vine. You are the branches. He who remains in me, and I in him, bears much fruit, for apart from me you can do nothing ... By this is my Father glorified, that you bear much fruit; and so you will be my disciples.",
+    feedback: "Fruitfulness comes from abiding in Christ, not independent religious effort. Mature disciples remain, receive, and bear fruit."
+  },
+  "Hebrews 5:12-14": {
+    title: "Hebrews 5:12-14",
+    text: "When by reason of the time you ought to be teachers, you again need to have someone teach you ... solid food is for those who are full grown, who by reason of use have their senses exercised to discern good and evil.",
+    feedback: "Maturity develops through practiced discernment. The goal is not information only, but trained senses and useful obedience."
+  },
+  "Matthew 28:18-20": {
+    title: "Matthew 28:18-20",
+    text: "All authority has been given to me in heaven and on earth. Go, and make disciples of all nations ... teaching them to observe all things that I commanded you. Behold, I am with you always.",
+    feedback: "Healthy disciples become disciple makers under Christ's authority and presence."
+  },
+  "2 Timothy 2:1-2": {
+    title: "2 Timothy 2:1-2",
+    text: "You therefore, my child, be strengthened in the grace that is in Christ Jesus. The things which you have heard from me among many witnesses, commit the same to faithful people, who will be able to teach others also.",
+    feedback: "Disciple-making is multiplication by grace: strengthened people entrust truth to others who can teach others also."
   },
   "Luke 10:38-42": {
     title: "Luke 10:38-42",
@@ -1715,42 +1738,67 @@ const renderScriptureReview = (map) => {
 };
 
 const renderGospelVisionPanel = () => {
-  if (activeContextKey !== "gospel") {
-    return "";
+  if (activeContextKey === "gospel") {
+    return `
+      <section class="formation-vision-panel">
+        <span>Final Vision · Revelation 21:21</span>
+        <h3>The path ends in transparent gold.</h3>
+        <p>Gold Vein begins with grace meeting a person in a real condition, but its horizon is the city of God: a street of pure gold, clear as glass, where the Lamb is the light. Every honest gospel response is a small trail marker toward that kingdom.</p>
+      </section>
+    `;
   }
 
-  return `
-    <section class="gospel-vision-panel">
-      <span>Final Vision · Revelation 21:21</span>
-      <h3>The path ends in transparent gold.</h3>
-      <p>Gold Vein begins with grace meeting a person in a real condition, but its horizon is the city of God: a street of pure gold, clear as glass, where the Lamb is the light. Every honest gospel response is a small trail marker toward that kingdom.</p>
-    </section>
-  `;
+  if (activeContextKey === "maturity") {
+    return `
+      <section class="formation-vision-panel">
+        <span>Formation Vision · 2 Timothy 2:1-2</span>
+        <h3>Grace becomes strong enough to entrust.</h3>
+        <p>The Mature Disciple trail moves from received power to practiced fruit to multiplied witness. The aim is not a private improvement project, but a disciple strengthened in grace who can help others follow Christ.</p>
+      </section>
+    `;
+  }
+
+  return "";
 };
 
 const getSoulCarePrompts = () =>
-  activeContextKey === "gospel"
-    ? [
+  {
+    if (activeContextKey === "gospel") {
+      return [
         ["curious", "I am curious, but not sure"],
         ["convicted", "I feel convicted and exposed"],
         ["ashamed", "I feel ashamed or unworthy"],
         ["resistant", "I feel resistant"],
         ["hungry", "I want to believe or change"],
         ["ready", "I am ready to trust Christ"]
-      ]
-    : [
-        ["convicted", "I feel convicted and exposed"],
-        ["defensive", "I feel defensive or resistant"],
-        ["ashamed", "I feel ashamed or unworthy"],
-        ["hungry", "I feel hungry for change"],
-        ["stuck", "I feel stuck in a pattern"],
-        ["peace", "I sense peace and courage"]
       ];
+    }
+
+    if (activeContextKey === "maturity") {
+      return [
+        ["passive", "I feel passive or stalled"],
+        ["immature", "I see an immature pattern"],
+        ["undisciplined", "I resist practice or consistency"],
+        ["fruit", "I see some fruit forming"],
+        ["ready-to-teach", "I am ready to help someone else"],
+        ["weary", "I feel weary in obedience"]
+      ];
+    }
+
+    return [
+      ["convicted", "I feel convicted and exposed"],
+      ["defensive", "I feel defensive or resistant"],
+      ["ashamed", "I feel ashamed or unworthy"],
+      ["hungry", "I feel hungry for change"],
+      ["stuck", "I feel stuck in a pattern"],
+      ["peace", "I sense peace and courage"]
+    ];
+  };
 
 const renderSoulCarePrompts = () => `
   <details class="soul-care-panel" open>
-    <summary>${activeContextKey === "gospel" ? "Gospel Condition Check" : "Soul-Care Check"}</summary>
-    <p>${activeContextKey === "gospel" ? "Choose where you honestly are before God. This is not pressure; it is a way to bring your condition into the light where grace can meet faith." : "Choose what feels most honest. This is not a diagnosis; it is a guided checkpoint for bringing the soul into the light of Scripture."}</p>
+    <summary>${activeContextKey === "gospel" ? "Gospel Condition Check" : activeContextKey === "maturity" ? "Disciple Formation Check" : "Soul-Care Check"}</summary>
+    <p>${activeContextKey === "gospel" ? "Choose where you honestly are before God. This is not pressure; it is a way to bring your condition into the light where grace can meet faith." : activeContextKey === "maturity" ? "Choose the most honest formation state. This helps the trail move from received grace into practiced obedience and disciple-making witness." : "Choose what feels most honest. This is not a diagnosis; it is a guided checkpoint for bringing the soul into the light of Scripture."}</p>
     <div class="soul-care-grid">
       ${getSoulCarePrompts()
         .map(
@@ -1802,6 +1850,18 @@ const soulCareFeedback = {
     "Hunger for change can be evidence of grace already stirring. Choose one practice that agrees with the Spirit: confession, prayer, counsel, restitution, or obedience.",
   ready:
     "If you are ready to trust Christ, respond honestly: confess your need, look to Jesus for mercy and life, and tell a trusted believer so you do not walk alone.",
+  passive:
+    "Passivity is often a formation signal, not a final identity. Begin with what Christ has granted, then choose one small practice that agrees with His power today.",
+  immature:
+    "An immature pattern can become a training place when it is brought into the light. Name the reaction, choose one virtue from 2 Peter 1, and practice the opposite in love.",
+  undisciplined:
+    "Resistance to practice usually weakens fruit over time. Do not start with a grand vow; start with one repeatable act of obedience that can be reviewed with a trusted person.",
+  fruit:
+    "Visible fruit is meant to be noticed and strengthened. Name it humbly, thank Christ for it, and ask how it can become steady enough to bless someone else.",
+  "ready-to-teach":
+    "Readiness to help someone else is part of maturity. Entrust what you have received simply: one Scripture, one practice, one follow-up, one person.",
+  weary:
+    "Weariness needs grace, not shame. Return to Christ's granted power, receive help, and choose a practice small enough to obey without pretending you are not tired.",
   stuck:
     "A stuck pattern needs more than willpower. Look for the loop: trigger, desire, reaction, aftermath. Invite Scripture, a companion, and one embodied interruption into the loop.",
   peace:

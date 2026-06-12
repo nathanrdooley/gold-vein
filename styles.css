@@ -986,7 +986,7 @@ h3 {
   margin-top: 10px;
 }
 
-.gospel-vision-panel {
+.formation-vision-panel {
   background:
     linear-gradient(135deg, rgba(245, 199, 95, 0.18), rgba(255, 255, 255, 0.035)),
     rgba(15, 20, 23, 0.48);
@@ -1000,7 +1000,7 @@ h3 {
   overflow: hidden;
 }
 
-.gospel-vision-panel::after {
+.formation-vision-panel::after {
   animation: optionThreadDrift 5s linear infinite;
   background: linear-gradient(90deg, transparent, rgba(245, 199, 95, 0.62), transparent);
   background-size: 180% 100%;
@@ -1012,19 +1012,19 @@ h3 {
   right: 0;
 }
 
-.gospel-vision-panel span {
+.formation-vision-panel span {
   color: var(--gold);
   font-size: 0.7rem;
   font-weight: 900;
   text-transform: uppercase;
 }
 
-.gospel-vision-panel h3,
-.gospel-vision-panel p {
+.formation-vision-panel h3,
+.formation-vision-panel p {
   margin: 0;
 }
 
-.gospel-vision-panel p {
+.formation-vision-panel p {
   color: var(--muted);
 }
 
