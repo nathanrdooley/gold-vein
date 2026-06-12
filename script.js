@@ -1339,9 +1339,26 @@ const getRewardFeedback = (title) =>
   `${title} is not a competing prize. Receive it as one possible sign of grace from the trail. Let it name what the Spirit may be forming, strengthening, correcting, or making visible.`;
 
 const getNextMissionTab = (currentTab) => {
-  const order = ["map", "challenge", "reward", "connect", "treasure", "signal", "vein"];
+  const order = ["map", "challenge", "reward", "connect", "treasure", "signal", "vein", "journal"];
   const currentIndex = order.indexOf(currentTab);
   return order[Math.min(currentIndex + 1, order.length - 1)] || "reward";
+};
+
+const getMissionTabLabel = (tab) =>
+  ({
+    map: "Map",
+    challenge: "Build",
+    reward: "Fruit",
+    connect: "Link",
+    treasure: "Gift",
+    signal: "Ping",
+    vein: "Vein",
+    journal: "Journal Web"
+  })[tab] || "Next";
+
+const getDirectionNextTarget = (direction) => {
+  const savedTarget = direction?.nextTab || getNextMissionTab(activeMissionTab);
+  return savedTarget === activeMissionTab ? getNextMissionTab(activeMissionTab) : savedTarget;
 };
 
 const getFormationDirectionCopy = (direction) => {
@@ -1416,7 +1433,8 @@ const renderFormationDirection = () => {
   }
 
   const copy = getFormationDirectionCopy(direction);
-  const nextTab = direction.nextTab || getNextMissionTab(activeMissionTab);
+  const nextTab = getDirectionNextTarget(direction);
+  const nextLabel = getMissionTabLabel(nextTab);
 
   return `
     <section class="formation-direction-card" data-source="${escapeHtml(direction.source || "checkpoint")}">
@@ -1437,7 +1455,7 @@ const renderFormationDirection = () => {
         </article>
       </div>
       <button class="button primary" type="button" data-open-direction-next="${escapeHtml(nextTab)}">
-        Open ${escapeHtml(nextTab)} Node
+        Continue to ${escapeHtml(nextLabel)}
       </button>
     </section>
   `;
@@ -2157,48 +2175,98 @@ const renderJournalEntries = () => {
     return groups;
   }, {});
 
-  journalList.innerHTML = Object.entries(groupedEntries)
-    .map(
-      ([trail, trailEntries]) => `
-        <section class="journal-trail-group">
-          <div class="journal-group-heading">
-            <div>
-              <span>Trail</span>
-              <h3>${escapeHtml(trail)}</h3>
-            </div>
-            <strong>${trailEntries.length} ${trailEntries.length === 1 ? "entry" : "entries"}</strong>
-          </div>
-          <div class="journal-entry-stack">
-            ${trailEntries
-              .map(
-                (entry) => `
-                  <article class="journal-entry">
-                    <div class="journal-entry-topline">
-                      <span>${escapeHtml(entry.date || "Undated")} · ${escapeHtml(entry.time || "No time")}</span>
-                      <strong>${escapeHtml(entry.place || "Place not recorded")}</strong>
-                    </div>
-                    <dl>
-                      <div>
-                        <dt>Weather</dt>
-                        <dd>${escapeHtml(cleanWeatherValue(entry.weather) || "Not recorded")}</dd>
-                      </div>
-                      <div>
-                        <dt>Saved</dt>
-                        <dd>${escapeHtml(entry.savedAt ? new Date(entry.savedAt).toLocaleDateString() : "Not recorded")}</dd>
-                      </div>
-                    </dl>
-                    <p><strong>Word:</strong> ${escapeHtml(entry.scripture || "Not recorded")}</p>
-                    <p><strong>Treasure:</strong> ${escapeHtml(entry.treasure || "Not recorded")}</p>
-                    <p><strong>Next step:</strong> ${escapeHtml(entry.nextStep || "Not recorded")}</p>
-                  </article>
-                `
-              )
-              .join("")}
-            </div>
-        </section>
-      `
-    )
+  const trailGroups = Object.entries(groupedEntries);
+  const webPoints = trailGroups.map((_, index) => {
+    const angle = trailGroups.length === 1 ? -90 : -90 + (360 / trailGroups.length) * index;
+    const radius = trailGroups.length < 3 ? 24 : 34;
+    const x = 50 + radius * Math.cos((angle * Math.PI) / 180);
+    const y = 50 + radius * Math.sin((angle * Math.PI) / 180);
+    return [Math.round(x), Math.round(y)];
+  });
+  const webLines = webPoints
+    .map(([x, y], index) => {
+      if (index >= webPoints.length - 1) {
+        return "";
+      }
+      const [nextX, nextY] = webPoints[index + 1];
+      return `<line x1="${x}" y1="${y}" x2="${nextX}" y2="${nextY}"></line>`;
+    })
     .join("");
+
+  journalList.innerHTML = `
+    <section class="journal-web-panel">
+      <div class="journal-web-heading">
+        <div>
+          <span>Evidence Web</span>
+          <h3>Adventure dots and Spirit-work records</h3>
+        </div>
+        <strong>${trailGroups.length} ${trailGroups.length === 1 ? "adventure" : "adventures"}</strong>
+      </div>
+      <div class="journal-web-space" aria-label="Adventure journal evidence web">
+        <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          ${webLines}
+        </svg>
+        ${trailGroups
+          .map(([trail, trailEntries], index) => {
+            const [x, y] = webPoints[index];
+            const latest = trailEntries[0] || {};
+            return `
+              <button class="journal-adventure-dot" type="button" style="--dot-x: ${x}%; --dot-y: ${y}%;">
+                <span>${escapeHtml(trail.slice(0, 2).toUpperCase())}</span>
+                <span class="journal-dot-popover">
+                  <strong>${escapeHtml(trail)}</strong>
+                  <small>${trailEntries.length} ${trailEntries.length === 1 ? "entry" : "entries"} stored</small>
+                  <p>${escapeHtml(latest.treasure || latest.nextStep || "Evidence is being gathered on this trail.")}</p>
+                </span>
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+    </section>
+    ${trailGroups
+      .map(
+        ([trail, trailEntries]) => `
+          <section class="journal-trail-group">
+            <div class="journal-group-heading">
+              <div>
+                <span>Adventure Record</span>
+                <h3>${escapeHtml(trail)}</h3>
+              </div>
+              <strong>${trailEntries.length} ${trailEntries.length === 1 ? "entry" : "entries"}</strong>
+            </div>
+            <div class="journal-entry-stack">
+              ${trailEntries
+                .map(
+                  (entry) => `
+                    <article class="journal-entry">
+                      <div class="journal-entry-topline">
+                        <span>${escapeHtml(entry.date || "Undated")} · ${escapeHtml(entry.time || "No time")}</span>
+                        <strong>${escapeHtml(entry.place || "Place not recorded")}</strong>
+                      </div>
+                      <dl>
+                        <div>
+                          <dt>Weather</dt>
+                          <dd>${escapeHtml(cleanWeatherValue(entry.weather) || "Not recorded")}</dd>
+                        </div>
+                        <div>
+                          <dt>Saved</dt>
+                          <dd>${escapeHtml(entry.savedAt ? new Date(entry.savedAt).toLocaleDateString() : "Not recorded")}</dd>
+                        </div>
+                      </dl>
+                      <p><strong>Word:</strong> ${escapeHtml(entry.scripture || "Not recorded")}</p>
+                      <p><strong>Treasure:</strong> ${escapeHtml(entry.treasure || "Not recorded")}</p>
+                      <p><strong>Next step:</strong> ${escapeHtml(entry.nextStep || "Not recorded")}</p>
+                    </article>
+                  `
+                )
+                .join("")}
+            </div>
+          </section>
+        `
+      )
+      .join("")}
+  `;
 };
 
 const getCreatorFormData = () => {
@@ -3453,7 +3521,14 @@ missionPanel?.addEventListener("click", async (event) => {
 
   const directionNextButton = event.target.closest("[data-open-direction-next]");
   if (directionNextButton) {
-    openMissionPath(directionNextButton.dataset.openDirectionNext || getNextMissionTab(activeMissionTab));
+    const nextTarget = directionNextButton.dataset.openDirectionNext || getNextMissionTab(activeMissionTab);
+    if (nextTarget === "journal") {
+      localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+      window.location.hash = "field-notes";
+      setContextStatus("Journal Web opened from the formation direction.", "success");
+      return;
+    }
+    openMissionPath(nextTarget);
     setContextStatus("Next trail node opened from the formation direction.", "success");
     return;
   }
