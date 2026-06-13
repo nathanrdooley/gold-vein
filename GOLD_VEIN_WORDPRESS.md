@@ -35,7 +35,7 @@ For the deployed site, add only the key before `script.js` in `index.html`:
 
 ```html
 <script>
-  window.GOLD_VEIN_STATS_KEY = "PASTE_THE_WORDPRESS_INGEST_KEY";
+  window.GOLD_VEIN_STATS_KEY = "jNbQYlrVaWeG9Ju3SROfIsuo9OQLWxDJ";
 </script>
 ```
 
