@@ -746,11 +746,71 @@ const postFieldNote = async (entry) => {
   }
 };
 
+const getGoldVeinStatsConfig = () => ({
+  endpoint:
+    window.GOLD_VEIN_STATS_ENDPOINT ||
+    localStorage.getItem("gold-vein-stats-endpoint") ||
+    "",
+  key:
+    window.GOLD_VEIN_STATS_KEY ||
+    localStorage.getItem("gold-vein-stats-key") ||
+    "",
+  site:
+    window.GOLD_VEIN_STATS_SITE ||
+    localStorage.getItem("gold-vein-stats-site") ||
+    "gold-vein"
+});
+
+const trackGoldVeinEvent = async (eventName, metadata = {}) => {
+  const config = getGoldVeinStatsConfig();
+
+  if (!config.endpoint) {
+    return false;
+  }
+
+  const adventure = contextAdventures[activeContextKey] || contextAdventures.home || {};
+  const route = typeof getHashParts === "function" ? getHashParts().pageId : window.location.hash;
+
+  try {
+    const response = await fetch(config.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(config.key ? { "X-Gold-Vein-Key": config.key } : {})
+      },
+      body: JSON.stringify({
+        site: config.site,
+        event_name: eventName,
+        trail: metadata.trail || adventure.title || activeContextKey || "",
+        node: metadata.node || activeMissionTab || "",
+        metadata: {
+          contextKey: activeContextKey,
+          missionTab: activeMissionTab,
+          page: route,
+          ...metadata
+        }
+      })
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
 const saveJournalEntry = async (entry) => {
   const entries = getJournalEntries();
   entries.unshift(entry);
   setJournalEntries(entries);
   renderJournalEntries();
+  void trackGoldVeinEvent("journal_entry_saved", {
+    trail: entry.trail,
+    node: activeMissionTab,
+    place: entry.place,
+    scripture: entry.scripture,
+    hasTreasure: Boolean(entry.treasure)
+  });
   return postFieldNote(entry);
 };
 
@@ -1121,6 +1181,7 @@ const openMissionPath = (key, shouldScroll = true) => {
   setActiveAdventureView("path");
   renderMissionPanel();
   renderActiveWeb();
+  void trackGoldVeinEvent("node_opened", { node: key });
 
   if (shouldScroll) {
     const scrollToPanel = () => {
@@ -1372,6 +1433,10 @@ const selectContextAdventure = (contextKey, message = "Adventure updated.") => {
   setActiveAdventureView("web");
   renderContextAdventure();
   setContextStatus(message, "success");
+  void trackGoldVeinEvent("adventure_selected", {
+    trail: contextAdventures[contextKey]?.title || contextKey,
+    node: "web"
+  });
   window.requestAnimationFrame(() => {
     activeWeb?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
@@ -3516,21 +3581,25 @@ shareAdventureButtons.forEach((button) => {
 
 supportOptionButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    const supportType = button.dataset.supportOption || "Give Freely";
     if (supportTypeInput) {
-      supportTypeInput.value = button.dataset.supportOption || "Give Freely";
+      supportTypeInput.value = supportType;
     }
     if (supportStatus) {
       supportStatus.textContent = `${supportTypeInput?.value || "Support"} selected. Add an amount, save a note, then open Venmo.`;
     }
+    void trackGoldVeinEvent("support_option_selected", { node: "support", supportType });
     setTemporaryButtonText(button, "Selected");
   });
 });
 
 supportAmountOptionButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    const amount = button.dataset.supportAmountOption || "";
     if (supportAmountInput) {
-      supportAmountInput.value = button.dataset.supportAmountOption || "";
+      supportAmountInput.value = amount;
     }
+    void trackGoldVeinEvent("support_amount_selected", { node: "support", amount });
   });
 });
 
@@ -3566,6 +3635,13 @@ saveSupportPledgeButton?.addEventListener("click", () => {
     supportStatus.textContent =
       "Support note saved locally. Open Venmo to send the gift when you are ready.";
   }
+  void trackGoldVeinEvent("support_note_saved", {
+    node: "support",
+    supportType: pledge.supportType,
+    amount: pledge.amount,
+    purpose: pledge.purpose,
+    hasNote: Boolean(pledge.note)
+  });
 });
 
 useWeatherButton?.addEventListener("click", () => {
@@ -3686,6 +3762,7 @@ activeWeb?.addEventListener("click", (event) => {
 
   if (action === "journal") {
     localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+    void trackGoldVeinEvent("node_opened", { node: "journal", source: "active_web" });
     window.location.hash = "field-notes";
     document.querySelector("#field-notes")?.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
@@ -3706,6 +3783,7 @@ missionPanel?.addEventListener("click", async (event) => {
   const journalButton = event.target.closest("[data-open-journal-from-path]");
   if (journalButton) {
     localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+    void trackGoldVeinEvent("node_opened", { node: "journal", source: "path_button" });
     window.location.hash = "field-notes";
     return;
   }
@@ -3715,6 +3793,7 @@ missionPanel?.addEventListener("click", async (event) => {
     const nextTarget = directionNextButton.dataset.openDirectionNext || getNextMissionTab(activeMissionTab);
     if (nextTarget === "journal") {
       localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+      void trackGoldVeinEvent("node_opened", { node: "journal", source: "formation_direction" });
       window.location.hash = "field-notes";
       setContextStatus("Journal Web opened from the formation direction.", "success");
       return;
@@ -3757,6 +3836,12 @@ missionPanel?.addEventListener("click", async (event) => {
         : "Note saved locally. It will stay in Adventure History until the database is available.",
       storedRemotely ? "success" : "quiet"
     );
+    void trackGoldVeinEvent("active_note_saved", {
+      node: activeMissionTab,
+      stage,
+      storedRemotely,
+      hasNote: true
+    });
     return;
   }
 
@@ -3791,6 +3876,11 @@ missionPanel?.addEventListener("click", async (event) => {
     }
     renderMissionPanel();
     const profile = getCompanionProfile(activeCompanionContact);
+    void trackGoldVeinEvent("companion_signal_sent", {
+      node: "connect",
+      contact: activeCompanionContact,
+      type: isPoke ? "poke" : "message"
+    });
     setContextStatus(`${isPoke ? "Poked" : "Messaged"} ${profile.name}.`, "success");
     return;
   }
@@ -3821,6 +3911,10 @@ missionPanel?.addEventListener("click", async (event) => {
     if (feedback) {
       feedback.textContent = soulCareFeedback[prompt] || soulCareFeedback.convicted;
     }
+    void trackGoldVeinEvent("soul_prompt_selected", {
+      node: "map",
+      prompt
+    });
     setContextStatus("Soul-care feedback opened. Save what is true as an active note if it needs to be carried forward.", "success");
     return;
   }
@@ -3830,6 +3924,7 @@ missionPanel?.addEventListener("click", async (event) => {
     const nextNode = nextNodeButton.dataset.openNextNode || "challenge";
     if (nextNode === "journal") {
       localStorage.setItem("gold-vein-journal-return-hash", "now-adventure");
+      void trackGoldVeinEvent("node_opened", { node: "journal", source: "next_node" });
       window.location.hash = "field-notes";
       setContextStatus("Journal Web opened from the trail.", "success");
       return;
@@ -3879,6 +3974,13 @@ missionPanel?.addEventListener("click", async (event) => {
     });
     renderMissionPanel();
     renderActiveWeb();
+    void trackGoldVeinEvent("challenge_activation_completed", {
+      node: "challenge",
+      challengeKey: key,
+      challengeTitle: title,
+      scripture: adventure.map?.passage || adventure.scripture,
+      hasNote: true
+    });
     setContextStatus("Activation completed. Receive the reward feedback to build it into the trail.", "success");
     return;
   }
@@ -3901,6 +4003,12 @@ missionPanel?.addEventListener("click", async (event) => {
     renderMissionPanel();
     renderActiveWeb();
     const count = getCompletedChallengeCount(activeContextKey);
+    void trackGoldVeinEvent("challenge_reward_received", {
+      node: "challenge",
+      challengeKey: key,
+      challengeTitle: current.title || "Challenge reward",
+      completedChallengeCount: count
+    });
     setContextStatus(
       count >= 2
         ? "Two challenge activations are complete. Checkpoint evidence is now open."
@@ -3956,6 +4064,12 @@ missionPanel?.addEventListener("click", async (event) => {
 
     renderMissionPanel();
     renderActiveWeb();
+    void trackGoldVeinEvent("reward_received", {
+      node: "reward",
+      rewardKey: key,
+      rewardTitle: title,
+      hasNote: Boolean(note)
+    });
     setContextStatus(`${title} received as trail fruit. You can receive another reward if it is also true.`, "success");
     return;
   }
@@ -3965,6 +4079,10 @@ missionPanel?.addEventListener("click", async (event) => {
     activeTreasureType = treasureButton.dataset.treasureType || "Financial gift";
     missionPanel.querySelectorAll("[data-treasure-type]").forEach((button) => {
       button.classList.toggle("selected", button === treasureButton);
+    });
+    void trackGoldVeinEvent("treasure_type_selected", {
+      node: "treasure",
+      treasureType: activeTreasureType
     });
     setContextStatus(`${activeTreasureType} selected as a treasure option.`, "success");
     return;
@@ -3979,6 +4097,11 @@ missionPanel?.addEventListener("click", async (event) => {
     });
     renderMissionPanel();
     renderActiveWeb();
+    void trackGoldVeinEvent("treasure_saved", {
+      node: "treasure",
+      treasureType: activeTreasureType,
+      hasNote: Boolean(note)
+    });
     setContextStatus("Treasure saved to this adventure context.", "success");
     return;
   }
@@ -4010,6 +4133,14 @@ missionPanel?.addEventListener("click", async (event) => {
     renderContextAdventure();
     renderActiveWeb();
     setActiveAdventureView(activeContextProgress >= checkpoints.length ? "path" : "path");
+    void trackGoldVeinEvent("checkpoint_evidence_saved", {
+      node: activeMissionTab,
+      completedIndex,
+      nextTab,
+      progress: activeContextProgress,
+      movementComplete: activeContextProgress >= checkpoints.length,
+      hasNote: true
+    });
     setContextStatus(
       activeContextProgress >= checkpoints.length
         ? "Evidence saved. This movement is complete."
