@@ -19,18 +19,22 @@ It also adds a dashboard widget and a full Dashboard > Gold Vein Stats page with
 
 ## Connect Gold Vein
 
-For the prototype, you can configure the local or deployed Gold Vein site from the browser console:
+Gold Vein now uses the Time For Providence endpoint by default:
+
+```text
+https://timeforprovidence.com/wp-json/gold-vein/v1/event
+```
+
+For the prototype, add the WordPress ingest key from the browser console:
 
 ```js
-localStorage.setItem("gold-vein-stats-endpoint", "https://timeforprovidence.com/wp-json/gold-vein/v1/event");
 localStorage.setItem("gold-vein-stats-key", "PASTE_THE_WORDPRESS_INGEST_KEY");
 ```
 
-For the deployed site, add this before `script.js` in `index.html`:
+For the deployed site, add only the key before `script.js` in `index.html`:
 
 ```html
 <script>
-  window.GOLD_VEIN_STATS_ENDPOINT = "https://timeforprovidence.com/wp-json/gold-vein/v1/event";
   window.GOLD_VEIN_STATS_KEY = "PASTE_THE_WORDPRESS_INGEST_KEY";
 </script>
 ```

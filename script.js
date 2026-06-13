@@ -750,7 +750,7 @@ const getGoldVeinStatsConfig = () => ({
   endpoint:
     window.GOLD_VEIN_STATS_ENDPOINT ||
     localStorage.getItem("gold-vein-stats-endpoint") ||
-    "",
+    "https://timeforprovidence.com/wp-json/gold-vein/v1/event",
   key:
     window.GOLD_VEIN_STATS_KEY ||
     localStorage.getItem("gold-vein-stats-key") ||
