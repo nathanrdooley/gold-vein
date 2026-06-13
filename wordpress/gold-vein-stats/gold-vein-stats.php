@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Gold Vein Stats
  * Description: Receives Gold Vein trail events and displays them inside the WordPress dashboard.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Gold Vein
  * Text Domain: gold-vein-stats
  */
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-const GOLD_VEIN_STATS_VERSION = '0.1.0';
+const GOLD_VEIN_STATS_VERSION = '0.1.1';
 const GOLD_VEIN_STATS_KEY_OPTION = 'gold_vein_stats_ingest_key';
 const GOLD_VEIN_STATS_ORIGIN_OPTION = 'gold_vein_stats_allowed_origin';
 
@@ -242,6 +242,62 @@ function gold_vein_stats_render_dashboard_widget() {
     echo '<p><strong>' . esc_html($summary['last_seven_days']) . '</strong> events received in the last 7 days.</p>';
     echo '<p><a href="' . esc_url(admin_url('index.php?page=gold-vein-stats')) . '">Open Gold Vein Stats</a></p>';
 }
+
+function gold_vein_stats_is_wp_stats_screen() {
+    global $pagenow;
+
+    if (!is_admin() || 'admin.php' !== $pagenow) {
+        return false;
+    }
+
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
+    return 'stats' === $page;
+}
+
+function gold_vein_stats_render_wp_stats_panel() {
+    if (!current_user_can('manage_options') || !gold_vein_stats_is_wp_stats_screen()) {
+        return;
+    }
+
+    $summary = gold_vein_stats_get_summary();
+    ?>
+    <div class="notice notice-info gold-vein-stats-panel" style="border-left-color:#c59f3d;padding:0;margin:16px 20px 16px 2px;">
+        <div style="padding:16px 18px;background:#101917;color:#f8f0dc;">
+            <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+                <div>
+                    <p style="margin:0 0 4px;color:#f6c65b;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Gold Vein Trail Activity</p>
+                    <h2 style="margin:0;color:#fff8e6;">Gold Vein stats are connected to this dashboard.</h2>
+                </div>
+                <a class="button button-primary" href="<?php echo esc_url(admin_url('index.php?page=gold-vein-stats')); ?>">Open Full Gold Vein Stats</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px;">
+                <div style="border:1px solid rgba(246,198,91,.35);padding:12px;background:rgba(255,255,255,.04);">
+                    <strong style="display:block;font-size:28px;color:#f6c65b;"><?php echo esc_html($summary['last_seven_days']); ?></strong>
+                    <span>Last 7 days</span>
+                </div>
+                <div style="border:1px solid rgba(246,198,91,.35);padding:12px;background:rgba(255,255,255,.04);">
+                    <strong style="display:block;font-size:28px;color:#f6c65b;"><?php echo esc_html($summary['total']); ?></strong>
+                    <span>Total events</span>
+                </div>
+                <div style="border:1px solid rgba(246,198,91,.35);padding:12px;background:rgba(255,255,255,.04);">
+                    <strong style="display:block;font-size:28px;color:#f6c65b;"><?php echo esc_html(count($summary['top_events'])); ?></strong>
+                    <span>Tracked event types</span>
+                </div>
+            </div>
+            <?php if (!empty($summary['top_events'])) : ?>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+                    <?php foreach ($summary['top_events'] as $event) : ?>
+                        <span style="border:1px solid rgba(246,198,91,.35);padding:6px 9px;background:rgba(0,0,0,.18);">
+                            <?php echo esc_html($event->event_name); ?> · <?php echo esc_html($event->total); ?>
+                        </span>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+}
+add_action('admin_notices', 'gold_vein_stats_render_wp_stats_panel');
 
 function gold_vein_stats_register_rest_routes() {
     register_rest_route('gold-vein/v1', '/event', [

@@ -17,6 +17,8 @@ https://timeforprovidence.com/wp-json/gold-vein/v1/event
 
 It also adds a dashboard widget and a full Dashboard > Gold Vein Stats page with recent activity and top event counts.
 
+When Jetpack or WordPress.com stats are open at `admin.php?page=stats`, the plugin also shows a Gold Vein Trail Activity panel on that same stats screen.
+
 ## Connect Gold Vein
 
 Gold Vein now uses the Time For Providence endpoint by default:
