@@ -1123,7 +1123,13 @@ const openMissionPath = (key, shouldScroll = true) => {
   renderActiveWeb();
 
   if (shouldScroll) {
-    missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const scrollToPanel = () => {
+      missionPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.requestAnimationFrame(() => {
+      scrollToPanel();
+      window.setTimeout(scrollToPanel, 180);
+    });
   }
 };
 
@@ -1856,7 +1862,7 @@ const renderTrailSupportPrompt = () => `
   <aside class="trail-support-prompt">
     <span>Keep the Trail Open</span>
     <h3>Support a future traveler.</h3>
-    <p>The gospel is not for sale. Support can prepare encouragement notes, tangible gifts, mystery paths, hosted trails, and tools that help people keep walking.</p>
+    <p>The gospel is not for sale. Support can prepare encouragement notes, tangible gifts, mystery paths, hosted trails, or direct blessings for people you meet along the way.</p>
     <div class="trail-support-actions">
       <a class="button secondary" href="#support">Support Trail</a>
       <a class="button secondary" href="https://account.venmo.com/u/Nathan_R_Dooley" target="_blank" rel="noreferrer">Venmo</a>
